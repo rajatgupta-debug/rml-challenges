@@ -1430,14 +1430,14 @@ function renderChart1(sub) {
         <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
         <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
         <div class="options" id="mcq-c1-first">
-          ${exploreOpt("The bars are all bright red", "Color is just paint. It doesn't change the data. Look past the colors — focus on the <em>shape</em> or the <em>numbers</em>.", false)}
-          ${exploreOpt("The headline word EXPLODES — dramatic", "Loud headlines try to set your feelings <em>before</em> you read the data. Good to notice — but the real lie usually lives in the chart itself.", false)}
-          ${exploreOpt("The bars climb like a staircase", "Your eyes are doing exactly what the chart <em>wants</em>. But are the bars really growing that fast? Check the numbers on the left.", false)}
-          ${exploreOpt("The y-axis numbers look strange — starts at 400", "🎯 <strong>You found it.</strong> A y-axis that doesn't start at 0 is how you puff up tiny changes into mountains. Remember this.", true)}
+          ${exploreOpt("The bars are all bright red", "Color is decoration. It doesn't change the data. Look past it.", false)}
+          ${exploreOpt("The headline word EXPLODES", "Loud headlines do loud work. But the trick is usually <em>inside</em> the chart, not in the title.", false)}
+          ${exploreOpt("The bars climb like a staircase", "Your eyes trust the shape. But shapes can be stretched — what's driving that climb?", false)}
+          ${exploreOpt("The numbers on the left side of the chart", "🎯 Good eye — worth investigating. Let's look closer.", true)}
         </div>
         <div class="lens-reaction hidden" id="reaction-c1-first"></div>
       </div>
-      <div class="nav-row end"><button class="btn" id="next-c1-first" disabled onclick="nextSub()">I found it →</button></div>
+      <div class="nav-row end"><button class="btn" id="next-c1-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
 
   // 2 — Chart's message (SINGLE MCQ — comprehension)
@@ -1663,14 +1663,14 @@ function renderChart2(sub) {
         <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
         <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
         <div class="options" id="mcq-c2-first">
-          ${exploreOpt("The word DYING is extreme", "Loud headlines set your feelings before you read the data. Good to notice — but the real lie usually lives in the chart itself.", false)}
-          ${exploreOpt("Bars are colored red", "Red says <em>alert!</em> but colors don't change the data. Focus on shape or numbers.", false)}
-          ${exploreOpt("The drop looks steep", "The drop is real — 13M users gone. But is a 3-month drop normal or unusual? We need more context.", false)}
-          ${exploreOpt("Only 3 months shown — very short window", "🎯 <strong>You found it.</strong> 3 months is a tiny slice. Lots of things dip and rise over a quarter. We need more history.", true)}
+          ${exploreOpt("The word DYING", "Loud word. But the real trick is usually <em>inside</em> the chart, not in the headline.", false)}
+          ${exploreOpt("The red bars", "Color is decoration. Look at the data itself.", false)}
+          ${exploreOpt("The bars dropping sharply", "Eyes trust the shape. But a drop can look worse than it is without more context.", false)}
+          ${exploreOpt("The time period shown on the chart", "🎯 Good eye — worth investigating. What might this chart be missing?", true)}
         </div>
         <div class="lens-reaction hidden" id="reaction-c2-first"></div>
       </div>
-      <div class="nav-row end"><button class="btn" id="next-c2-first" disabled onclick="nextSub()">I found it →</button></div>
+      <div class="nav-row end"><button class="btn" id="next-c2-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
 
   if (sub === 2) return `
@@ -1888,14 +1888,14 @@ function renderChart3(sub) {
         <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
         <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
         <div class="options" id="mcq-c3-first">
-          ${exploreOpt("The orange line and red line use different colors", "True, but color coding is just a legend thing — it doesn't change what the chart means.", false)}
-          ${exploreOpt("Shark attack numbers are small overall", "Sharp eye — shark attacks are rare. But even rare things can look scary in a news story.", false)}
-          ${exploreOpt("The headline says ice cream CAUSES shark attacks", "That's a huge claim. But the chart only shows <em>when</em> they happen. Can a chart really prove <em>cause</em>?", false)}
-          ${exploreOpt("Both lines move up and down together", "🎯 <strong>You found it.</strong> The chart shows two things that rise and fall together — but that doesn't mean one <em>causes</em> the other.", true)}
+          ${exploreOpt("The orange line and red line use different colors", "Color coding is just a legend — doesn't change what the chart means.", false)}
+          ${exploreOpt("Shark attack numbers are small overall", "Sharp eye — sharks are rare. Side observation though. Keep looking.", false)}
+          ${exploreOpt("The word CAUSES in the headline", "Big claim. But does the chart show <em>why</em> — or just <em>when</em>?", false)}
+          ${exploreOpt("Both lines move up and down together", "🎯 They really do move together. Interesting — but what does that actually mean? Let's dig in.", true)}
         </div>
         <div class="lens-reaction hidden" id="reaction-c3-first"></div>
       </div>
-      <div class="nav-row end"><button class="btn" id="next-c3-first" disabled onclick="nextSub()">I found it →</button></div>
+      <div class="nav-row end"><button class="btn" id="next-c3-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
 
   if (sub === 2) return `
