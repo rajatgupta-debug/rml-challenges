@@ -375,14 +375,25 @@ svg.chart { width: 100%; height: auto; display: block; }
 .option.multi.wrong .option-num { background: var(--coral); border-color: var(--coral); color: white; }
 .option.multi.wrong .option-num::before { content: "✕"; }
 
-/* Explore (differentiated) — key observations vs surface */
+/* Phase 1 — explore (tap to hear Lens react; all taps look the same) */
 .option.explore {}
 .option.explore.seen { border-color: var(--purple); background: var(--purple-bg); color: var(--text); }
 .option.explore.seen .option-num { background: var(--purple); color: white; border-color: var(--purple); }
 .option.explore.seen .option-num::before { content: "👁"; font-size: 12px; }
-.option.explore.hit { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
-.option.explore.hit .option-num { background: var(--mint); color: white; border-color: var(--mint); }
-.option.explore.hit .option-num::before { content: "🎯"; font-size: 12px; }
+
+/* Phase 2 — commit to a lead (radio-style, deliberate choice) */
+.question.phase2 { background: var(--orange-bg); border-color: var(--orange); border-left: 4px solid var(--orange); }
+.question.phase2 .q-label { color: var(--coral); }
+.option.commit .option-num { border-radius: 50%; background: white; border: 2px solid var(--border-strong); }
+.option.commit.selected { border-color: var(--orange); background: #FFE4C4; }
+.option.commit.selected .option-num { background: var(--orange); border-color: var(--orange); }
+.option.commit.selected .option-num::before { content: "●"; color: white; font-size: 14px; }
+.option.commit.correct { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
+.option.commit.correct .option-num { background: var(--mint); border-color: var(--mint); }
+.option.commit.correct .option-num::before { content: "🎯"; font-size: 12px; }
+.option.commit.wrong { border-color: var(--coral); background: var(--coral-bg); color: var(--coral-ink); animation: shake 0.4s; }
+.option.commit.wrong .option-num { background: var(--coral); border-color: var(--coral); }
+.option.commit.wrong .option-num::before { content: "✕"; color: white; font-size: 12px; }
 
 /* Numeric input */
 .numeric-row { display: flex; gap: 10px; align-items: center; }
@@ -1265,6 +1276,9 @@ function multiOpt(text, correct) {
 function exploreOpt(text, reaction, isKey = false) {
   return `<button class="option explore" data-key="${isKey}" data-react="${reaction.replace(/"/g, '&quot;')}"><span class="option-num"></span>${text}</button>`;
 }
+function commitOpt(text, isKey) {
+  return `<button class="option commit" data-key="${isKey}"><span class="option-num"></span>${text}</button>`;
+}
 
 // ═══════════════════════════════════════════════════════════
 // INTERACTION HELPERS
@@ -1327,29 +1341,86 @@ function setupMultiMCQ(mcqId, checkBtnId, fbId, nextId) {
   });
 }
 
-// Explore: some options are key observations (🎯), others are surface (👁).
-// "Continue" unlocks only after the key observation is found.
-function setupExplore(mcqId, reactionId, nextId) {
+// Phase 1 — Exploration. Kid taps options to hear Lens's take on each.
+// All taps look the same (purple "seen") — no right/wrong signal here.
+// After `tapsNeeded` taps, reveal the Phase 2 commit panel.
+function setupExplore(mcqId, reactionId, phase2Id, tapsNeeded = 2) {
   const mcq = document.getElementById(mcqId);
   if (!mcq) return;
   const reaction = document.getElementById(reactionId);
-  const nxt = document.getElementById(nextId);
+  const phase2 = phase2Id ? document.getElementById(phase2Id) : null;
+  let taps = 0;
   mcq.querySelectorAll(".option.explore").forEach(btn => {
     btn.addEventListener("click", () => {
-      if (btn.classList.contains("seen") || btn.classList.contains("hit")) return;
-      const isKey = btn.dataset.key === "true";
+      if (btn.classList.contains("seen")) return;
+      btn.classList.add("seen");
+      SFX.soft();
       const text = btn.dataset.react;
-      if (isKey) {
-        btn.classList.add("hit");
-        SFX.correct();
-        if (nxt) nxt.disabled = false;
-      } else {
-        btn.classList.add("seen");
-        SFX.soft();
-      }
       reaction.innerHTML = `<div class="lens-icon">🔍</div><div class="lens-text"><strong>Lens:</strong> ${text}</div>`;
       reaction.classList.remove("hidden");
+      taps++;
+      if (taps >= tapsNeeded && phase2 && phase2.classList.contains("hidden")) {
+        phase2.classList.remove("hidden");
+        setTimeout(() => phase2.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+      }
     });
+  });
+}
+
+// Phase 2 — Commit. Kid must deliberately pick one observation to follow up on.
+// Wrong picks get a gentle nudge; unlimited retries. Continue enables only on correct.
+function setupCommit(commitId, commitBtnId, fbId, nextId) {
+  const commit = document.getElementById(commitId);
+  if (!commit) return;
+  const commitBtn = document.getElementById(commitBtnId);
+  const fb = document.getElementById(fbId);
+  const nxt = document.getElementById(nextId);
+  let done = false;
+
+  commit.querySelectorAll(".option.commit").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (done) return;
+      commit.querySelectorAll(".option.commit").forEach(o => {
+        o.classList.remove("selected");
+        o.classList.remove("wrong");
+      });
+      btn.classList.add("selected");
+      commitBtn.disabled = false;
+      if (fb) fb.classList.add("hidden");
+      SFX.click();
+    });
+  });
+
+  commitBtn.addEventListener("click", () => {
+    if (done) return;
+    const selected = commit.querySelector(".option.commit.selected");
+    if (!selected) return;
+    const isKey = selected.dataset.key === "true";
+    if (isKey) {
+      SFX.correct();
+      done = true;
+      selected.classList.remove("selected");
+      selected.classList.add("correct");
+      commit.querySelectorAll(".option.commit").forEach(o => o.disabled = true);
+      commitBtn.disabled = true;
+      commitBtn.textContent = "Lead confirmed ✓";
+      if (fb) {
+        fb.classList.remove("hidden");
+        fb.className = "feedback";
+        fb.innerHTML = `<strong>🎯 Good lead.</strong> Let's follow it.`;
+      }
+      if (nxt) nxt.disabled = false;
+    } else {
+      SFX.wrong();
+      selected.classList.remove("selected");
+      selected.classList.add("wrong");
+      commitBtn.disabled = true;
+      if (fb) {
+        fb.classList.remove("hidden");
+        fb.className = "feedback hot";
+        fb.innerHTML = `That's a real observation — but Lens thinks the strongest clue is somewhere else. Look again.`;
+      }
+    }
   });
 }
 
@@ -1427,8 +1498,8 @@ function renderChart1(sub) {
       ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-first")}
       <div class="question">
         <div class="q-label">👀 Look around</div>
-        <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
-        <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
+        <div class="q-text">Tap anything that stands out — Lens will react to each.</div>
+        <div class="q-hint">No right answers here. Just look. Try a couple.</div>
         <div class="options" id="mcq-c1-first">
           ${exploreOpt("The bars are all bright red", "Color is decoration. It doesn't change the data. Look past it.", false)}
           ${exploreOpt("The headline word EXPLODES", "Loud headlines do loud work. But the trick is usually <em>inside</em> the chart, not in the title.", false)}
@@ -1436,6 +1507,18 @@ function renderChart1(sub) {
           ${exploreOpt("The numbers on the left side of the chart", "🎯 Good eye — worth investigating. Let's look closer.", true)}
         </div>
         <div class="lens-reaction hidden" id="reaction-c1-first"></div>
+      </div>
+      <div class="question phase2 hidden" id="phase2-c1-first">
+        <div class="q-label">🎯 Commit to a lead</div>
+        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="options" id="commit-c1-first">
+          ${commitOpt("The bars are all bright red", false)}
+          ${commitOpt("The headline word EXPLODES", false)}
+          ${commitOpt("The bars climb like a staircase", false)}
+          ${commitOpt("The numbers on the left side of the chart", true)}
+        </div>
+        <button class="check-btn" id="commit-btn-c1-first" disabled style="margin-top: 12px;">Follow this lead →</button>
+        <div class="feedback hidden" id="commit-fb-c1-first" style="margin-top: 12px; margin-bottom: 0;"></div>
       </div>
       <div class="nav-row end"><button class="btn" id="next-c1-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
@@ -1577,7 +1660,8 @@ function mountChart1(sub) {
   if (sub === 0) renderBars(document.getElementById("chart1-intro"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
   if (sub === 1) {
     renderBars(document.getElementById("chart1-first"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
-    setupExplore("mcq-c1-first", "reaction-c1-first", "next-c1-first");
+    setupExplore("mcq-c1-first", "reaction-c1-first", "phase2-c1-first", 2);
+    setupCommit("commit-c1-first", "commit-btn-c1-first", "commit-fb-c1-first", "next-c1-first");
   }
   if (sub === 2) {
     renderBars(document.getElementById("chart1-msg"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
@@ -1660,8 +1744,8 @@ function renderChart2(sub) {
       ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash.", "chart2-first")}
       <div class="question">
         <div class="q-label">👀 Look around</div>
-        <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
-        <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
+        <div class="q-text">Tap anything that stands out — Lens will react to each.</div>
+        <div class="q-hint">No right answers here. Just look. Try a couple.</div>
         <div class="options" id="mcq-c2-first">
           ${exploreOpt("The word DYING", "Loud word. But the real trick is usually <em>inside</em> the chart, not in the headline.", false)}
           ${exploreOpt("The red bars", "Color is decoration. Look at the data itself.", false)}
@@ -1669,6 +1753,18 @@ function renderChart2(sub) {
           ${exploreOpt("The time period shown on the chart", "🎯 Good eye — worth investigating. What might this chart be missing?", true)}
         </div>
         <div class="lens-reaction hidden" id="reaction-c2-first"></div>
+      </div>
+      <div class="question phase2 hidden" id="phase2-c2-first">
+        <div class="q-label">🎯 Commit to a lead</div>
+        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="options" id="commit-c2-first">
+          ${commitOpt("The word DYING", false)}
+          ${commitOpt("The red bars", false)}
+          ${commitOpt("The bars dropping sharply", false)}
+          ${commitOpt("The time period shown on the chart", true)}
+        </div>
+        <button class="check-btn" id="commit-btn-c2-first" disabled style="margin-top: 12px;">Follow this lead →</button>
+        <div class="feedback hidden" id="commit-fb-c2-first" style="margin-top: 12px; margin-bottom: 0;"></div>
       </div>
       <div class="nav-row end"><button class="btn" id="next-c2-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
@@ -1803,7 +1899,8 @@ function mountChart2(sub) {
   if (sub === 0) renderBars(document.getElementById("chart2-intro"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
   if (sub === 1) {
     renderBars(document.getElementById("chart2-first"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
-    setupExplore("mcq-c2-first", "reaction-c2-first", "next-c2-first");
+    setupExplore("mcq-c2-first", "reaction-c2-first", "phase2-c2-first", 2);
+    setupCommit("commit-c2-first", "commit-btn-c2-first", "commit-fb-c2-first", "next-c2-first");
   }
   if (sub === 2) {
     renderBars(document.getElementById("chart2-msg"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
@@ -1885,8 +1982,8 @@ function renderChart3(sub) {
       </div>
       <div class="question">
         <div class="q-label">👀 Look around</div>
-        <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
-        <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
+        <div class="q-text">Tap anything that stands out — Lens will react to each.</div>
+        <div class="q-hint">No right answers here. Just look. Try a couple.</div>
         <div class="options" id="mcq-c3-first">
           ${exploreOpt("The orange line and red line use different colors", "Color coding is just a legend — doesn't change what the chart means.", false)}
           ${exploreOpt("Shark attack numbers are small overall", "Sharp eye — sharks are rare. Side observation though. Keep looking.", false)}
@@ -1894,6 +1991,18 @@ function renderChart3(sub) {
           ${exploreOpt("Both lines move up and down together", "🎯 They really do move together. Interesting — but what does that actually mean? Let's dig in.", true)}
         </div>
         <div class="lens-reaction hidden" id="reaction-c3-first"></div>
+      </div>
+      <div class="question phase2 hidden" id="phase2-c3-first">
+        <div class="q-label">🎯 Commit to a lead</div>
+        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="options" id="commit-c3-first">
+          ${commitOpt("The orange line and red line use different colors", false)}
+          ${commitOpt("Shark attack numbers are small overall", false)}
+          ${commitOpt("The word CAUSES in the headline", false)}
+          ${commitOpt("Both lines move up and down together", true)}
+        </div>
+        <button class="check-btn" id="commit-btn-c3-first" disabled style="margin-top: 12px;">Follow this lead →</button>
+        <div class="feedback hidden" id="commit-fb-c3-first" style="margin-top: 12px; margin-bottom: 0;"></div>
       </div>
       <div class="nav-row end"><button class="btn" id="next-c3-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
@@ -2035,7 +2144,8 @@ function mountChart3(sub) {
   if (sub === 0) renderTwoLine(document.getElementById("chart3-intro"), DATA.iceCream);
   if (sub === 1) {
     renderTwoLine(document.getElementById("chart3-first"), DATA.iceCream);
-    setupExplore("mcq-c3-first", "reaction-c3-first", "next-c3-first");
+    setupExplore("mcq-c3-first", "reaction-c3-first", "phase2-c3-first", 2);
+    setupCommit("commit-c3-first", "commit-btn-c3-first", "commit-fb-c3-first", "next-c3-first");
   }
   if (sub === 2) {
     renderTwoLine(document.getElementById("chart3-msg"), DATA.iceCream);
