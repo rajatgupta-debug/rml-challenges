@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fake Chart Detective — RML</title>
+<style>
+/* ══════════════════════════════════════════════════════════
+   DESIGN SYSTEM — warm, cozy, detective-notebook palette
+   ══════════════════════════════════════════════════════════ */
+:root {
+  --bg: #FBF5E8;
+  --bg-2: #F5EDD8;
+  --card: #FFFFFF;
+  --border: #E8DFC8;
+  --border-strong: #C9BE9F;
+  --shadow: 0 6px 24px rgba(60, 45, 30, 0.08);
+  --shadow-lift: 0 12px 40px rgba(60, 45, 30, 0.14);
+
+  --text: #2B2320;
+  --text-2: #5E544D;
+  --text-3: #99908A;
+
+  --mint: #2EB39E;
+  --mint-2: #5FC9B5;
+  --mint-bg: #DFF5EF;
+  --mint-ink: #1A6A5C;
+
+  --coral: #E85D75;
+  --coral-bg: #FDE7EB;
+  --coral-ink: #B72F47;
+
+  --orange: #F99B4E;
+  --orange-bg: #FDECDB;
+
+  --yellow: #F4C430;
+  --yellow-bg: #FDF3CA;
+
+  --purple: #8E6FD8;
+  --purple-bg: #EFE8FC;
+
+  --navy: #2B3861;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Nunito", "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LAYOUT
+   ══════════════════════════════════════════════════════════ */
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 17px;
+  color: var(--text);
+}
+.topbar-brand .logo {
+  background: var(--coral);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+.topbar-meta { font-size: 13px; color: var(--text-3); font-weight: 700; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.mute-btn {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.mute-btn:hover { transform: scale(1.08); background: var(--yellow-bg); }
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 60px);
+}
+.sidebar {
+  padding: 28px 16px 40px;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+.sidebar h4 {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-3);
+  margin: 0 12px 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: all 0.15s;
+  margin-bottom: 3px;
+  border: 2px solid transparent;
+}
+.nav-item:hover { background: var(--bg-2); color: var(--text); }
+.nav-item.current {
+  background: var(--mint-bg);
+  color: var(--mint-ink);
+  border-color: var(--mint);
+}
+.nav-item.done { color: var(--text); }
+.nav-num {
+  background: var(--border);
+  color: var(--text-2);
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.nav-item.current .nav-num { background: var(--mint); color: white; }
+.nav-item.done .nav-num { background: var(--mint-bg); color: var(--mint-ink); }
+.nav-item.done .nav-num::before { content: "✓"; }
+.nav-item.done .nav-num-text { display: none; }
+
+.main {
+  padding: 32px 40px 60px;
+  min-width: 0;
+}
+.frame {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PROGRESS BAR
+   ══════════════════════════════════════════════════════════ */
+.progress-wrap { display: flex; gap: 5px; margin-bottom: 22px; }
+.progress-dot {
+  flex: 1; height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  transition: background 0.4s;
+}
+.progress-dot.active { background: var(--mint); }
+.progress-dot.current { background: var(--orange); }
+
+.step-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--mint-ink);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MASCOT + BUBBLE
+   ══════════════════════════════════════════════════════════ */
+.mascot-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+.mascot {
+  flex-shrink: 0;
+  width: 72px; height: 72px;
+}
+.mascot svg { width: 100%; height: 100%; }
+.bubble {
+  flex: 1;
+  background: var(--purple-bg);
+  border: 2px solid var(--purple);
+  border-radius: 18px;
+  padding: 14px 18px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  position: relative;
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: -10px; top: 18px;
+  width: 0; height: 0;
+  border: 10px solid transparent;
+  border-right-color: var(--purple);
+  border-left: 0;
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: -7px; top: 20px;
+  width: 0; height: 0;
+  border: 8px solid transparent;
+  border-right-color: var(--purple-bg);
+  border-left: 0;
+}
+.bubble .name {
+  color: var(--purple);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NEWS BLOCK
+   ══════════════════════════════════════════════════════════ */
+.news-block {
+  background: var(--bg-2);
+  border-radius: 18px;
+  padding: 22px 22px 18px;
+  margin-bottom: 18px;
+  border: 1px solid var(--border);
+}
+.byline { font-size: 10px; letter-spacing: 2px; color: var(--text-3); margin-bottom: 8px; font-weight: 900; }
+.headline {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text);
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+.headline .hot { color: var(--coral); }
+.subhead { font-size: 15px; color: var(--text-2); margin-bottom: 14px; line-height: 1.4; font-weight: 600; }
+
+svg.chart { width: 100%; height: auto; display: block; }
+
+/* ══════════════════════════════════════════════════════════
+   QUESTIONS + OPTIONS
+   ══════════════════════════════════════════════════════════ */
+.question {
+  background: var(--yellow-bg);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.q-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--orange);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.q-text {
+  font-size: 17px;
+  color: var(--text);
+  font-weight: 800;
+  margin-bottom: 14px;
+  line-height: 1.35;
+}
+.q-hint {
+  font-size: 13px;
+  color: var(--text-2);
+  font-weight: 700;
+  margin-bottom: 12px;
+  font-style: italic;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.option-num {
+  background: var(--bg-2);
+  color: var(--text-2);
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.option:hover:not(:disabled) { border-color: var(--mint-2); transform: translateY(-1px); box-shadow: var(--shadow); }
+.option.selected { border-color: var(--mint); background: var(--mint-bg); }
+.option.correct { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
+.option.correct .option-num { background: var(--mint); color: white; }
+.option.wrong { border-color: var(--coral); background: var(--coral-bg); color: var(--coral-ink); animation: shake 0.4s; }
+.option.missed { border-color: var(--yellow); background: var(--yellow-bg); }
+.option.missed::after { content: " (missed)"; color: var(--text-3); font-size: 12px; margin-left: auto; }
+.option:disabled { cursor: default; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Multi-select checkbox style */
+.option.multi .option-num {
+  border-radius: 6px;
+  background: white;
+  border: 2px solid var(--border-strong);
+  color: transparent;
+  font-size: 16px;
+}
+.option.multi.selected .option-num {
+  background: var(--mint);
+  border-color: var(--mint);
+  color: white;
+}
+.option.multi.selected .option-num::before { content: "✓"; }
+.option.multi.correct .option-num { background: var(--mint); border-color: var(--mint); color: white; }
+.option.multi.correct .option-num::before { content: "✓"; }
+.option.multi.wrong .option-num { background: var(--coral); border-color: var(--coral); color: white; }
+.option.multi.wrong .option-num::before { content: "✕"; }
+
+/* Explore (differentiated) — key observations vs surface */
+.option.explore {}
+.option.explore.seen { border-color: var(--purple); background: var(--purple-bg); color: var(--text); }
+.option.explore.seen .option-num { background: var(--purple); color: white; border-color: var(--purple); }
+.option.explore.seen .option-num::before { content: "👁"; font-size: 12px; }
+.option.explore.hit { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
+.option.explore.hit .option-num { background: var(--mint); color: white; border-color: var(--mint); }
+.option.explore.hit .option-num::before { content: "🎯"; font-size: 12px; }
+
+/* Numeric input */
+.numeric-row { display: flex; gap: 10px; align-items: center; }
+.numeric-input {
+  flex: 1;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 18px;
+  font-weight: 900;
+  font-family: inherit;
+  text-align: center;
+}
+.numeric-input:focus { outline: none; border-color: var(--mint); }
+.numeric-suffix { color: var(--text-2); font-size: 15px; font-weight: 800; }
+.check-btn {
+  background: var(--mint);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.check-btn:hover:not(:disabled) { background: var(--mint-2); transform: translateY(-1px); }
+.check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Slider */
+.slider-row { display: flex; align-items: center; gap: 14px; }
+.slider-label { font-size: 14px; color: var(--text); font-weight: 800; white-space: nowrap; }
+.slider-value {
+  font-family: "SF Mono", ui-monospace, monospace;
+  font-size: 15px;
+  color: var(--mint-ink);
+  background: var(--mint-bg);
+  padding: 6px 12px;
+  border-radius: 8px;
+  min-width: 90px;
+  text-align: center;
+  font-weight: 900;
+  border: 1px solid var(--mint);
+}
+input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
+
+/* Predict cards */
+.predict-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.predict-btn {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 10px;
+  color: var(--text);
+  font-size: 13px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  line-height: 1.3;
+  transition: all 0.15s;
+  text-align: center;
+}
+.predict-btn:hover { border-color: var(--mint-2); transform: translateY(-2px); box-shadow: var(--shadow); }
+.predict-btn.selected { border-color: var(--orange); background: var(--orange-bg); }
+.predict-btn .big { font-size: 24px; display: block; margin-bottom: 4px; }
+
+/* Hypothesis cards */
+.hyp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+.hyp-btn {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 14px;
+  color: var(--text);
+  font-size: 14px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 800;
+  text-align: left;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hyp-btn:hover:not(:disabled) { border-color: var(--mint-2); transform: translateY(-2px); box-shadow: var(--shadow); }
+.hyp-btn .hyp-icon { font-size: 24px; flex-shrink: 0; }
+.hyp-btn.tested-wrong { border-color: var(--coral); background: var(--coral-bg); color: var(--coral-ink); opacity: 0.6; cursor: not-allowed; }
+.hyp-btn.tested-right { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
+
+/* Hotspot */
+.hotspot { cursor: pointer; transition: all 0.2s; }
+.hotspot:hover { opacity: 0.75; }
+.hotspot.found { stroke: var(--mint); stroke-width: 3; animation: pulse 0.8s; }
+@keyframes pulse {
+  0%, 100% { stroke-width: 3; }
+  50% { stroke-width: 6; }
+}
+
+/* Feedback */
+.feedback {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border-left: 4px solid var(--mint);
+  background: var(--mint-bg);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.feedback.hot { border-color: var(--coral); background: var(--coral-bg); }
+.feedback.purple { border-color: var(--purple); background: var(--purple-bg); }
+.feedback strong { color: var(--text); font-weight: 900; }
+.feedback em { color: var(--mint-ink); font-style: normal; font-weight: 900; }
+
+/* Lens reaction bubble (for explore mode) */
+.lens-reaction {
+  background: var(--purple-bg);
+  border: 2px solid var(--purple);
+  border-radius: 14px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  animation: fadeIn 0.3s;
+}
+.lens-reaction .lens-icon { font-size: 22px; flex-shrink: 0; }
+.lens-reaction .lens-text { font-size: 14px; font-weight: 700; color: var(--text); line-height: 1.45; }
+.lens-reaction .lens-text strong { font-weight: 900; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tool card */
+.tool-card {
+  background: linear-gradient(135deg, var(--mint-bg) 0%, var(--yellow-bg) 100%);
+  border: 2px solid var(--mint);
+  border-radius: 20px;
+  padding: 26px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  animation: toolReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes toolReveal {
+  from { transform: scale(0.8) rotate(-4deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+.tool-card::before {
+  content: attr(data-emoji);
+  position: absolute;
+  top: -20px; right: -10px;
+  font-size: 100px;
+  opacity: 0.15;
+  transform: rotate(15deg);
+}
+.tool-card .tool-tag { font-size: 11px; letter-spacing: 2px; color: var(--mint-ink); font-weight: 900; margin-bottom: 10px; }
+.tool-card h3 { font-size: 26px; color: var(--text); margin-bottom: 10px; font-weight: 900; letter-spacing: -0.5px; }
+.tool-card p { font-size: 15px; color: var(--text-2); line-height: 1.5; font-weight: 600; }
+
+/* Toolkit strip */
+.toolkit-strip { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.tool-chip {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 900;
+}
+.tool-chip.earned { background: var(--mint-bg); color: var(--mint-ink); border-color: var(--mint); }
+
+/* Nav button */
+.nav-row { display: flex; justify-content: space-between; margin-top: 8px; gap: 10px; }
+.nav-row.end { justify-content: flex-end; }
+.btn {
+  background: var(--mint);
+  color: white;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn:hover:not(:disabled) { background: var(--mint-2); transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn.secondary { background: var(--bg-2); color: var(--text); }
+.btn.coral { background: var(--coral); }
+.btn.coral:hover { background: #d84866; }
+
+.hidden { display: none !important; }
+
+/* ══════════════════════════════════════════════════════════
+   CASE-FILE HOME PAGE
+   ══════════════════════════════════════════════════════════ */
+.case-hero {
+  background:
+    radial-gradient(ellipse 520px 260px at 50% 40%, rgba(255,215,130,0.22) 0%, transparent 72%),
+    linear-gradient(165deg, #2B1B10 0%, #1A120B 100%);
+  border-radius: 24px;
+  padding: 34px 28px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+  color: #F5E8D3;
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.4);
+}
+.case-hero svg.desk-illo {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  display: block;
+  margin: 0 auto 18px;
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,0.5));
+}
+.case-hero .tag-line {
+  display: inline-block;
+  background: var(--coral);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(232,93,117,0.5);
+}
+.case-hero h1 {
+  font-size: 40px;
+  font-weight: 900;
+  color: #FFFBF0;
+  margin-bottom: 10px;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+.case-hero .hook {
+  font-size: 17px;
+  color: #D5C4AD;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.case-hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #F5E8D3;
+  font-weight: 800;
+}
+.case-hero-meta span {
+  background: rgba(255,251,240,0.09);
+  padding: 7px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,251,240,0.18);
+  backdrop-filter: blur(4px);
+}
+
+.postit {
+  background: #FFF8C5;
+  border: 1px solid #E6D77A;
+  border-radius: 4px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  box-shadow: 2px 4px 12px rgba(60,45,30,0.08);
+  transform: rotate(-0.5deg);
+  position: relative;
+}
+.postit::before {
+  content: "";
+  position: absolute;
+  top: -8px; left: 20px;
+  width: 40px; height: 16px;
+  background: rgba(191, 130, 30, 0.35);
+  border-radius: 2px;
+  transform: rotate(-4deg);
+}
+.postit .from {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+.postit p { font-size: 15px; color: var(--text); line-height: 1.45; font-weight: 700; }
+
+.evidence-title {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--text-3);
+  text-transform: uppercase;
+  font-weight: 900;
+  margin: 0 0 14px;
+  text-align: center;
+}
+
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 26px;
+}
+@media (max-width: 680px) {
+  .evidence-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.evidence-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: all 0.2s;
+}
+.evidence-card:nth-child(even) { transform: rotate(0.6deg); }
+.evidence-card:nth-child(odd)  { transform: rotate(-0.4deg); }
+.evidence-card:hover { transform: translateY(-3px) rotate(0deg); box-shadow: var(--shadow-lift); }
+.evidence-card .stamp {
+  position: absolute;
+  top: 8px; right: 10px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  font-weight: 900;
+  background: var(--bg-2);
+  padding: 3px 7px;
+  border-radius: 5px;
+}
+.evidence-card.locked { opacity: 0.55; }
+.evidence-card .thumb {
+  background: var(--bg-2);
+  border-radius: 8px;
+  height: 72px;
+  padding: 8px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.evidence-card .thumb svg { width: 100%; height: 100%; }
+.evidence-card .mini-head {
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.2;
+  margin-bottom: 6px;
+  letter-spacing: -0.2px;
+}
+.evidence-card .mini-head .hot { color: var(--coral); }
+.evidence-card .tool-hint {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.cta-row {
+  display: flex;
+  justify-content: center;
+}
+.btn-big {
+  font-size: 17px;
+  padding: 16px 34px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   COMPLETION
+   ══════════════════════════════════════════════════════════ */
+.complete-hero {
+  background: linear-gradient(135deg, var(--mint-bg) 0%, var(--yellow-bg) 100%);
+  border-radius: 24px;
+  padding: 40px 32px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.complete-hero::before { content: "🎉"; position: absolute; top: 20px; left: 30px; font-size: 40px; animation: float 3s ease-in-out infinite; }
+.complete-hero::after { content: "🎊"; position: absolute; bottom: 20px; right: 30px; font-size: 40px; animation: float 3s ease-in-out infinite 1.5s; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.complete-hero h1 { font-size: 40px; font-weight: 900; color: var(--text); margin-bottom: 8px; letter-spacing: -1px; }
+.complete-hero .tag { display: inline-block; background: var(--mint); color: white; padding: 5px 14px; border-radius: 20px; font-size: 11px; letter-spacing: 1.5px; font-weight: 900; margin-bottom: 14px; }
+.complete-summary { font-size: 17px; color: var(--text); font-weight: 700; line-height: 1.5; max-width: 480px; margin: 0 auto; }
+
+.share-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.share-card .preview-card {
+  background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+  border-radius: 14px;
+  padding: 24px;
+  color: white;
+  margin-bottom: 14px;
+}
+.share-card .preview-card h4 { font-size: 22px; font-weight: 900; margin-bottom: 6px; }
+.share-card .preview-card p { font-size: 14px; font-weight: 700; opacity: 0.95; }
+.share-card .preview-card .brand { margin-top: 14px; font-size: 11px; letter-spacing: 1.5px; opacity: 0.85; }
+
+.tool-preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.tool-preview {
+  background: var(--card);
+  border: 2px dashed var(--border-strong);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tool-preview .emoji { font-size: 22px; }
+.tool-preview .name { font-size: 13px; font-weight: 800; color: var(--text-2); }
+
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .frame { padding: 20px; border-radius: 16px; }
+  .case-hero h1, .complete-hero h1 { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mascot SVG template -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="lens">
+      <ellipse cx="50" cy="14" rx="22" ry="5" fill="#2B3861"/>
+      <rect x="36" y="6" width="28" height="10" rx="2" fill="#2B3861"/>
+      <rect x="30" y="11" width="40" height="4" fill="#2EB39E"/>
+      <rect x="75" y="65" width="6" height="22" rx="3" fill="#8E6FD8" transform="rotate(35, 78, 76)"/>
+      <circle cx="50" cy="50" r="30" fill="#FFFBF0" stroke="#2EB39E" stroke-width="4"/>
+      <circle cx="40" cy="48" r="7" fill="white"/>
+      <circle cx="60" cy="48" r="7" fill="white"/>
+      <circle cx="40" cy="50" r="3.5" fill="#2B2320"/>
+      <circle cx="60" cy="50" r="3.5" fill="#2B2320"/>
+      <path d="M 42 62 Q 50 68 58 62" stroke="#2B2320" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="logo">🔍</div>
+    <div>Fake Chart Detective</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-meta" id="step-indicator">Section 1 of 9</div>
+    <button class="mute-btn" id="muteBtn" title="Toggle sound">🔊</button>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SOUND
+// ═══════════════════════════════════════════════════════════
+let audioCtx = null, muted = false;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function tone(f, d = 100, t = 'sine', v = 0.1) {
+  if (muted) return;
+  initAudio();
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = t; o.frequency.value = f;
+  g.gain.setValueAtTime(v, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d/1000);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + d/1000);
+}
+const SFX = {
+  click: () => tone(600, 40, 'square', 0.05),
+  correct: () => { tone(523, 80); setTimeout(() => tone(659, 80), 80); setTimeout(() => tone(784, 140), 160); },
+  soft: () => { tone(440, 80, 'sine', 0.06); setTimeout(() => tone(587, 100, 'sine', 0.06), 80); },
+  wrong: () => tone(200, 200, 'sawtooth', 0.08),
+  tool: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 120, 'sine', 0.12), i * 90)),
+  tick: () => tone(1200, 15, 'square', 0.02)
+};
+document.getElementById('muteBtn').addEventListener('click', () => {
+  muted = !muted;
+  document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+  if (!muted) SFX.click();
+});
+
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+const DATA = {
+  fortnite: [
+    { month: "Mar", value: 401 }, { month: "Apr", value: 403 },
+    { month: "May", value: 406 }, { month: "Jun", value: 409 }
+  ],
+  roblox: [
+    { month: "Jun '23", value: 82 }, { month: "Jul '23", value: 86 }, { month: "Aug '23", value: 84 },
+    { month: "Sep '23", value: 70 }, { month: "Oct '23", value: 63 }, { month: "Nov '23", value: 57 },
+    { month: "Dec '23", value: 61 }, { month: "Jan '24", value: 56 }, { month: "Feb '24", value: 54 },
+    { month: "Mar '24", value: 60 }, { month: "Apr '24", value: 66 }, { month: "May '24", value: 76 },
+    { month: "Jun '24", value: 83 }, { month: "Jul '24", value: 86 }, { month: "Aug '24", value: 85 },
+    { month: "Sep '24", value: 68 }, { month: "Oct '24", value: 62 }, { month: "Nov '24", value: 55 }
+  ],
+  iceCream: [
+    { month: "Jan", iceCream: 320, sharks: 0, beach: 2 },
+    { month: "Feb", iceCream: 360, sharks: 1, beach: 3 },
+    { month: "Mar", iceCream: 460, sharks: 1, beach: 5 },
+    { month: "Apr", iceCream: 580, sharks: 2, beach: 9 },
+    { month: "May", iceCream: 780, sharks: 5, beach: 16 },
+    { month: "Jun", iceCream: 1050, sharks: 7, beach: 22 },
+    { month: "Jul", iceCream: 1200, sharks: 9, beach: 28 },
+    { month: "Aug", iceCream: 1150, sharks: 8, beach: 26 },
+    { month: "Sep", iceCream: 820, sharks: 4, beach: 14 },
+    { month: "Oct", iceCream: 620, sharks: 3, beach: 8 },
+    { month: "Nov", iceCream: 410, sharks: 1, beach: 4 },
+    { month: "Dec", iceCream: 310, sharks: 0, beach: 2 }
+  ],
+  // Finale — teen screen time (Axis Trick, new context)
+  screen: [
+    { month: "Last Year", value: 6.1 },
+    { month: "This Year", value: 6.4 }
+  ]
+};
+
+// ═══════════════════════════════════════════════════════════
+// CHART RENDERERS
+// ═══════════════════════════════════════════════════════════
+function renderBars(svgEl, data, yMin, yMax, opts = {}) {
+  const cT = 30, cB = 280, cL = 70, cR = 580;
+  const cH = cB - cT, cW = cR - cL;
+  const n = data.length;
+  const gap = Math.min(20, cW / (n * 3));
+  const barW = Math.max(6, (cW - gap * (n + 1)) / n);
+  const unit = opts.unit || 'M';
+  const yToPx = v => { const r = yMax - yMin; return r <= 0 ? cB : cB - ((v - yMin) / r) * cH; };
+  // Pick tick format based on step size — decimals when step < 1
+  const step = (yMax - yMin) / 4;
+  const decimals = step < 1 ? (step < 0.1 ? 2 : 1) : 0;
+  const fmt = v => v.toFixed(decimals);
+  let html = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = yMin + (yMax - yMin) * (i / 4);
+    const y = yToPx(v);
+    html += `<line x1="${cL}" y1="${y}" x2="${cR}" y2="${y}" stroke="#E8DFC8" stroke-width="1" stroke-dasharray="3,4"/>`;
+    html += `<text x="${cL - 8}" y="${y + 4}" fill="#5E544D" font-size="12" text-anchor="end" font-family="SF Mono, ui-monospace, monospace" font-weight="800">${fmt(v)}${unit}</text>`;
+  }
+  html += `<line x1="${cL}" y1="${cT - 10}" x2="${cL}" y2="${cB}" stroke="#C9BE9F" stroke-width="2"/>`;
+  html += `<line x1="${cL}" y1="${cB}" x2="${cR}" y2="${cB}" stroke="#C9BE9F" stroke-width="2"/>`;
+  if (opts.title) html += `<text x="${(cL + cR) / 2}" y="16" fill="#99908A" font-size="11" text-anchor="middle" letter-spacing="1.5" font-weight="900">${opts.title}</text>`;
+  data.forEach((d, i) => {
+    const x = cL + gap + i * (barW + gap);
+    const y = yToPx(d.value);
+    const h = cB - y;
+    const color = opts.barColor || '#2EB39E';
+    html += `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${color}" rx="5"/>`;
+    if (n <= 6) html += `<text x="${x + barW / 2}" y="${y - 8}" fill="#2B2320" font-size="13" text-anchor="middle" font-weight="900">${d.value}${unit}</text>`;
+    const fs = n > 10 ? 9 : 12;
+    const rot = n > 10 ? `transform="rotate(-45, ${x + barW / 2}, ${cB + 18})"` : '';
+    html += `<text x="${x + barW / 2}" y="${cB + 18}" fill="#5E544D" font-size="${fs}" text-anchor="middle" font-weight="700" ${rot}>${d.month}</text>`;
+  });
+  svgEl.innerHTML = html;
+}
+
+function renderTwoLine(svgEl, data, opts = {}) {
+  const cT = 40, cB = 280, cL = 60, cR = 580;
+  const cH = cB - cT, cW = cR - cL;
+  const n = data.length;
+  const xStep = cW / (n - 1);
+  const max1 = Math.max(...data.map(d => d.iceCream));
+  const max2 = Math.max(...data.map(d => d.sharks));
+  const max3 = Math.max(...data.map(d => d.beach));
+  const y1 = v => cB - (v / (max1 * 1.1)) * cH;
+  const y2 = v => cB - (v / (max2 * 1.1)) * cH;
+  const y3 = v => cB - (v / (max3 * 1.1)) * cH;
+  let html = '';
+  for (let i = 0; i <= 4; i++) {
+    const y = cT + cH * (i / 4);
+    html += `<line x1="${cL}" y1="${y}" x2="${cR}" y2="${y}" stroke="#E8DFC8" stroke-width="1" stroke-dasharray="3,4"/>`;
+  }
+  html += `<line x1="${cL}" y1="${cT}" x2="${cL}" y2="${cB}" stroke="#C9BE9F" stroke-width="2"/>`;
+  html += `<line x1="${cL}" y1="${cB}" x2="${cR}" y2="${cB}" stroke="#C9BE9F" stroke-width="2"/>`;
+  let p1 = data.map((d, i) => `${cL + i * xStep},${y1(d.iceCream)}`).join(' ');
+  html += `<polyline points="${p1}" fill="none" stroke="#F99B4E" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  data.forEach((d, i) => html += `<circle cx="${cL + i * xStep}" cy="${y1(d.iceCream)}" r="5" fill="#F99B4E" stroke="white" stroke-width="2"/>`);
+  let p2 = data.map((d, i) => `${cL + i * xStep},${y2(d.sharks)}`).join(' ');
+  html += `<polyline points="${p2}" fill="none" stroke="#E85D75" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+  data.forEach((d, i) => html += `<circle cx="${cL + i * xStep}" cy="${y2(d.sharks)}" r="5" fill="#E85D75" stroke="white" stroke-width="2"/>`);
+  if (opts.showThird) {
+    let p3 = data.map((d, i) => `${cL + i * xStep},${y3(d.beach)}`).join(' ');
+    html += `<polyline points="${p3}" fill="none" stroke="#8E6FD8" stroke-width="4" stroke-dasharray="6,4" stroke-linecap="round" stroke-linejoin="round"/>`;
+    data.forEach((d, i) => html += `<circle cx="${cL + i * xStep}" cy="${y3(d.beach)}" r="5" fill="#8E6FD8" stroke="white" stroke-width="2"/>`);
+  }
+  data.forEach((d, i) => html += `<text x="${cL + i * xStep}" y="${cB + 18}" fill="#5E544D" font-size="11" text-anchor="middle" font-weight="700">${d.month}</text>`);
+  let legend = '';
+  legend += `<circle cx="70" cy="20" r="5" fill="#F99B4E"/><text x="82" y="24" fill="#5E544D" font-size="12" font-weight="800">🍦 Ice Cream Sales ($M)</text>`;
+  legend += `<circle cx="270" cy="20" r="5" fill="#E85D75"/><text x="282" y="24" fill="#5E544D" font-size="12" font-weight="800">🦈 Shark Attacks</text>`;
+  if (opts.showThird) legend += `<circle cx="430" cy="20" r="5" fill="#8E6FD8"/><text x="442" y="24" fill="#5E544D" font-size="12" font-weight="800">🌞 Beachgoers</text>`;
+  html = legend + html;
+  svgEl.innerHTML = html;
+}
+
+// Mini thumbnails for evidence cards (simplified)
+function miniBar(yMin, yMax, values, color) {
+  let bars = '';
+  const n = values.length;
+  const w = 50 / n;
+  values.forEach((v, i) => {
+    const h = ((v - yMin) / (yMax - yMin)) * 40;
+    bars += `<rect x="${8 + i * (w + 2)}" y="${48 - h}" width="${w}" height="${h}" fill="${color}" rx="1"/>`;
+  });
+  return `<svg viewBox="0 0 64 56"><rect x="4" y="4" width="56" height="48" fill="none" stroke="#E8DFC8" stroke-width="1" rx="3"/>${bars}</svg>`;
+}
+function miniTwoLine() {
+  return `<svg viewBox="0 0 64 56"><rect x="4" y="4" width="56" height="48" fill="none" stroke="#E8DFC8" stroke-width="1" rx="3"/><polyline points="8,42 16,36 24,24 32,12 40,14 48,26 56,38" fill="none" stroke="#F99B4E" stroke-width="2"/><polyline points="8,46 16,44 24,36 32,20 40,22 48,34 56,44" fill="none" stroke="#E85D75" stroke-width="2"/></svg>`;
+}
+function miniPicto() {
+  return `<svg viewBox="0 0 64 56"><rect x="4" y="4" width="56" height="48" fill="none" stroke="#E8DFC8" stroke-width="1" rx="3"/><rect x="10" y="30" width="10" height="14" fill="#5FC9B5" rx="1"/><rect x="36" y="12" width="20" height="32" fill="#E85D75" rx="2"/></svg>`;
+}
+function miniBase() {
+  return `<svg viewBox="0 0 64 56"><rect x="4" y="4" width="56" height="48" fill="none" stroke="#E8DFC8" stroke-width="1" rx="3"/><rect x="14" y="10" width="12" height="34" fill="#F99B4E" rx="1"/><rect x="38" y="40" width="12" height="4" fill="#8E6FD8" rx="1"/></svg>`;
+}
+function miniNewsroom() {
+  return `<svg viewBox="0 0 64 56"><rect x="4" y="4" width="24" height="22" fill="none" stroke="#E8DFC8" stroke-width="1" rx="2"/><rect x="36" y="4" width="24" height="22" fill="none" stroke="#E8DFC8" stroke-width="1" rx="2"/><rect x="4" y="30" width="24" height="22" fill="none" stroke="#E8DFC8" stroke-width="1" rx="2"/><rect x="36" y="30" width="24" height="22" fill="none" stroke="#E8DFC8" stroke-width="1" rx="2"/></svg>`;
+}
+
+// Desk illustration — detective's late-night office
+const DESK_ILLO = `
+<svg class="desk-illo" viewBox="0 0 420 280" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="lampPool" cx="55%" cy="55%">
+      <stop offset="0%" stop-color="#FFE4A8" stop-opacity="0.55"/>
+      <stop offset="45%" stop-color="#FFD78A" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#FFD78A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="deskWood" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5C3C1F"/>
+      <stop offset="50%" stop-color="#4A2E16"/>
+      <stop offset="100%" stop-color="#2E1B08"/>
+    </linearGradient>
+    <linearGradient id="wallBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1F1509"/>
+      <stop offset="100%" stop-color="#2C1D0B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Wall -->
+  <rect width="420" height="108" fill="url(#wallBg)"/>
+
+  <!-- Desk surface -->
+  <rect y="100" width="420" height="180" fill="url(#deskWood)"/>
+  <rect y="100" width="420" height="2" fill="#7A5228" opacity="0.8"/>
+  <!-- Desk grain -->
+  <line x1="0" y1="150" x2="420" y2="150" stroke="#3A220D" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="200" x2="420" y2="200" stroke="#3A220D" stroke-width="0.5" opacity="0.4"/>
+  <line x1="0" y1="240" x2="420" y2="240" stroke="#3A220D" stroke-width="0.5" opacity="0.4"/>
+
+  <!-- Warm light pool -->
+  <ellipse cx="230" cy="190" rx="230" ry="100" fill="url(#lampPool)"/>
+
+  <!-- Corkboard (upper left) -->
+  <g transform="translate(10, 6)">
+    <rect width="82" height="64" fill="#8B6635" stroke="#5D3E17" stroke-width="1.5" rx="3"/>
+    <rect x="3" y="3" width="76" height="58" fill="none" stroke="#6B4A22" stroke-width="0.5" stroke-dasharray="2,2"/>
+    <!-- Pinned paper 1 -->
+    <g transform="rotate(-6 26 34)">
+      <rect x="12" y="16" width="24" height="28" fill="#F5E8D3" stroke="#8C6B3E" stroke-width="0.5"/>
+      <rect x="14" y="19" width="18" height="2.5" fill="#D84A5A"/>
+      <rect x="15" y="28" width="4" height="11" fill="#D84A5A"/>
+      <rect x="22" y="24" width="4" height="15" fill="#D84A5A"/>
+      <rect x="29" y="30" width="4" height="9" fill="#D84A5A"/>
+      <circle cx="24" cy="16" r="2.5" fill="#D84A5A"/>
+    </g>
+    <!-- Pinned paper 2 -->
+    <g transform="rotate(8 58 40)">
+      <rect x="48" y="24" width="24" height="28" fill="#F5E8D3" stroke="#8C6B3E" stroke-width="0.5"/>
+      <rect x="50" y="27" width="18" height="2.5" fill="#3D2510"/>
+      <polyline points="52,42 56,36 60,38 64,32 68,34" stroke="#D84A5A" stroke-width="1.2" fill="none"/>
+      <circle cx="60" cy="24" r="2.5" fill="#D84A5A"/>
+    </g>
+    <!-- Red string connecting pins -->
+    <path d="M 24 16 Q 45 4 60 24" stroke="#D84A5A" stroke-width="1" fill="none" opacity="0.7"/>
+  </g>
+
+  <!-- Desk lamp (upper right) -->
+  <g transform="translate(310, 8)">
+    <ellipse cx="18" cy="82" rx="17" ry="4.5" fill="#0A0603"/>
+    <rect x="14" y="72" width="8" height="10" fill="#1A120B"/>
+    <line x1="18" y1="72" x2="44" y2="42" stroke="#1A120B" stroke-width="4" stroke-linecap="round"/>
+    <line x1="44" y1="42" x2="74" y2="30" stroke="#1A120B" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="44" cy="42" r="3.5" fill="#1A120B"/>
+    <!-- Shade -->
+    <path d="M 55 14 L 92 14 L 98 46 L 49 46 Z" fill="#1A120B"/>
+    <path d="M 51 46 L 96 46 L 88 58 L 59 58 Z" fill="#FFD78A"/>
+    <!-- Light beam hint -->
+    <ellipse cx="74" cy="58" rx="22" ry="4" fill="#FFE4A8" opacity="0.7"/>
+  </g>
+
+  <!-- Paper 1 — EXPLODES chart (back-left) -->
+  <g transform="translate(30, 95) rotate(-9 65 82)">
+    <rect width="130" height="160" fill="#F5E8D3" stroke="#8C6B3E" stroke-width="1.2"/>
+    <rect width="130" height="4" fill="#E6D5B8"/>
+    <text x="12" y="26" fill="#D84A5A" font-size="15" font-weight="900" font-family="inherit">EXPLODES!</text>
+    <line x1="12" y1="34" x2="118" y2="34" stroke="#C9AE7E" stroke-width="1"/>
+    <line x1="12" y1="42" x2="108" y2="42" stroke="#C9AE7E" stroke-width="1"/>
+    <line x1="12" y1="50" x2="100" y2="50" stroke="#C9AE7E" stroke-width="1"/>
+    <rect x="22" y="100" width="18" height="46" fill="#D84A5A" rx="1"/>
+    <rect x="44" y="84" width="18" height="62" fill="#D84A5A" rx="1"/>
+    <rect x="66" y="66" width="18" height="80" fill="#D84A5A" rx="1"/>
+    <rect x="88" y="44" width="18" height="102" fill="#D84A5A" rx="1"/>
+  </g>
+
+  <!-- Paper 2 — DYING chart (middle-right) -->
+  <g transform="translate(200, 85) rotate(7 65 82)">
+    <rect width="130" height="160" fill="#F5E8D3" stroke="#8C6B3E" stroke-width="1.2"/>
+    <rect width="130" height="4" fill="#E6D5B8"/>
+    <text x="12" y="26" fill="#D84A5A" font-size="15" font-weight="900" font-family="inherit">DYING.</text>
+    <line x1="12" y1="34" x2="118" y2="34" stroke="#C9AE7E" stroke-width="1"/>
+    <line x1="12" y1="42" x2="108" y2="42" stroke="#C9AE7E" stroke-width="1"/>
+    <rect x="20" y="82" width="28" height="64" fill="#D84A5A" rx="1"/>
+    <rect x="54" y="98" width="28" height="48" fill="#D84A5A" rx="1"/>
+    <rect x="88" y="112" width="28" height="34" fill="#D84A5A" rx="1"/>
+    <!-- Paperclip top-right -->
+    <path d="M 105 2 Q 108 -1 111 2 L 111 16 Q 111 20 107 20 L 107 7" stroke="#AFAFAF" stroke-width="1.2" fill="none"/>
+  </g>
+
+  <!-- Coffee mug (bottom right) -->
+  <g transform="translate(345, 195)">
+    <path d="M 8 -8 Q 5 -18 10 -24 Q 16 -29 11 -38" stroke="#F5E8D3" stroke-width="1.6" fill="none" opacity="0.45" stroke-linecap="round"/>
+    <path d="M 24 -8 Q 21 -18 26 -24 Q 31 -29 27 -38" stroke="#F5E8D3" stroke-width="1.6" fill="none" opacity="0.45" stroke-linecap="round"/>
+    <rect x="0" y="0" width="40" height="46" fill="#7A5290" rx="3"/>
+    <ellipse cx="20" cy="0" rx="20" ry="5.5" fill="#5A3770"/>
+    <ellipse cx="20" cy="0" rx="15" ry="4" fill="#1F0F33"/>
+    <path d="M 40 10 Q 54 13 54 23 Q 54 33 40 35" fill="none" stroke="#7A5290" stroke-width="4"/>
+  </g>
+
+  <!-- Scattered pencil -->
+  <g transform="translate(80, 248) rotate(18)">
+    <rect x="0" y="0" width="55" height="4" fill="#F4C430"/>
+    <polygon points="0,0 -8,2 0,4" fill="#1A120B"/>
+    <rect x="50" y="0" width="6" height="4" fill="#E85D75"/>
+  </g>
+
+  <!-- Magnifying glass (center foreground — hero element) -->
+  <g transform="translate(150, 68)">
+    <line x1="102" y1="102" x2="144" y2="144" stroke="#0F0805" stroke-width="12" stroke-linecap="round"/>
+    <rect x="132" y="132" width="19" height="30" fill="#8E6FD8" rx="4" transform="rotate(45 141 147)"/>
+    <line x1="133" y1="137" x2="151" y2="155" stroke="#6B4A8E" stroke-width="1" opacity="0.6"/>
+    <circle cx="60" cy="60" r="58" fill="rgba(94,217,196,0.22)" stroke="#4FD9C4" stroke-width="7"/>
+    <circle cx="60" cy="60" r="52" fill="none" stroke="#FFFBF0" stroke-width="1.5" opacity="0.35"/>
+    <ellipse cx="40" cy="40" rx="17" ry="9" fill="white" opacity="0.32" transform="rotate(-30 40 40)"/>
+    <path d="M 28 34 Q 45 30 56 36" stroke="white" stroke-width="1.5" fill="none" opacity="0.28"/>
+  </g>
+</svg>`;
+
+// ═══════════════════════════════════════════════════════════
+// CHALLENGE DEFINITION
+// ═══════════════════════════════════════════════════════════
+const CHALLENGE = {
+  title: "Fake Chart Detective",
+  tools: [
+    { id: "axis", name: "Axis Trick", icon: "🔍" },
+    { id: "time", name: "Time Window Trick", icon: "📅" },
+    { id: "third", name: "Third Thing Trick", icon: "🔗" },
+    { id: "picture", name: "Picture Trick", icon: "🖼" },
+    { id: "base", name: "Base Trick", icon: "🧮" }
+  ],
+  sections: [
+    { id: "intro", title: "The Assignment", kind: "intro" },
+    { id: "chart-1", title: "Chart 1: Fortnite", kind: "chart", toolId: "axis", subSteps: 8 },
+    { id: "chart-2", title: "Chart 2: Roblox", kind: "chart", toolId: "time", subSteps: 8 },
+    { id: "chart-3", title: "Chart 3: Ice Cream", kind: "chart", toolId: "third", subSteps: 8 },
+    { id: "chart-4", title: "Chart 4: iPhone", kind: "placeholder", toolId: "picture" },
+    { id: "chart-5", title: "Chart 5: YouTuber", kind: "placeholder", toolId: "base" },
+    { id: "newsroom-final", title: "Newsroom Final", kind: "placeholder" },
+    { id: "fix-the-chart", title: "Fix the Chart", kind: "finale" },
+    { id: "complete", title: "Case Closed", kind: "completion" }
+  ]
+};
+
+// State
+let toolsEarned = {};
+let currentSection = 0;
+let currentSubStep = 0;
+let completedSections = new Set();  // fixes the bug — only add when actually complete
+
+// ═══════════════════════════════════════════════════════════
+// SIDEBAR + STEP INDICATOR
+// ═══════════════════════════════════════════════════════════
+function renderSidebar() {
+  const nav = document.getElementById("sidebar");
+  let html = `<h4>The Case</h4>`;
+  CHALLENGE.sections.forEach((s, i) => {
+    const current = i === currentSection ? 'current' : '';
+    const done = completedSections.has(i) ? 'done' : '';
+    html += `
+      <div class="nav-item ${current} ${done}" data-section="${i}">
+        <div class="nav-num"><span class="nav-num-text">${i + 1}</span></div>
+        <div>${s.title}</div>
+      </div>`;
+  });
+  nav.innerHTML = html;
+  nav.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => gotoSection(parseInt(el.dataset.section)));
+  });
+}
+function updateStepIndicator() {
+  document.getElementById('step-indicator').textContent = `Section ${currentSection + 1} of ${CHALLENGE.sections.length}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRIMITIVES
+// ═══════════════════════════════════════════════════════════
+function progressDots(total, current) {
+  let html = '<div class="progress-wrap">';
+  for (let i = 0; i < total; i++) {
+    const cls = i < current ? 'active' : (i === current ? 'current' : '');
+    html += `<div class="progress-dot ${cls}"></div>`;
+  }
+  return html + '</div>';
+}
+function bubble(text) {
+  return `<div class="mascot-row"><div class="mascot"><svg viewBox="0 0 100 100"><use href="#lens"/></svg></div><div class="bubble"><div class="name">LENS · Detective</div>${text}</div></div>`;
+}
+function newsBlock(byline, headline, subhead, chartSvgId) {
+  return `<div class="news-block"><div class="byline">${byline}</div><div class="headline">${headline}</div><div class="subhead">${subhead}</div><svg class="chart" id="${chartSvgId}" viewBox="0 0 600 340"></svg></div>`;
+}
+function toolkitStrip() {
+  let html = '<div class="toolkit-strip">';
+  CHALLENGE.tools.forEach(t => {
+    const cls = toolsEarned[t.id] ? 'earned' : '';
+    html += `<span class="tool-chip ${cls}">${t.icon} ${t.name}</span>`;
+  });
+  return html + '</div>';
+}
+function mcqOpt(letter, text, correct) {
+  return `<button class="option" data-correct="${correct}"><span class="option-num">${letter}</span>${text}</button>`;
+}
+function multiOpt(text, correct) {
+  return `<button class="option multi" data-correct="${correct}"><span class="option-num"></span>${text}</button>`;
+}
+function exploreOpt(text, reaction, isKey = false) {
+  return `<button class="option explore" data-key="${isKey}" data-react="${reaction.replace(/"/g, '&quot;')}"><span class="option-num"></span>${text}</button>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTERACTION HELPERS
+// ═══════════════════════════════════════════════════════════
+function setupMCQ(mcqId, fbId, nextId, onCorrect) {
+  const mcq = document.getElementById(mcqId);
+  if (!mcq) return;
+  mcq.querySelectorAll(".option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const correct = btn.dataset.correct === "true";
+      if (correct) {
+        SFX.correct();
+        mcq.querySelectorAll(".option").forEach(o => o.disabled = true);
+        btn.classList.add("correct");
+        if (fbId) document.getElementById(fbId).classList.remove("hidden");
+        if (nextId) document.getElementById(nextId).disabled = false;
+        if (onCorrect) onCorrect();
+      } else {
+        SFX.wrong();
+        btn.classList.add("wrong");
+        setTimeout(() => btn.classList.remove("wrong"), 800);
+      }
+    });
+  });
+}
+
+// Multi-correct: pick N correct ones, submit via check button
+function setupMultiMCQ(mcqId, checkBtnId, fbId, nextId) {
+  const mcq = document.getElementById(mcqId);
+  if (!mcq) return;
+  const checkBtn = document.getElementById(checkBtnId);
+  const fb = document.getElementById(fbId);
+  const nxt = document.getElementById(nextId);
+
+  mcq.querySelectorAll(".option.multi").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+      btn.classList.toggle("selected");
+      SFX.click();
+      const anySelected = mcq.querySelectorAll(".option.multi.selected").length > 0;
+      checkBtn.disabled = !anySelected;
+    });
+  });
+
+  checkBtn.addEventListener("click", () => {
+    let allCorrect = true;
+    mcq.querySelectorAll(".option.multi").forEach(btn => {
+      const shouldBeSelected = btn.dataset.correct === "true";
+      const isSelected = btn.classList.contains("selected");
+      btn.classList.remove("selected");
+      btn.disabled = true;
+      if (shouldBeSelected && isSelected) btn.classList.add("correct");
+      else if (!shouldBeSelected && isSelected) { btn.classList.add("wrong"); allCorrect = false; }
+      else if (shouldBeSelected && !isSelected) { btn.classList.add("missed"); allCorrect = false; }
+    });
+    checkBtn.disabled = true;
+    if (allCorrect) { SFX.correct(); } else { SFX.soft(); }
+    if (fb) fb.classList.remove("hidden");
+    if (nxt) nxt.disabled = false;
+  });
+}
+
+// Explore: some options are key observations (🎯), others are surface (👁).
+// "Continue" unlocks only after the key observation is found.
+function setupExplore(mcqId, reactionId, nextId) {
+  const mcq = document.getElementById(mcqId);
+  if (!mcq) return;
+  const reaction = document.getElementById(reactionId);
+  const nxt = document.getElementById(nextId);
+  mcq.querySelectorAll(".option.explore").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.classList.contains("seen") || btn.classList.contains("hit")) return;
+      const isKey = btn.dataset.key === "true";
+      const text = btn.dataset.react;
+      if (isKey) {
+        btn.classList.add("hit");
+        SFX.correct();
+        if (nxt) nxt.disabled = false;
+      } else {
+        btn.classList.add("seen");
+        SFX.soft();
+      }
+      reaction.innerHTML = `<div class="lens-icon">🔍</div><div class="lens-text"><strong>Lens:</strong> ${text}</div>`;
+      reaction.classList.remove("hidden");
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTRO (HOME) — case-file aesthetic
+// ═══════════════════════════════════════════════════════════
+function renderIntro() {
+  const evidence = [
+    { stamp: "CASE 01", mini: miniBar(400, 410, [401,403,406,409], "#E85D75"), head: 'Fortnite <span class="hot">EXPLODES!</span>', tool: "🔍 Axis Trick" },
+    { stamp: "CASE 02", mini: miniBar(0, 100, [68,62,55], "#E85D75"), head: 'Roblox <span class="hot">DYING.</span>', tool: "📅 Time Window" },
+    { stamp: "CASE 03", mini: miniTwoLine(), head: 'Ice cream <span class="hot">causes</span> shark attacks!', tool: "🔗 Third Thing" },
+    { stamp: "CASE 04", mini: miniPicto(), head: 'iPhone <span class="hot">outsells</span> Samsung 2-to-1!', tool: "🖼 Picture Trick", locked: true },
+    { stamp: "CASE 05", mini: miniBase(), head: 'New YouTuber up <span class="hot">500%</span> this month!', tool: "🧮 Base Trick", locked: true },
+    { stamp: "FINAL", mini: miniNewsroom(), head: 'Newsroom Final — 4 charts, your call.', tool: "Apply all 5", locked: true }
+  ];
+
+  return `
+    <div class="frame">
+      <div class="case-hero">
+        ${DESK_ILLO}
+        <div style="text-align:center;"><span class="tag-line">RML · REAL MATH LEAGUE CASE #001</span></div>
+        <h1>Fake Chart Detective</h1>
+        <div class="hook">Four of these charts are lying. The numbers are correct — the framing isn't. Catch the tricks before they hit the front page.</div>
+        <div class="case-hero-meta">
+          <span>📚 Grade 6–8</span>
+          <span>⏱ ~18 min</span>
+          <span>🛠 5 tools to earn</span>
+        </div>
+      </div>
+
+      <div class="postit">
+        <div class="from">FROM MAYA · SENIOR EDITOR</div>
+        <p>Six charts came in. Four are lying. Find them before we print. Lens'll work the case with you.</p>
+      </div>
+
+      <div class="evidence-title">🗂 The Evidence</div>
+      <div class="evidence-grid">
+        ${evidence.map(e => `
+          <div class="evidence-card ${e.locked ? 'locked' : ''}">
+            <div class="stamp">${e.stamp}</div>
+            <div class="thumb">${e.mini}</div>
+            <div class="mini-head">${e.head}</div>
+            <div class="tool-hint">${e.tool}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="cta-row">
+        <button class="btn coral btn-big" onclick="markAndGoto(0, 1)">🔍 Take the Case →</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHART 1 — FORTNITE / AXIS TRICK (8 sub-steps with Sense-Check Layer)
+// ═══════════════════════════════════════════════════════════
+function renderChart1(sub) {
+  const total = 8;
+
+  // 0 — Intro (see the chart)
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Chart 1 of 6 · The Axis Trick</div>
+      <div class="step-title">Maya drops a chart on your desk.</div>
+      ${bubble(`Before we do any math, just <strong>look</strong>. What does this chart want you to think?`)}
+      ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record — massive monthly leap.", "chart1-intro")}
+      <div class="nav-row end"><button class="btn" onclick="nextSub()">Start investigating →</button></div>
+    </div>`;
+
+  // 1 — First impression (EXPLORE pattern — all valid)
+  if (sub === 1) return `
+    <div class="frame">${progressDots(total, 1)}
+      <div class="step-label">Observe · First impression</div>
+      <div class="step-title">What's the first thing you notice?</div>
+      ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-first")}
+      <div class="question">
+        <div class="q-label">👀 Look around</div>
+        <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
+        <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
+        <div class="options" id="mcq-c1-first">
+          ${exploreOpt("The bars are all bright red", "Color is just paint. It doesn't change the data. Look past the colors — focus on the <em>shape</em> or the <em>numbers</em>.", false)}
+          ${exploreOpt("The headline word EXPLODES — dramatic", "Loud headlines try to set your feelings <em>before</em> you read the data. Good to notice — but the real lie usually lives in the chart itself.", false)}
+          ${exploreOpt("The bars climb like a staircase", "Your eyes are doing exactly what the chart <em>wants</em>. But are the bars really growing that fast? Check the numbers on the left.", false)}
+          ${exploreOpt("The y-axis numbers look strange — starts at 400", "🎯 <strong>You found it.</strong> A y-axis that doesn't start at 0 is how you puff up tiny changes into mountains. Remember this.", true)}
+        </div>
+        <div class="lens-reaction hidden" id="reaction-c1-first"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c1-first" disabled onclick="nextSub()">I found it →</button></div>
+    </div>`;
+
+  // 2 — Chart's message (SINGLE MCQ — comprehension)
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">Step 1 · Comprehension</div>
+      <div class="step-title">What is this chart trying to make you believe?</div>
+      ${bubble(`Forget the numbers for a second. Read the headline and look at the shape. What's the <strong>story</strong> this chart wants you to walk away with?`)}
+      ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-msg")}
+      <div class="question">
+        <div class="q-label">🧠 Get the message</div>
+        <div class="q-text">If a friend saw this chart for 3 seconds, what would they think?</div>
+        <div class="options" id="mcq-c1-msg">
+          ${mcqOpt("A", "Fortnite is growing a tiny bit", false)}
+          ${mcqOpt("B", "Fortnite is blowing up — massive growth", true)}
+          ${mcqOpt("C", "Fortnite is dying", false)}
+          ${mcqOpt("D", "Nothing has changed", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c1-msg"><strong>Right.</strong> That's the story the chart is selling — <em>massive growth</em>. Now let's check if the data actually backs it up.</div>
+      <div class="nav-row end"><button class="btn" id="next-c1-msg" disabled onclick="nextSub()">Next →</button></div>
+    </div>`;
+
+  // 3 — Axis check (MULTI-CORRECT)
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
+      <div class="step-label">Step 2 · Read the axes</div>
+      <div class="step-title">Two true things about the y-axis. Pick both.</div>
+      ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-axis")}
+      <div class="question">
+        <div class="q-label">✅ Pick all that are true (you need 2)</div>
+        <div class="q-text">Look at the y-axis carefully. Which of these are actually true?</div>
+        <div class="options" id="mcq-c1-axis">
+          ${multiOpt("It shows monthly players, in millions", true)}
+          ${multiOpt("It shows daily hours played", false)}
+          ${multiOpt("It starts at 400M, not 0", true)}
+          ${multiOpt("It covers a huge range — 0 to 500M", false)}
+        </div>
+        <button class="check-btn" id="check-c1-axis" style="margin-top: 10px;" disabled>Check my picks</button>
+      </div>
+      <div class="feedback hidden" id="fb-c1-axis"><strong>Got it.</strong> Two facts: y-axis shows players in millions, and it starts at <em>400M</em>, not 0. That second one is doing all the lying.</div>
+      <div class="nav-row end"><button class="btn" id="next-c1-axis" disabled onclick="nextSub()">Next →</button></div>
+    </div>`;
+
+  // 4 — Hypothesize (SINGLE MCQ)
+  if (sub === 4) return `
+    <div class="frame">${progressDots(total, 4)}
+      <div class="step-label">Step 3 · Think it through</div>
+      <div class="step-title">What does a high-starting axis DO to the bars?</div>
+      ${bubble(`A y-axis that starts at 400 instead of 0 — before any math — what effect does that have on how the chart looks?`)}
+      <div class="question">
+        <div class="q-label">💡 Hypothesize</div>
+        <div class="options" id="mcq-c1-hyp">
+          ${mcqOpt("A", "Makes small differences look massive", true)}
+          ${mcqOpt("B", "Makes big differences look tiny", false)}
+          ${mcqOpt("C", "Doesn't change how bars look at all", false)}
+          ${mcqOpt("D", "Only affects the numbers, not the visuals", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c1-hyp"><strong>Exactly.</strong> Chopping off 400M from the bottom means the bars only show the <em>tiny slice</em> of variation — and stretches that slice across the whole chart.</div>
+      <div class="nav-row end"><button class="btn" id="next-c1-hyp" disabled onclick="nextSub()">Now let's do the math →</button></div>
+    </div>`;
+
+  // 5 — Real numbers (numeric chain)
+  if (sub === 5) return `
+    <div class="frame">${progressDots(total, 5)}
+      <div class="step-label">Step 4 · Check the real numbers</div>
+      <div class="step-title">Your hunch was right. Let's confirm.</div>
+      <div class="question">
+        <div class="q-label">🧮 Part A — Players added</div>
+        <div class="q-text">March = 401M players. June = 409M. How many <strong>millions</strong> were added?</div>
+        <div class="numeric-row">
+          <input type="number" class="numeric-input" id="num-added" placeholder="?">
+          <span class="numeric-suffix">million</span>
+          <button class="check-btn" id="check-added">Check</button>
+        </div>
+        <div class="feedback hidden" style="margin-top:12px; margin-bottom:0;" id="fb-added"><strong>Right — 8 million.</strong> Feels like a lot. But compared to <em>401 million</em>…</div>
+      </div>
+      <div class="question hidden" id="q-percent">
+        <div class="q-label">🧮 Part B — Percent growth</div>
+        <div class="q-text">8 million out of 401 million. What percent is that?</div>
+        <div class="options" id="mcq-percent">
+          ${mcqOpt("A", "About 50% — half the players are new", false)}
+          ${mcqOpt("B", "About 20% — a solid bump", false)}
+          ${mcqOpt("C", "About 2% — barely moved", true)}
+          ${mcqOpt("D", "About 0.1% — almost nothing", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c1-math"><strong>Confirmed.</strong> Real growth = <em>about 2%</em>. The chart sold "explosion." The math says "blip."</div>
+      <div class="nav-row end"><button class="btn" id="next-c1-math" disabled onclick="nextSub()">Fix the chart →</button></div>
+    </div>`;
+
+  // 6 — Fix (slider)
+  if (sub === 6) return `
+    <div class="frame">${progressDots(total, 6)}
+      <div class="step-label">Step 5 · Fix it yourself</div>
+      <div class="step-title">Drag the y-axis down to 0. Watch the lie collapse.</div>
+      ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-fix")}
+      <div class="question">
+        <div class="q-label">🎯 Your turn</div>
+        <div class="slider-row">
+          <span class="slider-label">Y-axis starts at</span>
+          <input type="range" id="axisMin" min="0" max="400" step="5" value="400">
+          <span class="slider-value" id="axisMinDisplay">400M</span>
+        </div>
+      </div>
+      <div class="feedback hot" id="fb-c1-fix">Bars still look like a staircase. Keep dragging…</div>
+      <div class="nav-row end"><button class="btn" id="next-c1-fix" disabled onclick="nextSub()">Name the trick →</button></div>
+    </div>`;
+
+  // 7 — Name + tool
+  if (sub === 7) return `
+    <div class="frame">${progressDots(total, 7)}
+      <div class="step-label">Step 6 · Name it</div>
+      <div class="step-title">You figured it out. Give the trick a name.</div>
+      <div class="question">
+        <div class="q-label">🏷 Name the trick</div>
+        <div class="q-text">This lie relies on the <strong>scale of the y-axis</strong>. What should we call it?</div>
+        <div class="options" id="mcq-c1-name">
+          ${mcqOpt("A", "The Color Trick", false)}
+          ${mcqOpt("B", "The Axis Trick", true)}
+          ${mcqOpt("C", "The Big Number Trick", false)}
+          ${mcqOpt("D", "The Bar Trick", false)}
+        </div>
+      </div>
+      <div class="tool-card hidden" id="tool-axis" data-emoji="🔍">
+        <div class="tool-tag">🔍 BS DETECTOR · TOOL #1</div>
+        <h3>The Axis Trick</h3>
+        <p>When the y-axis doesn't start at 0, tiny changes get puffed up into huge-looking jumps. Always check: where does the scale begin?</p>
+      </div>
+      <div class="feedback hidden" id="fb-c1-name">Your toolkit so far:${toolkitStrip()}</div>
+      <div class="nav-row end"><button class="btn" id="next-c1-name" disabled onclick="markAndGoto(1, 2)">Next chart →</button></div>
+    </div>`;
+}
+
+function mountChart1(sub) {
+  if (sub === 0) renderBars(document.getElementById("chart1-intro"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
+  if (sub === 1) {
+    renderBars(document.getElementById("chart1-first"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
+    setupExplore("mcq-c1-first", "reaction-c1-first", "next-c1-first");
+  }
+  if (sub === 2) {
+    renderBars(document.getElementById("chart1-msg"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
+    setupMCQ("mcq-c1-msg", "fb-c1-msg", "next-c1-msg");
+  }
+  if (sub === 3) {
+    renderBars(document.getElementById("chart1-axis"), DATA.fortnite, 400, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: "#E85D75" });
+    setupMultiMCQ("mcq-c1-axis", "check-c1-axis", "fb-c1-axis", "next-c1-axis");
+  }
+  if (sub === 4) setupMCQ("mcq-c1-hyp", "fb-c1-hyp", "next-c1-hyp");
+  if (sub === 5) {
+    const num = document.getElementById("num-added");
+    const check = document.getElementById("check-added");
+    const fbA = document.getElementById("fb-added");
+    const qB = document.getElementById("q-percent");
+    check.addEventListener("click", () => {
+      if (parseInt(num.value) === 8) {
+        SFX.correct(); num.disabled = true; check.disabled = true;
+        fbA.classList.remove("hidden");
+        setTimeout(() => qB.classList.remove("hidden"), 500);
+      } else {
+        SFX.wrong(); num.style.borderColor = "var(--coral)";
+        setTimeout(() => num.style.borderColor = "", 800);
+      }
+    });
+    setupMCQ("mcq-percent", "fb-c1-math", "next-c1-math");
+  }
+  if (sub === 6) {
+    const slider = document.getElementById("axisMin");
+    const display = document.getElementById("axisMinDisplay");
+    const fb = document.getElementById("fb-c1-fix");
+    const nxt = document.getElementById("next-c1-fix");
+    let lastTick = 400;
+    const render = () => {
+      const y = parseInt(slider.value);
+      display.textContent = y + "M";
+      renderBars(document.getElementById("chart1-fix"), DATA.fortnite, y, 410, { title: "MONTHLY ACTIVE USERS (MILLIONS)", barColor: y === 0 ? "#2EB39E" : "#E85D75" });
+      if (Math.abs(y - lastTick) >= 20) { SFX.tick(); lastTick = y; }
+      if (y >= 395) { fb.className = "feedback hot"; fb.innerHTML = `Bars still look like a staircase. Keep going…`; }
+      else if (y >= 200) { fb.className = "feedback hot"; fb.innerHTML = `Bars shrinking. Getting closer to honest.`; }
+      else if (y >= 50) { fb.className = "feedback"; fb.innerHTML = `The "explosion" is looking like a small bump.`; }
+      else {
+        fb.className = "feedback";
+        fb.innerHTML = `<strong>Yes!</strong> At full scale, all four bars look nearly identical. <em>Same data, honest story.</em>`;
+        nxt.disabled = false;
+      }
+    };
+    slider.addEventListener("input", render);
+    render();
+  }
+  if (sub === 7) {
+    setupMCQ("mcq-c1-name", "fb-c1-name", "next-c1-name", () => {
+      toolsEarned.axis = true;
+      document.getElementById("tool-axis").classList.remove("hidden");
+      SFX.tool();
+      setTimeout(() => document.getElementById("fb-c1-name").innerHTML = `Your toolkit so far:${toolkitStrip()}`, 100);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHART 2 — ROBLOX / TIME WINDOW (8 sub-steps)
+// ═══════════════════════════════════════════════════════════
+function renderChart2(sub) {
+  const total = 8;
+
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Chart 2 of 6 · The Time Window Trick</div>
+      <div class="step-title">Another chart. Another scary headline.</div>
+      ${bubble(`This one looks grim — a steep drop. Same drill: look first, investigate second.`)}
+      ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash. Is Gen Alpha over it?", "chart2-intro")}
+      <div class="nav-row end"><button class="btn" onclick="nextSub()">Start investigating →</button></div>
+    </div>`;
+
+  if (sub === 1) return `
+    <div class="frame">${progressDots(total, 1)}
+      <div class="step-label">Observe · First impression</div>
+      <div class="step-title">What's the first thing you notice?</div>
+      ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash.", "chart2-first")}
+      <div class="question">
+        <div class="q-label">👀 Look around</div>
+        <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
+        <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
+        <div class="options" id="mcq-c2-first">
+          ${exploreOpt("The word DYING is extreme", "Loud headlines set your feelings before you read the data. Good to notice — but the real lie usually lives in the chart itself.", false)}
+          ${exploreOpt("Bars are colored red", "Red says <em>alert!</em> but colors don't change the data. Focus on shape or numbers.", false)}
+          ${exploreOpt("The drop looks steep", "The drop is real — 13M users gone. But is a 3-month drop normal or unusual? We need more context.", false)}
+          ${exploreOpt("Only 3 months shown — very short window", "🎯 <strong>You found it.</strong> 3 months is a tiny slice. Lots of things dip and rise over a quarter. We need more history.", true)}
+        </div>
+        <div class="lens-reaction hidden" id="reaction-c2-first"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c2-first" disabled onclick="nextSub()">I found it →</button></div>
+    </div>`;
+
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">Step 1 · Comprehension</div>
+      <div class="step-title">What's this chart's message?</div>
+      ${bubble(`Read the headline + bars together. What story is this chart telling?`)}
+      ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash.", "chart2-msg")}
+      <div class="question">
+        <div class="q-label">🧠 Get the message</div>
+        <div class="q-text">If a friend saw this chart for 3 seconds, what would they think?</div>
+        <div class="options" id="mcq-c2-msg">
+          ${mcqOpt("A", "Roblox is booming", false)}
+          ${mcqOpt("B", "Roblox is in free-fall — kids are leaving", true)}
+          ${mcqOpt("C", "Roblox is unchanged", false)}
+          ${mcqOpt("D", "Can't tell — not enough info", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c2-msg"><strong>Right.</strong> The chart screams <em>collapse</em>. Now — is that the full story?</div>
+      <div class="nav-row end"><button class="btn" id="next-c2-msg" disabled onclick="nextSub()">Next →</button></div>
+    </div>`;
+
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
+      <div class="step-label">Step 2 · What's missing?</div>
+      <div class="step-title">Before you believe the headline — what would you WANT to see?</div>
+      ${bubble(`Good detectives ask what's <em>missing</em>. If you were verifying this claim, what context would you demand?`)}
+      <div class="question">
+        <div class="q-label">✅ Pick all that apply</div>
+        <div class="q-text">To check if Roblox is really dying, you'd want to know:</div>
+        <div class="options" id="mcq-c2-missing">
+          ${multiOpt("What Roblox usage looked like last year at the same months", true)}
+          ${multiOpt("Whether this pattern has happened before (past years)", true)}
+          ${multiOpt("The color of the Roblox logo", false)}
+          ${multiOpt("How many months of history are usually shown", false)}
+        </div>
+        <button class="check-btn" id="check-c2-missing" style="margin-top:10px;" disabled>Check my picks</button>
+      </div>
+      <div class="feedback hidden" id="fb-c2-missing"><strong>Nailed it.</strong> The two big missing pieces: <em>last year's numbers</em> and <em>prior-year patterns</em>. Let's pull them in.</div>
+      <div class="nav-row end"><button class="btn" id="next-c2-missing" disabled onclick="nextSub()">Next →</button></div>
+    </div>`;
+
+  if (sub === 4) return `
+    <div class="frame">${progressDots(total, 4)}
+      <div class="step-label">Step 3 · Predict</div>
+      <div class="step-title">If the 3-month trend kept going…</div>
+      ${bubble(`Based ONLY on what you see here, where does Roblox end up 3 more months from now?`)}
+      <div class="question">
+        <div class="q-label">🔮 Your prediction</div>
+        <div class="predict-row">
+          <button class="predict-btn" data-pred="fall"><span class="big">📉</span>Keeps falling<br>to ~40M</button>
+          <button class="predict-btn" data-pred="level"><span class="big">➡️</span>Levels off<br>around 55M</button>
+          <button class="predict-btn" data-pred="up"><span class="big">📈</span>Bounces back<br>to 75M+</button>
+        </div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c2-pred" disabled onclick="nextSub()">Lock it in →</button></div>
+    </div>`;
+
+  if (sub === 5) return `
+    <div class="frame">${progressDots(total, 5)}
+      <div class="step-label">Step 4 · Zoom out</div>
+      <div class="step-title">Drag the lens back. How does more history change things?</div>
+      ${newsBlock("DAILY NEWS · TECH · FULL HISTORY", 'Roblox follows a rhythm.', "Pull back the lens — see the full picture.", "chart2-full")}
+      <div class="question">
+        <div class="q-label">🎯 Your turn</div>
+        <div class="slider-row">
+          <span class="slider-label">Show past</span>
+          <input type="range" id="timeWindow" min="3" max="18" step="1" value="3">
+          <span class="slider-value" id="timeWindowDisplay">3 months</span>
+        </div>
+      </div>
+      <div class="feedback" id="fb-c2-zoom">Just 3 months. Drag to see more…</div>
+      <div class="nav-row end"><button class="btn" id="next-c2-zoom" disabled onclick="nextSub()">Find the rhythm →</button></div>
+    </div>`;
+
+  if (sub === 6) return `
+    <div class="frame">${progressDots(total, 6)}
+      <div class="step-label">Step 5 · Find the rhythm</div>
+      <div class="step-title">This pattern repeats. What's driving it?</div>
+      ${newsBlock("DAILY NEWS · TECH · 18 MONTHS", 'Roblox follows a rhythm.', "Two summers. Two school years. Same shape.", "chart2-rhythm")}
+      <div class="question" id="q-peak">
+        <div class="q-label">🧠 Part A — When are the peaks?</div>
+        <div class="q-text">When is Roblox usage HIGHEST every year?</div>
+        <div class="options" id="mcq-peak">
+          ${mcqOpt("A", "Fall (Sept–Nov)", false)}
+          ${mcqOpt("B", "Winter (Dec–Feb)", false)}
+          ${mcqOpt("C", "Summer (Jun–Aug)", true)}
+          ${mcqOpt("D", "It's random", false)}
+        </div>
+      </div>
+      <div class="question hidden" id="q-why">
+        <div class="q-label">🧠 Part B — Why?</div>
+        <div class="q-text">Why does Roblox peak in summer every year?</div>
+        <div class="options" id="mcq-why">
+          ${mcqOpt("A", "Roblox releases new games in summer", false)}
+          ${mcqOpt("B", "Kids are off school — more free time", true)}
+          ${mcqOpt("C", "Phones work better in hot weather", false)}
+          ${mcqOpt("D", "No real reason — just noise", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c2-rhythm"><strong>Exactly.</strong> School year = down. Summer = up. The "Roblox dying" chart just showed the <em>school-year dip</em>. It happens every fall.</div>
+      <div class="nav-row end"><button class="btn" id="next-c2-rhythm" disabled onclick="nextSub()">Name the trick →</button></div>
+    </div>`;
+
+  if (sub === 7) return `
+    <div class="frame">${progressDots(total, 7)}
+      <div class="step-label">Step 6 · Name it</div>
+      <div class="step-title">This lie had a signature move.</div>
+      <div class="question">
+        <div class="q-label">🏷 Name the trick</div>
+        <div class="q-text">The "Roblox dying" chart fooled people by only showing <strong>3 months</strong>. What's a good name?</div>
+        <div class="options" id="mcq-c2-name">
+          ${mcqOpt("A", "The Axis Trick", false)}
+          ${mcqOpt("B", "The Big Number Trick", false)}
+          ${mcqOpt("C", "The Time Window Trick", true)}
+          ${mcqOpt("D", "The Color Trick", false)}
+        </div>
+      </div>
+      <div class="tool-card hidden" id="tool-time" data-emoji="📅">
+        <div class="tool-tag">📅 BS DETECTOR · TOOL #2</div>
+        <h3>The Time Window Trick</h3>
+        <p>Short time windows can flip the story. Always ask: what does the longer trend say? A scary 3 months might be a pattern you're missing.</p>
+      </div>
+      <div class="feedback hidden" id="fb-c2-name">Your toolkit so far:${toolkitStrip()}</div>
+      <div class="nav-row end"><button class="btn" id="next-c2-name" disabled onclick="markAndGoto(2, 3)">Next chart →</button></div>
+    </div>`;
+}
+
+function mountChart2(sub) {
+  if (sub === 0) renderBars(document.getElementById("chart2-intro"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
+  if (sub === 1) {
+    renderBars(document.getElementById("chart2-first"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
+    setupExplore("mcq-c2-first", "reaction-c2-first", "next-c2-first");
+  }
+  if (sub === 2) {
+    renderBars(document.getElementById("chart2-msg"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
+    setupMCQ("mcq-c2-msg", "fb-c2-msg", "next-c2-msg");
+  }
+  if (sub === 3) setupMultiMCQ("mcq-c2-missing", "check-c2-missing", "fb-c2-missing", "next-c2-missing");
+  if (sub === 4) {
+    document.querySelectorAll(".predict-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        SFX.click();
+        document.querySelectorAll(".predict-btn").forEach(o => o.classList.remove("selected"));
+        btn.classList.add("selected");
+        document.getElementById("next-c2-pred").disabled = false;
+      });
+    });
+  }
+  if (sub === 5) {
+    const slider = document.getElementById("timeWindow");
+    const display = document.getElementById("timeWindowDisplay");
+    const fb = document.getElementById("fb-c2-zoom");
+    const nxt = document.getElementById("next-c2-zoom");
+    let lastTick = 3;
+    const render = () => {
+      const m = parseInt(slider.value);
+      display.textContent = m + " month" + (m === 1 ? "" : "s");
+      renderBars(document.getElementById("chart2-full"), DATA.roblox.slice(-m), 0, 100, { title: `DAILY USERS (MILLIONS) · LAST ${m} MONTHS`, barColor: "#2EB39E" });
+      if (Math.abs(m - lastTick) >= 1) { SFX.tick(); lastTick = m; }
+      if (m <= 4) { fb.className = "feedback hot"; fb.innerHTML = `Just 3 months. Looks scary. Keep dragging…`; }
+      else if (m <= 8) { fb.className = "feedback"; fb.innerHTML = `Zooming out. Last summer was <em>way higher</em>.`; }
+      else if (m <= 13) { fb.className = "feedback"; fb.innerHTML = `A full year in. Summers peak. Fall dips.`; nxt.disabled = false; }
+      else { fb.className = "feedback"; fb.innerHTML = `<strong>18 months.</strong> Two full cycles. Not dying — a <em>seasonal pattern</em> repeating.`; nxt.disabled = false; }
+    };
+    slider.addEventListener("input", render);
+    render();
+  }
+  if (sub === 6) {
+    renderBars(document.getElementById("chart2-rhythm"), DATA.roblox, 0, 100, { title: "DAILY USERS (MILLIONS) · 18 MONTHS", barColor: "#2EB39E" });
+    setupMCQ("mcq-peak", null, null, () => {
+      setTimeout(() => document.getElementById("q-why").classList.remove("hidden"), 400);
+    });
+    setupMCQ("mcq-why", "fb-c2-rhythm", "next-c2-rhythm");
+  }
+  if (sub === 7) {
+    setupMCQ("mcq-c2-name", "fb-c2-name", "next-c2-name", () => {
+      toolsEarned.time = true;
+      document.getElementById("tool-time").classList.remove("hidden");
+      SFX.tool();
+      setTimeout(() => document.getElementById("fb-c2-name").innerHTML = `Your toolkit so far:${toolkitStrip()}`, 100);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHART 3 — ICE CREAM / THIRD THING (8 sub-steps)
+// ═══════════════════════════════════════════════════════════
+function renderChart3(sub) {
+  const total = 8;
+
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Chart 3 of 6 · The Third Thing Trick</div>
+      <div class="step-title">This one's weird. Two things moving together.</div>
+      ${bubble(`Ice cream sales and shark attacks. Same chart. Is one really causing the other?`)}
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · WEIRD</div>
+        <div class="headline">ICE CREAM <span class="hot">CAUSES SHARK ATTACKS!</span></div>
+        <div class="subhead">Shocking US data reveals ice cream and shark attacks spike together.</div>
+        <svg class="chart" id="chart3-intro" viewBox="0 0 600 320"></svg>
+      </div>
+      <div class="nav-row end"><button class="btn" onclick="nextSub()">Start investigating →</button></div>
+    </div>`;
+
+  if (sub === 1) return `
+    <div class="frame">${progressDots(total, 1)}
+      <div class="step-label">Observe · First impression</div>
+      <div class="step-title">What jumps out?</div>
+      <div class="news-block">
+        <svg class="chart" id="chart3-first" viewBox="0 0 600 320"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">👀 Look around</div>
+        <div class="q-text">What stands out? Tap to hear what Lens thinks.</div>
+        <div class="q-hint">Some clues go deeper than others. Find the one that points to the real trick.</div>
+        <div class="options" id="mcq-c3-first">
+          ${exploreOpt("The orange line and red line use different colors", "True, but color coding is just a legend thing — it doesn't change what the chart means.", false)}
+          ${exploreOpt("Shark attack numbers are small overall", "Sharp eye — shark attacks are rare. But even rare things can look scary in a news story.", false)}
+          ${exploreOpt("The headline says ice cream CAUSES shark attacks", "That's a huge claim. But the chart only shows <em>when</em> they happen. Can a chart really prove <em>cause</em>?", false)}
+          ${exploreOpt("Both lines move up and down together", "🎯 <strong>You found it.</strong> The chart shows two things that rise and fall together — but that doesn't mean one <em>causes</em> the other.", true)}
+        </div>
+        <div class="lens-reaction hidden" id="reaction-c3-first"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c3-first" disabled onclick="nextSub()">I found it →</button></div>
+    </div>`;
+
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">Step 1 · Comprehension</div>
+      <div class="step-title">What is this chart claiming?</div>
+      ${bubble(`Before we agree or disagree — just restate the claim.`)}
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · WEIRD</div>
+        <div class="headline">ICE CREAM <span class="hot">CAUSES SHARK ATTACKS!</span></div>
+        <div class="subhead">Shocking US data reveals ice cream and shark attacks spike together.</div>
+        <svg class="chart" id="chart3-msg" viewBox="0 0 600 320"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">🧠 Get the message</div>
+        <div class="q-text">If a friend saw this chart for 3 seconds, what would they think?</div>
+        <div class="options" id="mcq-c3-msg">
+          ${mcqOpt("A", "Ice cream eating causes shark attacks", true)}
+          ${mcqOpt("B", "Sharks love ice cream", false)}
+          ${mcqOpt("C", "Ice cream sales drop when sharks attack", false)}
+          ${mcqOpt("D", "No claim — just showing data", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c3-msg"><strong>Right.</strong> The claim is <em>ice cream causes shark attacks</em>. Now — does the data actually support that claim?</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-msg" disabled onclick="nextSub()">Next →</button></div>
+    </div>`;
+
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
+      <div class="step-label">Step 2 · What's actually true here?</div>
+      <div class="step-title">Separate fact from claim. Pick ONLY what the data shows.</div>
+      ${bubble(`The chart shows <strong>what happened</strong>. The headline adds a <em>story</em>. Let's split them apart.`)}
+      <div class="question">
+        <div class="q-label">✅ Pick all that the DATA actually shows</div>
+        <div class="q-text">Which of these are facts you can see in the chart (not just claims in the headline)?</div>
+        <div class="options" id="mcq-c3-facts">
+          ${multiOpt("Ice cream sales rise in summer", true)}
+          ${multiOpt("Shark attacks also peak in summer", true)}
+          ${multiOpt("Ice cream causes shark attacks", false)}
+          ${multiOpt("Sharks can smell ice cream from shore", false)}
+        </div>
+        <button class="check-btn" id="check-c3-facts" style="margin-top:10px;" disabled>Check my picks</button>
+      </div>
+      <div class="feedback hidden" id="fb-c3-facts"><strong>Right.</strong> The chart only shows: both go up in summer. "Cause" is a <em>story the headline added</em>. Big difference.</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-facts" disabled onclick="nextSub()">Next →</button></div>
+    </div>`;
+
+  if (sub === 4) return `
+    <div class="frame">${progressDots(total, 4)}
+      <div class="step-label">Step 3 · Test the claim</div>
+      <div class="step-title">If ice cream really caused shark attacks…</div>
+      ${bubble(`Think like a scientist. If A causes B, what else would have to be true?`)}
+      <div class="question">
+        <div class="q-label">🧪 Reason it out</div>
+        <div class="q-text">If eating ice cream actually caused shark attacks, which of these would we expect?</div>
+        <div class="options" id="mcq-c3-logic">
+          ${mcqOpt("A", "People who ate ice cream would also get attacked in swimming pools", true)}
+          ${mcqOpt("B", "Winter shark attacks would spike when holiday ice cream sales rise", false)}
+          ${mcqOpt("C", "Only people who don't eat ice cream would get attacked", false)}
+          ${mcqOpt("D", "None of these — correlation always proves cause", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c3-logic"><strong>Exactly.</strong> Pool attacks don't happen. Winter attacks don't spike. The causal story falls apart. So something <em>else</em> must be linking ice cream and sharks.</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-logic" disabled onclick="nextSub()">Find the hidden thing →</button></div>
+    </div>`;
+
+  if (sub === 5) return `
+    <div class="frame">${progressDots(total, 5)}
+      <div class="step-label">Step 4 · Find the third thing</div>
+      <div class="step-title">Something's driving BOTH ice cream AND sharks. What?</div>
+      ${bubble(`Click each hypothesis to test it. Only one actually explains the pattern.`)}
+      <div class="news-block">
+        <svg class="chart" id="chart3-hyp" viewBox="0 0 600 320"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">🔍 Test hypotheses</div>
+        <div class="q-text">What could be driving BOTH ice cream AND shark attacks up together?</div>
+        <div class="hyp-row">
+          <button class="hyp-btn" data-hyp="sharks"><span class="hyp-icon">🦈</span>Sharks like sweet smells</button>
+          <button class="hyp-btn" data-hyp="summer"><span class="hyp-icon">🌞</span>Summer — beach crowds</button>
+          <button class="hyp-btn" data-hyp="flavors"><span class="hyp-icon">🍦</span>New ice cream flavors</button>
+          <button class="hyp-btn" data-hyp="random"><span class="hyp-icon">🎲</span>Random coincidence</button>
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c3-hyp"><strong>Found it.</strong> <em>Summer</em> sends more people to beaches. More beachgoers = more ice cream sold AND more swimmers near sharks. Neither causes the other — summer causes both.</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-hyp" disabled onclick="nextSub()">Apply the tool →</button></div>
+    </div>`;
+
+  if (sub === 6) return `
+    <div class="frame">${progressDots(total, 6)}
+      <div class="step-label">Step 5 · Apply it</div>
+      <div class="step-title">Here's a new claim. Same trick or not?</div>
+      ${bubble(`A reporter just filed a claim. Read carefully.`)}
+      <div class="postit">
+        <div class="from">NEW CLAIM</div>
+        <p><strong>"Americans who drink bottled water earn more money."</strong><br>A study says drinking bottled water makes you richer. Is this the Third Thing Trick?</p>
+      </div>
+      <div class="question">
+        <div class="q-label">🧠 Your call</div>
+        <div class="q-text">What's most likely going on?</div>
+        <div class="options" id="mcq-c3-apply">
+          ${mcqOpt("A", "Yes — drinking bottled water boosts income somehow", false)}
+          ${mcqOpt("B", "Yes — it's the Third Thing Trick. Higher income lets people afford bottled water, AND their job/education drives income — not the water.", true)}
+          ${mcqOpt("C", "No — it's the Axis Trick", false)}
+          ${mcqOpt("D", "No — the study is made up", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c3-apply"><strong>Got it.</strong> Income drives bottled water spending, not the other way around. Once you know this trick, you'll see it <em>everywhere</em>.</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-apply" disabled onclick="nextSub()">Name the trick →</button></div>
+    </div>`;
+
+  if (sub === 7) return `
+    <div class="frame">${progressDots(total, 7)}
+      <div class="step-label">Step 6 · Name it</div>
+      <div class="step-title">Two things move together. Something else drives both.</div>
+      <div class="question">
+        <div class="q-label">🏷 Name the trick</div>
+        <div class="q-text">What's a good name for this kind of lie?</div>
+        <div class="options" id="mcq-c3-name">
+          ${mcqOpt("A", "The Axis Trick", false)}
+          ${mcqOpt("B", "The Third Thing Trick", true)}
+          ${mcqOpt("C", "The Two Lines Trick", false)}
+          ${mcqOpt("D", "The Summer Trick", false)}
+        </div>
+      </div>
+      <div class="tool-card hidden" id="tool-third" data-emoji="🔗">
+        <div class="tool-tag">🔗 BS DETECTOR · TOOL #3</div>
+        <h3>The Third Thing Trick</h3>
+        <p>When two things move together, don't assume one causes the other. Usually there's a hidden "third thing" driving both. Always ask: is something else behind this?</p>
+      </div>
+      <div class="feedback hidden" id="fb-c3-name">Your toolkit so far:${toolkitStrip()}</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-name" disabled onclick="markAndGoto(3, 4)">Next chart →</button></div>
+    </div>`;
+}
+
+function mountChart3(sub) {
+  if (sub === 0) renderTwoLine(document.getElementById("chart3-intro"), DATA.iceCream);
+  if (sub === 1) {
+    renderTwoLine(document.getElementById("chart3-first"), DATA.iceCream);
+    setupExplore("mcq-c3-first", "reaction-c3-first", "next-c3-first");
+  }
+  if (sub === 2) {
+    renderTwoLine(document.getElementById("chart3-msg"), DATA.iceCream);
+    setupMCQ("mcq-c3-msg", "fb-c3-msg", "next-c3-msg");
+  }
+  if (sub === 3) setupMultiMCQ("mcq-c3-facts", "check-c3-facts", "fb-c3-facts", "next-c3-facts");
+  if (sub === 4) setupMCQ("mcq-c3-logic", "fb-c3-logic", "next-c3-logic");
+  if (sub === 5) {
+    renderTwoLine(document.getElementById("chart3-hyp"), DATA.iceCream);
+    const fb = document.getElementById("fb-c3-hyp");
+    const nxt = document.getElementById("next-c3-hyp");
+    document.querySelectorAll(".hyp-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const hyp = btn.dataset.hyp;
+        if (hyp === "summer") {
+          SFX.correct();
+          btn.classList.add("tested-right");
+          document.querySelectorAll(".hyp-btn").forEach(b => b.disabled = true);
+          renderTwoLine(document.getElementById("chart3-hyp"), DATA.iceCream, { showThird: true });
+          fb.classList.remove("hidden");
+          nxt.disabled = false;
+        } else {
+          SFX.wrong();
+          btn.classList.add("tested-wrong");
+          btn.disabled = true;
+        }
+      });
+    });
+  }
+  if (sub === 6) setupMCQ("mcq-c3-apply", "fb-c3-apply", "next-c3-apply");
+  if (sub === 7) {
+    setupMCQ("mcq-c3-name", "fb-c3-name", "next-c3-name", () => {
+      toolsEarned.third = true;
+      document.getElementById("tool-third").classList.remove("hidden");
+      SFX.tool();
+      setTimeout(() => document.getElementById("fb-c3-name").innerHTML = `Your toolkit so far:${toolkitStrip()}`, 100);
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// PLACEHOLDERS
+// ═══════════════════════════════════════════════════════════
+function renderPlaceholder(idx) {
+  const s = CHALLENGE.sections[idx];
+  return `
+    <div class="frame">
+      <div class="step-label">Coming soon</div>
+      <div class="step-title">${s.title}</div>
+      ${bubble(`Not built yet — you're ahead of me.`)}
+      <div class="feedback" style="border-color: var(--orange); background: var(--orange-bg);">
+        <strong>Placeholder.</strong> Will hold:
+        ${s.id === "chart-4" ? "the iPhone pictogram + Picture Trick (grid-overlay measurement, ~8 sub-steps with sense-check layer)." : ""}
+        ${s.id === "chart-5" ? "the Rising YouTuber + Base Trick (% vs. absolute toggle, ~8 sub-steps)." : ""}
+        ${s.id === "newsroom-final" ? "the final 4-chart round — kid publishes or holds each, names the trick on any they flag." : ""}
+      </div>
+      <div class="nav-row">
+        <button class="btn secondary" onclick="gotoSection(${idx - 1})">← Back</button>
+        <button class="btn" onclick="gotoSection(${idx + 1})">Skip ahead →</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// FINALE — FIX THE CHART (4 sub-steps: intro → diagnose → fix → rewrite)
+// New chart the kid hasn't seen — applies Axis Trick to a fresh context.
+// ═══════════════════════════════════════════════════════════
+function renderFinale(sub) {
+  const total = 4;
+
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Finale · Fix the chart</div>
+      <div class="step-title">One last case. A new one.</div>
+      ${bubble(`This chart just came in. Not one we've seen before. Your job: diagnose the trick, fix it, rewrite the honest headline. You ready?`)}
+      <div class="postit">
+        <div class="from">MAYA · EDITOR</div>
+        <p>Straight from a "parenting expert." Feels off to me — too dramatic. Put your toolkit on it. Don't let this print as-is.</p>
+      </div>
+      <div class="news-block">
+        <div class="byline">PARENTING TIMES · TECHNOLOGY</div>
+        <div class="headline">TEEN SCREEN TIME <span class="hot">SKYROCKETS!</span></div>
+        <div class="subhead">New study shocks parents: kids glued to phones more than ever.</div>
+        <svg class="chart" id="fn-intro-chart" viewBox="0 0 600 340"></svg>
+      </div>
+      <div class="nav-row end"><button class="btn" onclick="nextSub()">Diagnose →</button></div>
+    </div>`;
+
+  if (sub === 1) return `
+    <div class="frame">${progressDots(total, 1)}
+      <div class="step-label">Step 1 · Diagnose</div>
+      <div class="step-title">Which trick is this chart pulling?</div>
+      <div class="news-block">
+        <div class="byline">PARENTING TIMES · TECHNOLOGY</div>
+        <div class="headline">TEEN SCREEN TIME <span class="hot">SKYROCKETS!</span></div>
+        <div class="subhead">New study shocks parents: kids glued to phones more than ever.</div>
+        <svg class="chart" id="fn-diag-chart" viewBox="0 0 600 340"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">🕵 Identify the trick</div>
+        <div class="q-text">Use your toolkit. Which of the 5 tricks is this chart using?</div>
+        <div class="options" id="mcq-fn-diag">
+          ${mcqOpt("A", "🔍 The Axis Trick — y-axis doesn't start at 0", true)}
+          ${mcqOpt("B", "📅 The Time Window Trick — too short a window", false)}
+          ${mcqOpt("C", "🔗 The Third Thing Trick — hidden variable", false)}
+          ${mcqOpt("D", "🖼 The Picture Trick — misleading visual sizes", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-fn-diag"><strong>Right.</strong> Look at the y-axis — it starts at <em>6.0</em>, not 0. That's how a 0.3-hour jump becomes "skyrocket" in the visuals.</div>
+      <div class="nav-row end"><button class="btn" id="next-fn-diag" disabled onclick="nextSub()">Fix the chart →</button></div>
+    </div>`;
+
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">Step 2 · Fix the chart</div>
+      <div class="step-title">Rebuild it honestly. Pull the y-axis to 0.</div>
+      <div class="news-block">
+        <div class="byline" id="fn-byline">PARENTING TIMES · DISHONEST VERSION</div>
+        <div class="headline" id="fn-headline">TEEN SCREEN TIME <span class="hot">SKYROCKETS!</span></div>
+        <div class="subhead" id="fn-subhead">New study shocks parents.</div>
+        <svg class="chart" id="fn-fix-chart" viewBox="0 0 600 340"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">🔧 Your fix</div>
+        <div class="slider-row">
+          <span class="slider-label">Y-axis starts at</span>
+          <input type="range" id="fn-axis" min="0" max="6" step="0.1" value="6">
+          <span class="slider-value" id="fn-axis-display">6.0 hrs</span>
+        </div>
+      </div>
+      <div class="feedback hot" id="fn-fb">Dishonest scale. This year's bar looks like a mountain. Keep dragging…</div>
+      <div class="nav-row end"><button class="btn" id="next-fn-fix" disabled onclick="nextSub()">Rewrite the headline →</button></div>
+    </div>`;
+
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
+      <div class="step-label">Step 3 · Rewrite</div>
+      <div class="step-title">The chart is honest now. Pick the headline that matches.</div>
+      <div class="news-block">
+        <div class="byline">PARENTING TIMES · HONEST VERSION</div>
+        <div class="headline" style="color: var(--text);">Teens spent 6.4 hrs/day on screens — up slightly.</div>
+        <div class="subhead">6.1 hrs last year → 6.4 hrs this year. Roughly 5% more.</div>
+        <svg class="chart" id="fn-rewrite-chart" viewBox="0 0 600 340"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">✍️ Pick the honest headline</div>
+        <div class="q-text">Which one reports the data without misleading readers?</div>
+        <div class="options" id="mcq-fn-rewrite">
+          ${mcqOpt("A", "Teen screen time up slightly — about 5% more than last year", true)}
+          ${mcqOpt("B", "Teens addicted to phones — screen time exploding", false)}
+          ${mcqOpt("C", "Teens drop screen time — returning to reading books", false)}
+          ${mcqOpt("D", "Teens spend 2× more time on screens than last year", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-fn-rewrite"><strong>Perfect.</strong> "About 5%" is accurate and calm. No fake drama. <em>That's</em> what honest reporting looks like.</div>
+      <div class="nav-row end"><button class="btn" id="next-fn-rewrite" disabled onclick="markAndGoto(7, 8)">Send to press →</button></div>
+    </div>`;
+}
+
+function mountFinale(sub) {
+  if (sub === 0) {
+    renderBars(document.getElementById("fn-intro-chart"), DATA.screen, 6.0, 6.5, {
+      title: "AVG HOURS/DAY · PHONES & TABLETS", unit: " hrs", barColor: "#E85D75"
+    });
+  }
+  if (sub === 1) {
+    renderBars(document.getElementById("fn-diag-chart"), DATA.screen, 6.0, 6.5, {
+      title: "AVG HOURS/DAY · PHONES & TABLETS", unit: " hrs", barColor: "#E85D75"
+    });
+    setupMCQ("mcq-fn-diag", "fb-fn-diag", "next-fn-diag");
+  }
+  if (sub === 2) {
+    const slider = document.getElementById("fn-axis");
+    const display = document.getElementById("fn-axis-display");
+    const fb = document.getElementById("fn-fb");
+    const byline = document.getElementById("fn-byline");
+    const headline = document.getElementById("fn-headline");
+    const subhead = document.getElementById("fn-subhead");
+    const nxt = document.getElementById("next-fn-fix");
+    let lastTick = 6.0;
+    const render = () => {
+      const y = parseFloat(slider.value);
+      display.textContent = y.toFixed(1) + " hrs";
+      renderBars(document.getElementById("fn-fix-chart"), DATA.screen, y, 6.5, {
+        title: "AVG HOURS/DAY · PHONES & TABLETS", unit: " hrs", barColor: y === 0 ? "#2EB39E" : "#E85D75"
+      });
+      if (Math.abs(y - lastTick) >= 0.3) { SFX.tick(); lastTick = y; }
+      if (y >= 5.5) {
+        fb.className = "feedback hot";
+        fb.innerHTML = `Dishonest scale. This year's bar still looks like a mountain. Keep going…`;
+        byline.textContent = "PARENTING TIMES · DISHONEST VERSION";
+        headline.innerHTML = `TEEN SCREEN TIME <span class="hot">SKYROCKETS!</span>`;
+        subhead.textContent = "New study shocks parents.";
+      } else if (y > 0) {
+        fb.className = "feedback hot";
+        fb.innerHTML = `Better — but pull all the way to 0 for the truth.`;
+      } else {
+        fb.className = "feedback";
+        fb.innerHTML = `<strong>Honest scale.</strong> Both bars almost the same height. Real change: <em>0.3 hours/day</em>. About a 5% bump, not a skyrocket.`;
+        byline.textContent = "PARENTING TIMES · HONEST VERSION";
+        headline.innerHTML = `Teen screen time up slightly.`;
+        subhead.textContent = "6.1 → 6.4 hours/day. About 5% more.";
+        nxt.disabled = false;
+      }
+    };
+    slider.addEventListener("input", render);
+    render();
+  }
+  if (sub === 3) {
+    renderBars(document.getElementById("fn-rewrite-chart"), DATA.screen, 0, 6.5, {
+      title: "AVG HOURS/DAY · PHONES & TABLETS", unit: " hrs", barColor: "#2EB39E"
+    });
+    setupMCQ("mcq-fn-rewrite", "fb-fn-rewrite", "next-fn-rewrite");
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPLETION
+// ═══════════════════════════════════════════════════════════
+function renderCompletion() {
+  return `
+    <div class="frame">
+      <div class="complete-hero">
+        <div class="tag">CASE CLOSED</div>
+        <h1>You caught the liars.</h1>
+        <div class="complete-summary">Every chart had correct numbers. The lies lived in the framing. You've built a toolkit you can use on every chart you see — TV, Instagram, anywhere.</div>
+      </div>
+      ${bubble(`Great work, partner. You earned the tools the hard way. Next time someone shows you a chart, you'll see right through it.`)}
+      <div class="evidence-title">🛠 Your BS Detector Toolkit</div>
+      <div class="tool-preview-grid">
+        ${CHALLENGE.tools.map(t => `
+          <div class="tool-preview" style="opacity:${toolsEarned[t.id] ? 1 : 0.35}; border-style:${toolsEarned[t.id] ? 'solid' : 'dashed'}; border-color:${toolsEarned[t.id] ? 'var(--mint)' : 'var(--border-strong)'}; background:${toolsEarned[t.id] ? 'var(--mint-bg)' : 'var(--card)'};">
+            <div class="emoji">${t.icon}</div>
+            <div class="name" style="color:${toolsEarned[t.id] ? 'var(--mint-ink)' : 'var(--text-3)'};">The ${t.name}</div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="share-card">
+        <div class="preview-card">
+          <h4>I caught 4 lies before they hit the front page.</h4>
+          <p>Can you? → Fake Chart Detective, a Real Math League case.</p>
+          <div class="brand">🔍 RML · cuemath.com/league</div>
+        </div>
+        <button class="btn">Share the case</button>
+      </div>
+      <div class="nav-row">
+        <button class="btn secondary" onclick="location.reload()">↻ Try again</button>
+        <button class="btn">Next case →</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function renderChart(idx) {
+  const s = CHALLENGE.sections[idx];
+  if (s.id === "chart-1") return renderChart1(currentSubStep);
+  if (s.id === "chart-2") return renderChart2(currentSubStep);
+  if (s.id === "chart-3") return renderChart3(currentSubStep);
+}
+function mountChart(idx) {
+  const s = CHALLENGE.sections[idx];
+  if (s.id === "chart-1") mountChart1(currentSubStep);
+  if (s.id === "chart-2") mountChart2(currentSubStep);
+  if (s.id === "chart-3") mountChart3(currentSubStep);
+}
+
+function render() {
+  const s = CHALLENGE.sections[currentSection];
+  const main = document.getElementById("main");
+  let html = '';
+  if (s.kind === "intro") html = renderIntro();
+  else if (s.kind === "chart") html = renderChart(currentSection);
+  else if (s.kind === "placeholder") html = renderPlaceholder(currentSection);
+  else if (s.kind === "finale") html = renderFinale(currentSubStep);
+  else if (s.kind === "completion") html = renderCompletion();
+  main.innerHTML = html;
+
+  if (s.kind === "chart") mountChart(currentSection);
+  if (s.kind === "finale") mountFinale(currentSubStep);
+
+  renderSidebar();
+  updateStepIndicator();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function gotoSection(idx) {
+  if (idx < 0 || idx >= CHALLENGE.sections.length) return;
+  SFX.click();
+  currentSection = idx;
+  currentSubStep = 0;
+  render();
+}
+
+// Only mark complete when user earns it (not just by jumping nav)
+function markAndGoto(markIdx, goIdx) {
+  completedSections.add(markIdx);
+  gotoSection(goIdx);
+}
+
+function nextSub() {
+  SFX.click();
+  currentSubStep += 1;
+  render();
+}
+
+// INIT
+render();
+</script>
+</body>
+</html>
