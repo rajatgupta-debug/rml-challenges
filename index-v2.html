@@ -131,6 +131,7 @@
   }
   .mode-chip.lies .dot    { background: var(--coral); }
   .mode-chip.wonder .dot  { background: var(--purple); }
+  .mode-chip.explore .dot { background: var(--sky); }
   .mode-chip.choices .dot { background: var(--mint); }
   .mode-chip.build .dot   { background: var(--orange); }
 
@@ -149,6 +150,7 @@
   }
   .mode-intro.lies    { border-left-color: var(--coral); }
   .mode-intro.wonder  { border-left-color: var(--purple); }
+  .mode-intro.explore { border-left-color: var(--sky); }
   .mode-intro.choices { border-left-color: var(--mint); }
   .mode-intro.build   { border-left-color: var(--orange); }
 
@@ -162,6 +164,7 @@
   }
   .mode-intro.lies    .mode-num { color: var(--coral-ink); }
   .mode-intro.wonder  .mode-num { color: var(--purple-ink); }
+  .mode-intro.explore .mode-num { color: var(--sky-ink); }
   .mode-intro.choices .mode-num { color: var(--mint-ink); }
   .mode-intro.build   .mode-num { color: var(--orange-ink); }
 
@@ -178,6 +181,7 @@
   }
   .mode-intro.lies    .mode-label { background: var(--coral-bg);  color: var(--coral-ink); }
   .mode-intro.wonder  .mode-label { background: var(--purple-bg); color: var(--purple-ink); }
+  .mode-intro.explore .mode-label { background: var(--sky-bg);    color: var(--sky-ink); }
   .mode-intro.choices .mode-label { background: var(--mint-bg);   color: var(--mint-ink); }
   .mode-intro.build   .mode-label { background: var(--orange-bg); color: var(--orange-ink); }
 
@@ -440,6 +444,7 @@
       <div class="mode-row">
         <div class="mode-chip lies"><span class="dot"></span>LIES</div>
         <div class="mode-chip wonder"><span class="dot"></span>WONDER</div>
+        <div class="mode-chip explore"><span class="dot"></span>EXPLORE</div>
         <div class="mode-chip choices"><span class="dot"></span>CHOICES</div>
         <div class="mode-chip build"><span class="dot"></span>BUILD</div>
       </div>
@@ -718,10 +723,126 @@
     </div>
 
     <!-- ════════════════════════════════════════ -->
-    <!-- ═══  MODE 03 · CHOICES               ═══ -->
+    <!-- ═══  MODE 03 · EXPLORE               ═══ -->
+    <!-- ════════════════════════════════════════ -->
+    <div class="mode-intro explore">
+      <div class="mode-num">03</div>
+      <div class="mode-text">
+        <div class="mode-label">EXPLORE</div>
+        <div class="mode-tagline">Dig in and see what's there.</div>
+        <div class="mode-desc">Real datasets and live simulations are where math actually does its job in 2026. Your child loads up real data or tweaks a running simulation — becoming the kind of thinker who rolls up their sleeves and interrogates the world, instead of waiting for someone else to summarize it.</div>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <div class="card soon theme-sky">
+        <div class="card-top">
+          <div class="card-watermark">🏅</div>
+          <div class="card-meta-top">
+            <div class="case-badge">CASE 013</div>
+            <div class="status-badge status-concept">CONCEPT</div>
+          </div>
+          <div class="card-icon">📊</div>
+        </div>
+        <div class="card-body">
+          <h2>Olympic Decoder</h2>
+          <div class="hook">50 years of Olympic 100m times in your hands. When will someone break 9 seconds? Hunt the pattern — the data hides more than one story.</div>
+          <div class="meta">
+            <span class="pill">📚 Grade 7–9</span>
+            <span class="pill">⏱ ~20 min</span>
+          </div>
+          <div class="cta">In concept</div>
+        </div>
+      </div>
+
+      <div class="card soon theme-mint">
+        <div class="card-top">
+          <div class="card-watermark">🦠</div>
+          <div class="card-meta-top">
+            <div class="case-badge">CASE 014</div>
+            <div class="status-badge status-concept">CONCEPT</div>
+          </div>
+          <div class="card-icon">🏫</div>
+        </div>
+        <div class="card-body">
+          <h2>Flu in the Hallways</h2>
+          <div class="hook">Run a live simulation of a flu outbreak in a school of 500. Change hand-washing rates, vaccination, group sizes — watch the curve bend or explode.</div>
+          <div class="meta">
+            <span class="pill">📚 Grade 7–9</span>
+            <span class="pill">⏱ ~20 min</span>
+          </div>
+          <div class="cta">In concept</div>
+        </div>
+      </div>
+
+      <div class="card soon theme-orange">
+        <div class="card-top">
+          <div class="card-watermark">🏀</div>
+          <div class="card-meta-top">
+            <div class="case-badge">CASE 015</div>
+            <div class="status-badge status-concept">CONCEPT</div>
+          </div>
+          <div class="card-icon">🎯</div>
+        </div>
+        <div class="card-body">
+          <h2>The Shot Chart</h2>
+          <div class="hook">Every shot taken in last year's NBA playoffs. Where do scorers actually score from? Map it and find the spots nobody talks about.</div>
+          <div class="meta">
+            <span class="pill">📚 Grade 6–8</span>
+            <span class="pill">⏱ ~18 min</span>
+          </div>
+          <div class="cta">In concept</div>
+        </div>
+      </div>
+
+      <div class="card soon theme-teal">
+        <div class="card-top">
+          <div class="card-watermark">🚦</div>
+          <div class="card-meta-top">
+            <div class="case-badge">CASE 016</div>
+            <div class="status-badge status-concept">CONCEPT</div>
+          </div>
+          <div class="card-icon">🛣</div>
+        </div>
+        <div class="card-body">
+          <h2>Tweak the Traffic</h2>
+          <div class="hook">A running simulation of a gridlocked city. Change the light timings, the speed limits, the one-way streets. Can you un-jam it?</div>
+          <div class="meta">
+            <span class="pill">📚 Grade 7–9</span>
+            <span class="pill">⏱ ~20 min</span>
+          </div>
+          <div class="cta">In concept</div>
+        </div>
+      </div>
+
+      <div class="card soon theme-purple">
+        <div class="card-top">
+          <div class="card-watermark">💰</div>
+          <div class="card-meta-top">
+            <div class="case-badge">CASE 017</div>
+            <div class="status-badge status-concept">CONCEPT</div>
+          </div>
+          <div class="card-icon">🏘</div>
+        </div>
+        <div class="card-body">
+          <h2>The Wealth Simulator</h2>
+          <div class="hook">1,000 families, three tax policies, twenty years. Run each policy and watch the wealth distribution emerge — then ask yourself which world you'd want to live in.</div>
+          <div class="meta">
+            <span class="pill">📚 Grade 8–10</span>
+            <span class="pill">⏱ ~25 min</span>
+          </div>
+          <div class="cta">In concept</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════ -->
+    <!-- ═══  MODE 04 · CHOICES               ═══ -->
     <!-- ════════════════════════════════════════ -->
     <div class="mode-intro choices">
-      <div class="mode-num">03</div>
+      <div class="mode-num">04</div>
       <div class="mode-text">
         <div class="mode-label">CHOICES</div>
         <div class="mode-tagline">Make the call that actually pays off.</div>
@@ -735,7 +856,7 @@
         <div class="card-top">
           <div class="card-watermark">📅</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 013</div>
+            <div class="case-badge">CASE 018</div>
             <div class="status-badge status-soon">COMING SOON</div>
           </div>
           <div class="card-icon">💸</div>
@@ -755,7 +876,7 @@
         <div class="card-top">
           <div class="card-watermark">📲</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 014</div>
+            <div class="case-badge">CASE 019</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">📞</div>
@@ -775,7 +896,7 @@
         <div class="card-top">
           <div class="card-watermark">🍕</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 015</div>
+            <div class="case-badge">CASE 020</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">⚖️</div>
@@ -795,7 +916,7 @@
         <div class="card-top">
           <div class="card-watermark">🚦</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 016</div>
+            <div class="case-badge">CASE 021</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">🚗</div>
@@ -815,7 +936,7 @@
         <div class="card-top">
           <div class="card-watermark">🏷</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 017</div>
+            <div class="case-badge">CASE 022</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">💰</div>
@@ -834,10 +955,10 @@
     </div>
 
     <!-- ════════════════════════════════════════ -->
-    <!-- ═══  MODE 04 · BUILD                 ═══ -->
+    <!-- ═══  MODE 05 · BUILD                 ═══ -->
     <!-- ════════════════════════════════════════ -->
     <div class="mode-intro build">
-      <div class="mode-num">04</div>
+      <div class="mode-num">05</div>
       <div class="mode-text">
         <div class="mode-label">BUILD</div>
         <div class="mode-tagline">Design the systems that run the game.</div>
@@ -851,7 +972,7 @@
         <div class="card-top">
           <div class="card-watermark">🏆</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 018</div>
+            <div class="case-badge">CASE 023</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">🏅</div>
@@ -871,7 +992,7 @@
         <div class="card-top">
           <div class="card-watermark">🎯</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 019</div>
+            <div class="case-badge">CASE 024</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">🎮</div>
@@ -891,7 +1012,7 @@
         <div class="card-top">
           <div class="card-watermark">🍋</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 020</div>
+            <div class="case-badge">CASE 025</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">🥤</div>
@@ -911,7 +1032,7 @@
         <div class="card-top">
           <div class="card-watermark">🗳</div>
           <div class="card-meta-top">
-            <div class="case-badge">CASE 021</div>
+            <div class="case-badge">CASE 026</div>
             <div class="status-badge status-concept">CONCEPT</div>
           </div>
           <div class="card-icon">✋</div>
@@ -930,7 +1051,7 @@
     </div>
 
     <div class="footer">
-      RML · A Cuemath project · 4 modes · 21 cases sketched<span class="v2-badge">V2 MOCKUP</span>
+      RML · A Cuemath project · 5 modes · 26 cases sketched<span class="v2-badge">V2 MOCKUP</span>
       <br><br>
       v1 home page still available at <code style="font-size:11px;opacity:0.7;">/index.html</code>
     </div>
