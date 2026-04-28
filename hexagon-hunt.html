@@ -1,0 +1,2041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Hexagon Hunt — RML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700;800;900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FFFFFF;
+  --bg-tint: #F4F4F2;
+  --cream: #FBEED1;
+  --cream-soft: #FDF6E3;
+  --ink: #1A1A1A;
+  --ink-muted: #6B6B70;
+  --yellow: #F5C43E;
+  --yellow-soft: #FFE8A0;
+  --yellow-deep: #E0A823;
+  --tint-peach: #FFD4C0;
+  --tint-mint: #C5F0DC;
+  --tint-sky: #C8E5F2;
+  --bold-yellow: #FFC93C;
+  --bold-mint: #3FD68F;
+  --red-warn: #E74C3C;
+  --grid-line: #E8E8E5;
+  --r-card: 12px;
+  --r-button: 8px;
+  --font-display: "Sora", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg); color: var(--ink);
+  min-height: 100vh; overflow-x: hidden;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.app {
+  max-width: 720px; margin: 0 auto;
+  min-height: 100vh; padding: 16px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+}
+.tag {
+  position: fixed; top: 12px;
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 11px; letter-spacing: 1px;
+  background: var(--ink); color: white;
+  padding: 6px 10px; border-radius: 4px; z-index: 100;
+}
+.tag-step { left: 12px; }
+.tag-restart {
+  right: 12px;
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink);
+  cursor: pointer; font-family: inherit;
+}
+.phase {
+  display: none; width: 100%;
+  flex-direction: column; align-items: center; text-align: center;
+  padding-top: 56px;
+  animation: fadeIn 0.4s ease;
+}
+.phase.active { display: flex; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+h1 { font-family: var(--font-display); font-size: 36px; font-weight: 900; line-height: 1.1; margin-bottom: 12px; }
+h2 {
+  font-family: var(--font-display); font-size: 26px; font-weight: 800;
+  line-height: 1.2; margin-bottom: 10px;
+  display: flex; align-items: center; gap: 10px;
+  justify-content: center;
+}
+h2 .title-icon {
+  width: 28px; height: 28px; flex-shrink: 0;
+}
+.bigtext { font-family: var(--font-display); font-weight: 800; font-size: 21px; line-height: 1.3; margin: 10px 0; max-width: 520px; }
+.subtext {
+  font-size: 17px; color: var(--ink-muted);
+  margin-bottom: 12px; max-width: 460px; line-height: 1.4;
+  min-height: 24px;
+}
+.q-hint { font-size: 13px; color: var(--ink-muted); font-weight: 500; font-style: italic; margin-top: 4px; }
+.btn {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 18px;
+  background: var(--yellow); color: var(--ink);
+  border: 2px solid var(--ink); border-radius: var(--r-button);
+  padding: 14px 32px; cursor: pointer; margin-top: 14px;
+  box-shadow: 0 3px 0 var(--ink);
+  transition: transform 0.1s, box-shadow 0.1s;
+  letter-spacing: 0.3px;
+}
+.btn:hover { background: var(--yellow-soft); }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.btn:disabled { opacity: 0.5; pointer-events: none; }
+.btn.pulse { animation: pulse 1.2s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+.btn.big { font-size: 21px; padding: 18px 42px; }
+
+.buzz { width: 110px; height: 110px; margin: 12px 0; animation: float 2.6s ease-in-out infinite; }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.speech {
+  background: var(--cream); border: 2px solid var(--ink);
+  border-radius: 16px; padding: 14px 20px;
+  font-family: var(--font-display); font-weight: 700; font-size: 17px;
+  max-width: 480px; margin: 12px 0 10px;
+  position: relative; line-height: 1.4;
+}
+.speech::after {
+  content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 10px solid transparent; border-right: 10px solid transparent;
+  border-bottom: 10px solid var(--ink);
+}
+.speech::before {
+  content: ''; position: absolute; top: -7px; left: 50%; transform: translateX(-50%);
+  width: 0; height: 0;
+  border-left: 8px solid transparent; border-right: 8px solid transparent;
+  border-bottom: 8px solid var(--cream); z-index: 1;
+}
+.speech.warn { background: #FCE2DD; border-color: var(--red-warn); }
+.speech.warn::before { border-bottom-color: #FCE2DD; }
+.speech.warn::after { border-bottom-color: var(--red-warn); }
+.speech.win { background: var(--tint-mint); border-color: var(--bold-mint); }
+.speech.win::before { border-bottom-color: var(--tint-mint); }
+.speech.win::after { border-bottom-color: var(--bold-mint); }
+.speech em { background: var(--yellow); padding: 2px 6px; border-radius: 4px; font-style: normal; }
+
+.shape-set {
+  display: inline-flex; gap: 8px;
+  vertical-align: middle; margin-left: 6px;
+}
+.shape-set svg { width: 24px; height: 24px; }
+
+.mission-card {
+  background: var(--cream); border: 2px solid var(--ink);
+  border-radius: var(--r-card); padding: 22px;
+  margin: 14px 0; box-shadow: 0 3px 0 var(--ink); max-width: 480px;
+}
+.wax-scene {
+  width: 100%; max-width: 420px;
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card);
+  padding: 8px;
+  margin: 12px 0;
+  box-shadow: 0 3px 0 var(--ink);
+}
+.wax-scene svg { display: block; width: 100%; height: auto; }
+/* Shape preview grid (Phase 3 transition) */
+.preview-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%; max-width: 440px;
+  margin: 12px 0;
+}
+.preview-card {
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card);
+  padding: 8px 8px 6px;
+  box-shadow: 0 3px 0 var(--ink);
+  display: flex; flex-direction: column;
+  align-items: center; gap: 4px;
+}
+.preview-card svg { display: block; width: 100%; height: auto; }
+.preview-card-name {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 13px; letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.mission-row { display: flex; align-items: center; gap: 16px; padding: 8px 0; }
+.mission-row + .mission-row { border-top: 2px dashed var(--ink); margin-top: 6px; padding-top: 14px; }
+.mission-icon { width: 56px; height: 56px; flex-shrink: 0; }
+.mission-text { font-family: var(--font-display); font-weight: 800; font-size: 18px; text-align: left; line-height: 1.3; }
+.mission-text em { background: var(--yellow); font-style: normal; padding: 2px 6px; border-radius: 4px; }
+
+.combined-frame {
+  width: 100%; max-width: 380px; margin: 8px 0;
+}
+.combined-frame svg { display: block; width: 100%; height: auto; }
+
+.frame-only {
+  width: 100%; max-width: 380px;
+  background: white;
+  border: 3px solid var(--ink); border-radius: var(--r-card);
+  padding: 12px; margin: 8px 0;
+  box-shadow: 0 4px 0 var(--ink);
+  position: relative;
+  min-height: 230px;
+}
+.frame-label-html {
+  position: absolute; top: -12px; left: 16px;
+  background: var(--ink); color: white;
+  padding: 3px 10px; border-radius: 4px;
+  font-family: var(--font-display); font-weight: 800; font-size: 11px;
+  letter-spacing: 1px; z-index: 2;
+}
+.frame-only svg { display: block; width: 100%; height: auto; }
+
+/* Count pill */
+.count-pill {
+  display: inline-block;
+  background: var(--bold-mint);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 6px 16px;
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 14px;
+  margin: 4px 0 8px;
+  box-shadow: 0 2px 0 var(--ink);
+  animation: pop 0.4s ease;
+}
+@keyframes pop { 0% { transform: scale(0.6); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+
+.thread-readout {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 22px; color: var(--ink);
+  background: var(--bold-mint); border: 3px solid var(--ink);
+  border-radius: 12px; padding: 8px 22px;
+  margin: 8px 0;
+  box-shadow: 0 3px 0 var(--ink);
+  display: inline-block;
+  animation: pop 0.4s ease;
+  max-width: 380px;
+}
+
+.shape-total {
+  font-family: var(--font-display); font-weight: 900;
+  font-size: 22px; color: var(--ink);
+  background: var(--bold-mint); border: 3px solid var(--ink);
+  border-radius: 12px; padding: 12px 22px;
+  margin: 10px 0;
+  box-shadow: 0 3px 0 var(--ink);
+  animation: pop 0.4s ease;
+  max-width: 380px;
+}
+
+/* Answer buttons */
+.q-block {
+  width: 100%; max-width: 480px;
+  margin: 8px 0;
+  display: flex; flex-direction: column; align-items: center;
+}
+.ans-options {
+  display: flex; gap: 10px;
+  flex-wrap: wrap; justify-content: center;
+  margin: 6px 0 8px;
+  width: 100%;
+}
+.ans-btn {
+  font-family: var(--font-display);
+  font-weight: 800; font-size: 22px;
+  background: white; color: var(--ink);
+  border: 2px solid var(--ink); border-radius: 10px;
+  padding: 12px 22px; cursor: pointer;
+  min-width: 64px;
+  box-shadow: 0 3px 0 var(--ink);
+  transition: transform 0.1s, background 0.15s, box-shadow 0.1s;
+}
+.ans-btn:hover { background: var(--cream-soft); }
+.ans-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.ans-btn:disabled { opacity: 0.6; pointer-events: none; }
+.ans-btn.correct {
+  background: var(--bold-mint); color: var(--ink);
+  pointer-events: none;
+  animation: correctPop 0.4s ease;
+}
+@keyframes correctPop { 0% { transform: scale(1); } 40% { transform: scale(1.15); } 100% { transform: scale(1); } }
+.ans-btn.wrong {
+  background: #FCE2DD; border-color: var(--red-warn);
+  animation: shake 0.4s;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+.shape-ans-btn {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; padding: 12px 16px; font-size: 14px;
+  min-width: 90px;
+}
+.shape-ans-btn svg { width: 36px; height: 36px; }
+.ans-btn.text-ans { font-size: 16px; padding: 12px 16px; min-width: 100px; }
+
+/* Shared walls visual */
+.shared-walls {
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: var(--r-card);
+  padding: 12px;
+  margin: 8px 0;
+  box-shadow: 0 3px 0 var(--ink);
+  width: 100%; max-width: 380px;
+}
+.shared-walls svg { display: block; width: 100%; height: auto; }
+
+/* Final reveal */
+.final-totals {
+  width: 100%; max-width: 460px;
+  background: var(--cream); border: 2px solid var(--ink);
+  border-radius: var(--r-card); padding: 14px 18px;
+  margin: 10px 0; box-shadow: 0 3px 0 var(--ink);
+}
+.final-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center; gap: 10px;
+  padding: 6px 0;
+  font-family: var(--font-display); font-weight: 800; font-size: 17px;
+  text-align: left;
+}
+.final-row + .final-row { border-top: 1px dashed var(--ink); }
+.final-row svg { width: 28px; height: 28px; }
+.final-row strong { font-size: 22px; font-weight: 900; }
+.final-row.win { color: var(--bold-mint); }
+.final-row.win strong { font-size: 26px; }
+
+.celebrate-card {
+  background: var(--tint-mint);
+  border: 3px solid var(--ink);
+  border-radius: var(--r-card);
+  padding: 20px 24px;
+  margin: 14px 0;
+  box-shadow: 0 4px 0 var(--ink);
+  max-width: 460px;
+  animation: pop 0.4s ease;
+}
+.celebrate-card .bigtext { margin: 6px 0; }
+
+/* SVG */
+.click-circle { cursor: pointer; }
+.cell-highlight { fill: var(--yellow-soft); stroke: var(--ink); stroke-width: 1.5; }
+.cell-highlight-pulse { animation: highlightPulse 1.8s ease-in-out infinite; }
+@keyframes highlightPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+
+.cell-number {
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 800;
+  font-size: 11px; fill: #1A1A1A;
+  pointer-events: none;
+  text-anchor: middle;
+}
+.tap-side {
+  stroke: #F5C43E;
+  stroke-linecap: round;
+  cursor: pointer;
+  animation: tapSidePulse 1.2s ease-in-out infinite;
+}
+@keyframes tapSidePulse {
+  0%, 100% { opacity: 0.55; stroke-width: 6; }
+  50% { opacity: 1; stroke-width: 10; }
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; }
+  h2 .title-icon { width: 24px; height: 24px; }
+  .bigtext { font-size: 19px; }
+  .subtext { font-size: 16px; }
+  .thread-readout { font-size: 20px; }
+  .ans-btn { font-size: 19px; padding: 10px 16px; min-width: 54px; }
+  .ans-btn.text-ans { font-size: 14px; padding: 10px 12px; min-width: 80px; }
+  .count-pill { font-size: 13px; padding: 5px 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="tag tag-step" id="stepTag">STEP 1 / 8</div>
+<button class="tag tag-restart" onclick="restart()">RESTART</button>
+
+<div class="app">
+
+<!-- ========== PHASE 1: BUZZ INTRO ========== -->
+<div class="phase active" data-phase="1">
+  <h1>Hexagon Hunt</h1>
+  <svg class="buzz" viewBox="0 0 100 100">
+    <ellipse cx="50" cy="55" rx="28" ry="22" fill="#F5C43E" stroke="#1A1A1A" stroke-width="2.5"/>
+    <rect x="34" y="40" width="6" height="30" fill="#1A1A1A"/>
+    <rect x="48" y="38" width="6" height="34" fill="#1A1A1A"/>
+    <rect x="62" y="40" width="6" height="30" fill="#1A1A1A"/>
+    <ellipse cx="38" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
+    <ellipse cx="62" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
+    <circle cx="42" cy="52" r="2.5" fill="#1A1A1A"/>
+    <circle cx="58" cy="52" r="2.5" fill="#1A1A1A"/>
+    <path d="M 44 62 Q 50 66 56 62" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <line x1="42" y1="32" x2="38" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+    <line x1="58" y1="32" x2="62" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="38" cy="22" r="3" fill="#1A1A1A"/>
+    <circle cx="62" cy="22" r="3" fill="#1A1A1A"/>
+  </svg>
+  <div class="speech">Hi! I'm Buzz. We bees need to build a honeycomb. Help us pick the right shape!</div>
+  <button class="btn pulse big" onclick="next()">START →</button>
+</div>
+
+<!-- ========== PHASE 2: MISSION ========== -->
+<div class="phase" data-phase="2">
+  <h2>The bee mission</h2>
+  <div class="subtext">Walls of a honeycomb are made of wax — and wax is hard to make!</div>
+
+  <div class="wax-scene">
+    <svg viewBox="0 0 320 170" id="waxSceneSvg"></svg>
+  </div>
+
+  <div class="bigtext">Bees want to use the LEAST wax!</div>
+  <div class="subtext">Same honey inside. Less wax outside.</div>
+  <button class="btn pulse" onclick="next()">LET'S TRY →</button>
+</div>
+
+<!-- ========== PHASE 3: HONEY PREVIEW ========== -->
+<div class="phase" data-phase="3">
+  <h2>A bee's honeycomb</h2>
+  <div class="subtext">Bees can fill it with any shape. Look — same honey inside!</div>
+  <div class="preview-grid">
+    <div class="preview-card">
+      <svg viewBox="0 0 120 80" id="previewCircles"></svg>
+      <div class="preview-card-name">Circles</div>
+    </div>
+    <div class="preview-card">
+      <svg viewBox="0 0 120 80" id="previewTriangles"></svg>
+      <div class="preview-card-name">Triangles</div>
+    </div>
+    <div class="preview-card">
+      <svg viewBox="0 0 120 80" id="previewSquares"></svg>
+      <div class="preview-card-name">Squares</div>
+    </div>
+    <div class="preview-card">
+      <svg viewBox="0 0 120 80" id="previewHexagons"></svg>
+      <div class="preview-card-name">Hexagons</div>
+    </div>
+  </div>
+  <div class="bigtext">But which one uses the LEAST wax?</div>
+  <button class="btn pulse" onclick="next()">LET'S FIND OUT →</button>
+</div>
+
+<!-- ========== PHASE 4: CIRCLES ========== -->
+<div class="phase" data-phase="4">
+  <h2>
+    <svg class="title-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#FBEED1" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+    First — try CIRCLES
+  </h2>
+  <div class="subtext" id="circleSubtext">Will circles work? Let's see.</div>
+  <div class="frame-only">
+    <span class="frame-label-html">HONEYCOMB</span>
+    <svg viewBox="0 0 320 200" id="circleFloor"></svg>
+  </div>
+
+  <div id="circleControls">
+    <button class="btn pulse big" id="circleTryBtn" onclick="tryCircles()">FILL WITH CIRCLES</button>
+  </div>
+
+  <div id="circleTapPrompt" style="display:none;">
+    <div class="speech">Something's wrong. <em>Tap an empty spot</em> between the circles.</div>
+  </div>
+
+  <div id="circleProblemQ" class="q-block" style="display:none;">
+    <div class="speech">What's the problem with circles?</div>
+    <div class="ans-options">
+      <button class="ans-btn text-ans" data-correct="0" onclick="answerCircleProblem(this)">Too small</button>
+      <button class="ans-btn text-ans" data-correct="1" onclick="answerCircleProblem(this)">Wasted space</button>
+      <button class="ans-btn text-ans" data-correct="0" onclick="answerCircleProblem(this)">Wrong color</button>
+    </div>
+  </div>
+
+  <div id="circleResult" style="display:none;">
+    <div class="speech win">
+      Right! Wasted space. Let's try shapes with <em>corners and straight sides</em> — like these:
+      <span class="shape-set">
+        <svg viewBox="0 0 24 24"><polygon points="12,3 3,21 21,21" fill="#FFD4C0" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="#C8E5F2" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        <svg viewBox="0 0 24 24"><polygon points="12,3 21,8 21,16 12,21 3,16 3,8" fill="#F5C43E" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+      </span>
+    </div>
+    <button class="btn pulse" onclick="next()">TRY SHAPES WITH SIDES →</button>
+  </div>
+</div>
+
+<!-- ========== PHASE 5: TRIANGLES ========== -->
+<div class="phase" data-phase="5">
+  <h2>
+    <svg class="title-icon" viewBox="0 0 24 24"><polygon points="12,3 3,21 21,21" fill="#FFD4C0" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+    Try TRIANGLES
+  </h2>
+  <div class="subtext" id="triSubtext">Will triangles work?</div>
+  <div id="triCountPill" class="count-pill" style="display:none;">✓ About 40 cells</div>
+  <div class="combined-frame">
+    <svg viewBox="0 0 320 210" id="triFloor"></svg>
+  </div>
+
+  <div id="triControls">
+    <button class="btn pulse big" id="triTryBtn" onclick="tryTriangles()">FILL WITH TRIANGLES</button>
+  </div>
+
+  <div id="triCountQ" class="q-block" style="display:none;">
+    <div class="speech">About how many triangles fit?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerTriCount(this)">30</button>
+      <button class="ans-btn" data-correct="1" onclick="answerTriCount(this)">40</button>
+      <button class="ans-btn" data-correct="0" onclick="answerTriCount(this)">50</button>
+    </div>
+  </div>
+
+  <div id="triMeasurePrompt" style="display:none;">
+    <div class="speech">Now let's measure the wax around <em>one cell</em>.</div>
+    <button class="btn pulse" onclick="measureTri()">MEASURE THE WAX</button>
+  </div>
+
+  <div id="triTapSidePrompt" style="display:none;">
+    <div class="speech">Tap a <em>side</em> of the bright triangle to begin!</div>
+  </div>
+
+  <div id="triThreadQ" class="q-block" style="display:none;">
+    <div class="speech">
+      Where does the line end?
+      <div class="q-hint">(closest number)</div>
+    </div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerTriThread(this)">7</button>
+      <button class="ans-btn" data-correct="0" onclick="answerTriThread(this)">8</button>
+      <button class="ans-btn" data-correct="1" onclick="answerTriThread(this)">9</button>
+      <button class="ans-btn" data-correct="0" onclick="answerTriThread(this)">10</button>
+    </div>
+  </div>
+
+  <div id="triReadout" style="display:none;">
+    <div class="thread-readout">About 9 wax units per triangle</div>
+  </div>
+
+  <div id="triMultiplyQ" class="q-block" style="display:none;">
+    <div class="speech">40 triangles × 9 wax each = ?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerTriMultiply(this)">100</button>
+      <button class="ans-btn" data-correct="1" onclick="answerTriMultiply(this)">360</button>
+      <button class="ans-btn" data-correct="0" onclick="answerTriMultiply(this)">600</button>
+    </div>
+  </div>
+
+  <div id="triWallsBlock" style="display:none;">
+    <div class="bigtext">But wait — look closer!</div>
+    <div class="shared-walls">
+      <svg viewBox="0 0 320 160" id="sharedWallsSvg"></svg>
+    </div>
+    <div id="triWallsQ" class="q-block">
+      <div class="speech">How many cells does <em>this wall</em> belong to?</div>
+      <div class="ans-options">
+        <button class="ans-btn" data-correct="0" onclick="answerTriWalls(this)">1</button>
+        <button class="ans-btn" data-correct="1" onclick="answerTriWalls(this)">2</button>
+        <button class="ans-btn" data-correct="0" onclick="answerTriWalls(this)">3</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="triWallsReveal" style="display:none;">
+    <div class="speech win">Yes! Every wall is shared. We counted each wall <em>twice</em> — so the real wax is HALF.</div>
+  </div>
+
+  <div id="triHalveQ" class="q-block" style="display:none;">
+    <div class="speech">360 ÷ 2 = ?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerTriHalve(this)">100</button>
+      <button class="ans-btn" data-correct="1" onclick="answerTriHalve(this)">180</button>
+      <button class="ans-btn" data-correct="0" onclick="answerTriHalve(this)">360</button>
+    </div>
+  </div>
+
+  <div id="triTotal" style="display:none;">
+    <div class="shape-total">Triangle total: <strong>180</strong> wax units</div>
+  </div>
+
+  <div id="triDone" style="display:none;">
+    <button class="btn pulse" onclick="next()">NEXT →</button>
+  </div>
+</div>
+
+<!-- ========== PHASE 6: SQUARES ========== -->
+<div class="phase" data-phase="6">
+  <h2>
+    <svg class="title-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="#C8E5F2" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+    Try SQUARES
+  </h2>
+  <div class="subtext" id="sqSubtext">Now try squares.</div>
+  <div id="sqCountPill" class="count-pill" style="display:none;">✓ About 40 cells</div>
+  <div class="combined-frame">
+    <svg viewBox="0 0 320 210" id="sqFloor"></svg>
+  </div>
+
+  <div id="sqControls">
+    <button class="btn pulse big" id="sqTryBtn" onclick="trySquares()">FILL WITH SQUARES</button>
+  </div>
+
+  <div id="sqCountQ" class="q-block" style="display:none;">
+    <div class="speech">About how many squares fit?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerSqCount(this)">30</button>
+      <button class="ans-btn" data-correct="1" onclick="answerSqCount(this)">40</button>
+      <button class="ans-btn" data-correct="0" onclick="answerSqCount(this)">50</button>
+    </div>
+  </div>
+
+  <div id="sqMeasurePrompt" style="display:none;">
+    <div class="speech win">About 40 — same as triangles! Now measure the wax.</div>
+    <button class="btn pulse" onclick="measureSq()">MEASURE THE WAX</button>
+  </div>
+
+  <div id="sqTapSidePrompt" style="display:none;">
+    <div class="speech">Tap a <em>side</em> of the bright square to begin!</div>
+  </div>
+
+  <div id="sqThreadQ" class="q-block" style="display:none;">
+    <div class="speech">
+      Where does the line end?
+      <div class="q-hint">(closest number)</div>
+    </div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerSqThread(this)">6</button>
+      <button class="ans-btn" data-correct="0" onclick="answerSqThread(this)">7</button>
+      <button class="ans-btn" data-correct="1" onclick="answerSqThread(this)">8</button>
+      <button class="ans-btn" data-correct="0" onclick="answerSqThread(this)">9</button>
+    </div>
+  </div>
+
+  <div id="sqReadout" style="display:none;">
+    <div class="thread-readout">8 wax units per square</div>
+  </div>
+
+  <div id="sqMultiplyQ" class="q-block" style="display:none;">
+    <div class="speech">40 squares × 8 wax each = ?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerSqMultiply(this)">100</button>
+      <button class="ans-btn" data-correct="1" onclick="answerSqMultiply(this)">320</button>
+      <button class="ans-btn" data-correct="0" onclick="answerSqMultiply(this)">600</button>
+    </div>
+  </div>
+
+  <div id="sqWallsBlock" style="display:none;">
+    <div class="bigtext">Squares share walls too!</div>
+    <div class="shared-walls">
+      <svg viewBox="0 0 320 160" id="sqSharedWallsSvg"></svg>
+    </div>
+    <div class="speech">Every wall is shared — halve it!</div>
+  </div>
+
+  <div id="sqHalveQ" class="q-block" style="display:none;">
+    <div class="speech">320 ÷ 2 = ?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerSqHalve(this)">100</button>
+      <button class="ans-btn" data-correct="1" onclick="answerSqHalve(this)">160</button>
+      <button class="ans-btn" data-correct="0" onclick="answerSqHalve(this)">320</button>
+    </div>
+  </div>
+
+  <div id="sqTotal" style="display:none;">
+    <div class="shape-total">Square total: <strong>160</strong> wax units</div>
+    <div class="speech win">Less than triangle (180)!</div>
+  </div>
+
+  <div id="sqDone" style="display:none;">
+    <button class="btn pulse" onclick="next()">NEXT →</button>
+  </div>
+</div>
+
+<!-- ========== PHASE 7: HEXAGONS ========== -->
+<div class="phase" data-phase="7">
+  <h2>
+    <svg class="title-icon" viewBox="0 0 24 24"><polygon points="12,3 21,8 21,16 12,21 3,16 3,8" fill="#F5C43E" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+    Try HEXAGONS
+  </h2>
+  <div class="subtext" id="hexSubtext">Last shape — hexagons.</div>
+  <div id="hexCountPill" class="count-pill" style="display:none;">✓ About 40 cells</div>
+  <div class="combined-frame">
+    <svg viewBox="0 0 320 210" id="hexFloor"></svg>
+  </div>
+
+  <div id="hexControls">
+    <button class="btn pulse big" id="hexTryBtn" onclick="tryHexagons()">FILL WITH HEXAGONS</button>
+  </div>
+
+  <div id="hexCountQ" class="q-block" style="display:none;">
+    <div class="speech">About how many hexagons fit?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerHexCount(this)">30</button>
+      <button class="ans-btn" data-correct="1" onclick="answerHexCount(this)">40</button>
+      <button class="ans-btn" data-correct="0" onclick="answerHexCount(this)">50</button>
+    </div>
+  </div>
+
+  <div id="hexMeasurePrompt" style="display:none;">
+    <div class="speech win">About 40 again — same total honey! Now measure the wax.</div>
+    <button class="btn pulse" onclick="measureHex()">MEASURE THE WAX</button>
+  </div>
+
+  <div id="hexTapSidePrompt" style="display:none;">
+    <div class="speech">Tap a <em>side</em> of the bright hexagon to begin!</div>
+  </div>
+
+  <div id="hexThreadQ" class="q-block" style="display:none;">
+    <div class="speech">
+      Where does the line end?
+      <div class="q-hint">(closest number)</div>
+    </div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerHexThread(this)">6</button>
+      <button class="ans-btn" data-correct="1" onclick="answerHexThread(this)">7</button>
+      <button class="ans-btn" data-correct="0" onclick="answerHexThread(this)">8</button>
+      <button class="ans-btn" data-correct="0" onclick="answerHexThread(this)">9</button>
+    </div>
+  </div>
+
+  <div id="hexReadout" style="display:none;">
+    <div class="thread-readout">About 7 wax units per hexagon</div>
+  </div>
+
+  <div id="hexMultiplyQ" class="q-block" style="display:none;">
+    <div class="speech">40 hexagons × 7 wax each = ?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerHexMultiply(this)">100</button>
+      <button class="ans-btn" data-correct="1" onclick="answerHexMultiply(this)">280</button>
+      <button class="ans-btn" data-correct="0" onclick="answerHexMultiply(this)">600</button>
+    </div>
+  </div>
+
+  <div id="hexWallsBlock" style="display:none;">
+    <div class="bigtext">Hexagons share walls too!</div>
+    <div class="shared-walls">
+      <svg viewBox="0 0 320 160" id="hexSharedWallsSvg"></svg>
+    </div>
+    <div class="speech">Every wall is shared — halve it!</div>
+  </div>
+
+  <div id="hexHalveQ" class="q-block" style="display:none;">
+    <div class="speech">280 ÷ 2 = ?</div>
+    <div class="ans-options">
+      <button class="ans-btn" data-correct="0" onclick="answerHexHalve(this)">100</button>
+      <button class="ans-btn" data-correct="1" onclick="answerHexHalve(this)">140</button>
+      <button class="ans-btn" data-correct="0" onclick="answerHexHalve(this)">280</button>
+    </div>
+  </div>
+
+  <div id="hexTotal" style="display:none;">
+    <div class="shape-total">Hexagon total: <strong>140</strong> wax units</div>
+    <div class="speech win">The least of all!</div>
+  </div>
+
+  <div id="hexDone" style="display:none;">
+    <button class="btn pulse" onclick="next()">SEE THE WINNER →</button>
+  </div>
+</div>
+
+<!-- ========== PHASE 8: FINAL ========== -->
+<div class="phase" data-phase="8">
+  <h2 id="finalTitle">Compare them all</h2>
+  <div class="subtext">Total wax for each:</div>
+  <div class="final-totals">
+    <div class="final-row">
+      <svg viewBox="0 0 24 24"><polygon points="12,3 3,21 21,21" fill="#FFD4C0" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+      <span>Triangle</span>
+      <strong>180</strong>
+    </div>
+    <div class="final-row">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="#C8E5F2" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+      <span>Square</span>
+      <strong>160</strong>
+    </div>
+    <div class="final-row win">
+      <svg viewBox="0 0 24 24"><polygon points="12,3 21,8 21,16 12,21 3,16 3,8" fill="#F5C43E" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+      <span>Hexagon</span>
+      <strong>140 ★</strong>
+    </div>
+  </div>
+
+  <div id="bestQ" class="q-block">
+    <div class="speech">Which is the BEST shape for bees?</div>
+    <div class="ans-options">
+      <button class="ans-btn shape-ans-btn" data-correct="0" onclick="answerBest(this, 'tri')">
+        <svg viewBox="0 0 24 24"><polygon points="12,3 3,21 21,21" fill="#FFD4C0" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        Triangle
+      </button>
+      <button class="ans-btn shape-ans-btn" data-correct="0" onclick="answerBest(this, 'sq')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="#C8E5F2" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        Square
+      </button>
+      <button class="ans-btn shape-ans-btn" data-correct="1" onclick="answerBest(this, 'hex')">
+        <svg viewBox="0 0 24 24"><polygon points="12,3 21,8 21,16 12,21 3,16 3,8" fill="#F5C43E" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        Hexagon
+      </button>
+    </div>
+  </div>
+
+  <div id="bestReveal" style="display:none;">
+    <div class="celebrate-card">
+      <svg class="buzz" viewBox="0 0 100 100" style="width:90px; height:90px; margin: 4px auto;">
+        <ellipse cx="50" cy="55" rx="28" ry="22" fill="#F5C43E" stroke="#1A1A1A" stroke-width="2.5"/>
+        <rect x="34" y="40" width="6" height="30" fill="#1A1A1A"/>
+        <rect x="48" y="38" width="6" height="34" fill="#1A1A1A"/>
+        <rect x="62" y="40" width="6" height="30" fill="#1A1A1A"/>
+        <ellipse cx="38" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
+        <ellipse cx="62" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
+        <circle cx="42" cy="52" r="2.5" fill="#1A1A1A"/>
+        <circle cx="58" cy="52" r="2.5" fill="#1A1A1A"/>
+        <path d="M 42 60 Q 50 68 58 60" stroke="#1A1A1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+      <div class="bigtext">Hexagons WIN!</div>
+      <div class="speech">Real bees figured this out a long time ago. Same honey, less wax. Hexagons every time.</div>
+    </div>
+    <button class="btn" onclick="restart()">PLAY AGAIN</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const TOTAL = 8;
+const U = 20;
+const FRAME_W = 320, FRAME_H = 200;
+let phase = 1;
+
+const SQ_SIDE = 40;
+const TRI_SIDE = Math.sqrt(4 * 1600 / Math.sqrt(3));
+const HEX_SIDE = Math.sqrt(2 * 1600 / (3 * Math.sqrt(3)));
+
+const cellState = {
+  tri: { highlightVerts: null, placed: [] },
+  sq:  { highlightVerts: null, placed: [] },
+  hex: { highlightVerts: null, placed: [] }
+};
+
+// ========== HINTS ==========
+const HINTS = {
+  circleProblemQ: 'Look at the gaps between the circles — what fills them?',
+  triCountQ: 'Look at the honeycomb again — count by tens.',
+  triThreadQ: 'Look at where the yellow line ends. Closest number on the ruler.',
+  triMultiplyQ: '40 of them, each using 9 — try a bigger number.',
+  triWallsQ: 'Look at the wall — count the cells touching it on each side.',
+  triHalveQ: 'Half of 360 — split it in two equal parts.',
+  sqCountQ: 'Count by tens. Same as the triangles!',
+  sqThreadQ: 'Look at where the line ends.',
+  sqMultiplyQ: '40 squares each with 8 wax.',
+  sqHalveQ: 'Half of 320.',
+  hexCountQ: 'Count by tens. Same as before!',
+  hexThreadQ: 'Look at where the line ends. Closest number.',
+  hexMultiplyQ: '40 hexagons each with 7 wax.',
+  hexHalveQ: 'Half of 280.',
+  bestQ: 'Look at the totals — which has the smallest number?'
+};
+
+const ORIGINAL_PROMPTS = {};
+
+function showPhase(n) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+  document.querySelector(`[data-phase="${n}"]`).classList.add('active');
+  document.getElementById('stepTag').textContent = `STEP ${n} / ${TOTAL}`;
+  phase = n;
+  window.scrollTo(0, 0);
+  if (n === 2) drawWaxScene();
+  if (n === 3) initPreview();
+  if (n === 4) initCircles();
+  if (n === 5) initTriangles();
+  if (n === 6) initSquares();
+  if (n === 7) initHexagons();
+  if (n === 8) initFinal();
+}
+
+function drawWaxScene() {
+  const svg = document.getElementById('waxSceneSvg');
+  svg.innerHTML = '';
+  el(svg, 'rect', { x: 0, y: 0, width: 320, height: 170, fill: '#FDF6E3' });
+
+  // Honeycomb cluster: 7 hexagons (1 center + 6 around) — classic flower pattern
+  const r = 26;
+  const cx = 160, cy = 80;
+  const dx = r * Math.sqrt(3);
+  const centers = [
+    [cx, cy],                 // center
+    [cx, cy - r * 1.5 - 0],    // top — actually use proper hex flower placement
+  ];
+  // Proper hex flower around center
+  const flower = [
+    [cx, cy],
+    [cx + dx, cy],
+    [cx - dx, cy],
+    [cx + dx/2, cy - r*1.5],
+    [cx - dx/2, cy - r*1.5],
+    [cx + dx/2, cy + r*1.5],
+    [cx - dx/2, cy + r*1.5]
+  ];
+
+  // Draw cells with honey
+  flower.forEach(([x, y]) => {
+    const pts = hexPts(x, y, r);
+    el(svg, 'polygon', {
+      points: pts.map(p => p.join(',')).join(' '),
+      fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 4, 'stroke-linejoin': 'round'
+    });
+    // honey drop in cell
+    honeyDrop(svg, x, y, 1.2);
+  });
+
+  // Highlight a couple of "walls" — overlay yellow strokes on shared edges
+  // Pick the wall between center and right neighbor
+  const c0 = flower[0]; // center
+  const cR = flower[1]; // right
+  const ptsC = hexPts(c0[0], c0[1], r);
+  // The shared edge with right neighbor is between vertex 1 (upper-right) and vertex 2 (lower-right) of center hex
+  const wall1 = [ptsC[1], ptsC[2]];
+  // Wall between center and top-right
+  const cTR = flower[3];
+  const wall2 = [ptsC[0], ptsC[1]];
+  // Wall between center and top-left
+  const wall3 = [ptsC[5], ptsC[0]];
+
+  // Draw highlighted walls in a wax-yellow color, thick
+  [wall1, wall2, wall3].forEach(w => {
+    el(svg, 'line', {
+      x1: w[0][0], y1: w[0][1], x2: w[1][0], y2: w[1][1],
+      stroke: '#E0524A', 'stroke-width': 6, 'stroke-linecap': 'round'
+    });
+  });
+
+  // Label "WALLS = WAX" with arrows pointing to the walls
+  // Place label above-right of cluster
+  const labelX = 245, labelY = 22;
+  el(svg, 'rect', {
+    x: labelX - 56, y: labelY - 11, width: 112, height: 24, rx: 5,
+    fill: '#1A1A1A'
+  });
+  const txt = el(svg, 'text', {
+    x: labelX, y: labelY + 5, 'text-anchor': 'middle',
+    'font-family': 'Sora, sans-serif', 'font-weight': 900,
+    'font-size': 12, fill: 'white', 'letter-spacing': 0.5
+  });
+  txt.textContent = 'walls = WAX';
+
+  // Arrows from label to 2 highlighted walls
+  const arrowTargets = [wall1, wall2];
+  arrowTargets.forEach(w => {
+    const tx = (w[0][0] + w[1][0]) / 2;
+    const ty = (w[0][1] + w[1][1]) / 2;
+    const fromX = labelX, fromY = labelY + 13;
+    const dxA = tx - fromX, dyA = ty - fromY;
+    const len = Math.hypot(dxA, dyA);
+    const ux = dxA / len, uy = dyA / len;
+    const stopX = tx - ux * 8, stopY = ty - uy * 8;
+    el(svg, 'line', {
+      x1: fromX, y1: fromY, x2: stopX, y2: stopY,
+      stroke: '#1A1A1A', 'stroke-width': 2, 'stroke-linecap': 'round'
+    });
+    const ah = 6;
+    const px = -uy, py = ux;
+    el(svg, 'polygon', {
+      points: `${stopX + ux*ah},${stopY + uy*ah} ${stopX + px*ah*0.6},${stopY + py*ah*0.6} ${stopX - px*ah*0.6},${stopY - py*ah*0.6}`,
+      fill: '#1A1A1A'
+    });
+  });
+
+  // "hard to make!" sub-label below cluster
+  const noteY = 156;
+  el(svg, 'text', {
+    x: cx, y: noteY, 'text-anchor': 'middle',
+    'font-family': 'Sora, sans-serif', 'font-weight': 800,
+    'font-size': 12, fill: '#E0524A'
+  }).textContent = '⚒  hard to make!';
+}
+function next() { if (phase < TOTAL) showPhase(phase + 1); }
+function restart() {
+  cellState.tri.placed = []; cellState.sq.placed = []; cellState.hex.placed = [];
+  cellState.tri.highlightVerts = cellState.sq.highlightVerts = cellState.hex.highlightVerts = null;
+  showPhase(1);
+}
+
+// ========== AUDIO ==========
+let actx;
+function ctx() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); return actx; }
+function tone(freq, dur=0.12, type='sine', gain=0.18, delay=0) {
+  try {
+    const c = ctx();
+    const o = c.createOscillator(), g = c.createGain();
+    o.connect(g); g.connect(c.destination);
+    o.frequency.value = freq; o.type = type;
+    const t = c.currentTime + delay;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(gain, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur);
+  } catch(e) {}
+}
+function playTap() { tone(700, 0.06, 'sine', 0.1); }
+function playTick() { tone(660 + Math.random()*200, 0.05, 'sine', 0.08); }
+function playPlace() { tone(440, 0.08); }
+function playWin() { tone(523, 0.2, 'sine', 0.18, 0); tone(659, 0.2, 'sine', 0.18, 0.1); tone(784, 0.25, 'sine', 0.18, 0.2); }
+function playFail() { tone(330, 0.25, 'triangle', 0.15); tone(247, 0.3, 'triangle', 0.15, 0.15); }
+function playWrong() { tone(220, 0.18, 'triangle', 0.13); }
+function playFly() { tone(523, 0.4, 'sine', 0.13); tone(659, 0.3, 'sine', 0.1, 0.1); }
+function playLand() { tone(659, 0.1, 'sine', 0.16); }
+
+// ========== SVG HELPERS ==========
+function el(parent, name, attrs) {
+  const e = document.createElementNS(SVG_NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  parent.appendChild(e);
+  return e;
+}
+function svgPoint(svg, clientX, clientY) {
+  const pt = svg.createSVGPoint();
+  pt.x = clientX; pt.y = clientY;
+  return pt.matrixTransform(svg.getScreenCTM().inverse());
+}
+function hexPts(cx, cy, r) {
+  const pts = [];
+  for (let i = 0; i < 6; i++) {
+    const a = Math.PI/3 * i - Math.PI/2;
+    pts.push([cx + r*Math.cos(a), cy + r*Math.sin(a)]);
+  }
+  return pts;
+}
+function honeyDrop(parent, cx, cy, scale=1) {
+  el(parent, 'ellipse', { cx, cy, rx: 5*scale, ry: 6.5*scale, fill: '#F5C43E', opacity: 0.75 });
+  el(parent, 'ellipse', { cx: cx-1.5*scale, cy: cy-1.5*scale, rx: 1.5*scale, ry: 2.5*scale, fill: 'white', opacity: 0.7 });
+}
+
+// Frame-only setup (no ruler area drawn until measure)
+function setupFrame(svg) {
+  svg.setAttribute('viewBox', '0 0 320 210');
+  const defs = el(svg, 'defs', {});
+  const clip = el(defs, 'clipPath', { id: svg.id + '-clip' });
+  el(clip, 'rect', { x: 4, y: 12, width: 312, height: 184, rx: 6 });
+
+  el(svg, 'rect', {
+    x: 4, y: 12, width: 312, height: 184,
+    fill: 'white', stroke: '#1A1A1A', 'stroke-width': 3, rx: 8
+  });
+  el(svg, 'rect', { x: 4, y: 198, width: 312, height: 4, fill: '#1A1A1A', rx: 2 });
+
+  // Tile group (clipped) — drawn before label so label sits on top
+  const tileGroup = el(svg, 'g', { 'clip-path': `url(#${svg.id}-clip)` });
+
+  // Number layer (above tiles, also clipped)
+  const numberGroup = el(svg, 'g', { 'clip-path': `url(#${svg.id}-clip)` });
+
+  // Label group LAST — sits on top of everything
+  const labelGroup = el(svg, 'g', {});
+  el(labelGroup, 'rect', { x: 18, y: 4, width: 90, height: 16, rx: 3, fill: '#1A1A1A' });
+  const t = el(labelGroup, 'text', {
+    x: 63, y: 15, 'text-anchor': 'middle',
+    'font-family': 'Sora, sans-serif', 'font-weight': 800,
+    'font-size': 9, fill: 'white', 'letter-spacing': 1
+  });
+  t.textContent = 'HONEYCOMB';
+
+  return { tileGroup, numberGroup };
+}
+
+// Add ruler — expands viewBox + draws ruler area
+function addRuler(svg) {
+  svg.setAttribute('viewBox', '0 0 320 320');
+
+  el(svg, 'rect', {
+    x: 4, y: 226, width: 312, height: 84, rx: 8,
+    fill: '#FDF6E3', stroke: '#1A1A1A', 'stroke-width': 2
+  });
+  el(svg, 'rect', { x: 4, y: 308, width: 312, height: 4, fill: '#1A1A1A', rx: 2 });
+
+  const rulerY = 270;
+  const totalMarks = 10;
+  const markGap = U;
+  const rulerStartX = (320 - totalMarks * markGap) / 2;
+
+  // Ruler base — thicker with rounded end caps
+  el(svg, 'line', {
+    x1: rulerStartX, y1: rulerY, x2: rulerStartX + totalMarks * markGap, y2: rulerY,
+    stroke: '#1A1A1A', 'stroke-width': 3.5, 'stroke-linecap': 'round'
+  });
+  // Filled end stops
+  el(svg, 'circle', { cx: rulerStartX, cy: rulerY, r: 3, fill: '#1A1A1A' });
+  el(svg, 'circle', { cx: rulerStartX + totalMarks * markGap, cy: rulerY, r: 3, fill: '#1A1A1A' });
+  for (let i = 0; i <= totalMarks; i++) {
+    const x = rulerStartX + i * markGap;
+    const isMajor = (i % 5 === 0);
+    const tickH = isMajor ? 11 : 7;
+    el(svg, 'line', {
+      x1: x, y1: rulerY, x2: x, y2: rulerY + tickH,
+      stroke: '#1A1A1A', 'stroke-width': isMajor ? 2.8 : 2
+    });
+    const tx = el(svg, 'text', {
+      x, y: rulerY + 22, 'text-anchor': 'middle',
+      'font-family': 'Sora, sans-serif', 'font-weight': isMajor ? 900 : 800,
+      'font-size': isMajor ? 12 : 11,
+      fill: '#1A1A1A'
+    });
+    tx.textContent = i;
+  }
+  return { rulerY, rulerStartX };
+}
+
+// ========== ANSWER HELPER ==========
+function handleAnswer(btn, qBlockId, onCorrect) {
+  if (btn.dataset.correct === '1') {
+    btn.classList.add('correct');
+    btn.parentElement.querySelectorAll('.ans-btn').forEach(b => b.disabled = true);
+    playWin();
+    setTimeout(onCorrect, 700);
+  } else {
+    btn.classList.add('wrong');
+    playWrong();
+    setTimeout(() => btn.classList.remove('wrong'), 500);
+    if (qBlockId && HINTS[qBlockId]) {
+      const block = document.getElementById(qBlockId);
+      const speech = block.querySelector('.speech');
+      if (speech) {
+        if (!ORIGINAL_PROMPTS[qBlockId]) ORIGINAL_PROMPTS[qBlockId] = speech.innerHTML;
+        speech.innerHTML = HINTS[qBlockId];
+      }
+    }
+  }
+}
+
+function isCellInFrame(centroid) {
+  return centroid.x > 4 && centroid.x < 316 && centroid.y > 14 && centroid.y < 196;
+}
+
+// ========== COUNTING ANIMATION (numbers in cells) ==========
+function animateCount(prefix, placed, onComplete) {
+  const visible = placed.filter(p => isCellInFrame(p.centroid));
+  visible.sort((a, b) => a.centroid.y - b.centroid.y || a.centroid.x - b.centroid.x);
+
+  const svg = document.getElementById(prefix + 'Floor');
+  // Find numberGroup (3rd <g> in svg, the one for numbers)
+  const groups = svg.querySelectorAll('g');
+  const numberGroup = groups[1]; // [0] = tileGroup, [1] = numberGroup, [2] = labelGroup
+
+  let i = 0;
+  function tick() {
+    if (i >= visible.length) {
+      // Show success pill
+      const pill = document.getElementById(prefix + 'CountPill');
+      pill.style.display = 'inline-block';
+      playWin();
+      setTimeout(onComplete, 700);
+      return;
+    }
+    const c = visible[i];
+    const num = i + 1;
+    // Place number near cell centroid (slightly above to avoid honey drop)
+    const text = el(numberGroup, 'text', {
+      x: c.centroid.x, y: c.centroid.y + 3,
+      class: 'cell-number'
+    });
+    text.textContent = num;
+    text.style.opacity = '0';
+    text.style.transition = 'opacity 0.2s';
+    requestAnimationFrame(() => text.style.opacity = '1');
+    if (i % 2 === 0) playTick();
+    i++;
+    setTimeout(tick, 120);
+  }
+  tick();
+}
+
+// ========== PHASE 3: HONEY PREVIEW ==========
+function initPreview() {
+  drawPreviewCircles();
+  drawPreviewTriangles();
+  drawPreviewSquares();
+  drawPreviewHexagons();
+}
+
+function drawPreviewCircles() {
+  const svg = document.getElementById('previewCircles');
+  svg.innerHTML = '';
+  el(svg, 'rect', { x: 0, y: 0, width: 120, height: 80, fill: '#FBEED1' });
+  const r = 9;
+  const dy = r * Math.sqrt(3);
+  for (let row = 0; row < 5; row++) {
+    const y = 8 + row * dy;
+    if (y - r > 80) break;
+    const offset = (row % 2) * r;
+    for (let col = -1; col < 8; col++) {
+      const x = 4 + offset + col * (2 * r);
+      if (x + r < 0) continue;
+      if (x - r > 120) break;
+      el(svg, 'circle', { cx: x, cy: y, r, fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 1 });
+      // Honey drop
+      el(svg, 'circle', { cx: x, cy: y, r: 2.5, fill: '#F5C43E' });
+    }
+  }
+}
+
+function drawPreviewTriangles() {
+  const svg = document.getElementById('previewTriangles');
+  svg.innerHTML = '';
+  el(svg, 'rect', { x: 0, y: 0, width: 120, height: 80, fill: '#FBEED1' });
+  const s = 18, h = s * Math.sqrt(3) / 2;
+  for (let row = 0; row < 6; row++) {
+    const y = 2 + row * h;
+    if (y > 80) break;
+    for (let i = -1; i < 14; i++) {
+      const x = i * (s / 2);
+      if (x > 125) break;
+      const up = (i + row + 100) % 2 === 0;
+      const v = up
+        ? [[x, y+h], [x+s/2, y], [x+s, y+h]]
+        : [[x, y], [x+s/2, y+h], [x+s, y]];
+      el(svg, 'polygon', {
+        points: v.map(p => p.join(',')).join(' '),
+        fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 1
+      });
+      const cx = (v[0][0] + v[1][0] + v[2][0]) / 3;
+      const cy = (v[0][1] + v[1][1] + v[2][1]) / 3;
+      el(svg, 'circle', { cx, cy, r: 1.8, fill: '#F5C43E' });
+    }
+  }
+}
+
+function drawPreviewSquares() {
+  const svg = document.getElementById('previewSquares');
+  svg.innerHTML = '';
+  el(svg, 'rect', { x: 0, y: 0, width: 120, height: 80, fill: '#FBEED1' });
+  const s = 14;
+  for (let r = 0; r < 6; r++) {
+    for (let c = 0; c < 9; c++) {
+      const x = c * s;
+      const y = 4 + r * s;
+      if (y > 80) break;
+      el(svg, 'rect', { x, y, width: s, height: s, fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 1 });
+      el(svg, 'circle', { cx: x + s/2, cy: y + s/2, r: 2.2, fill: '#F5C43E' });
+    }
+  }
+}
+
+function drawPreviewHexagons() {
+  const svg = document.getElementById('previewHexagons');
+  svg.innerHTML = '';
+  el(svg, 'rect', { x: 0, y: 0, width: 120, height: 80, fill: '#FBEED1' });
+  const r = 8;
+  const dx = r * Math.sqrt(3);
+  const dy = r * 1.5;
+  for (let row = 0; row < 7; row++) {
+    const y = 6 + row * dy;
+    if (y > 80) break;
+    for (let col = 0; col < 11; col++) {
+      const x = 4 + col * dx + (row % 2) * dx/2;
+      if (x > 125) break;
+      const pts = hexPts(x, y, r);
+      el(svg, 'polygon', {
+        points: pts.map(p => p.join(',')).join(' '),
+        fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 1
+      });
+      el(svg, 'circle', { cx: x, cy: y, r: 2, fill: '#F5C43E' });
+    }
+  }
+}
+
+// ========== PHASE 4: CIRCLES ==========
+let circleData = [];
+
+function initCircles() {
+  const svg = document.getElementById('circleFloor');
+  svg.innerHTML = '';
+  document.getElementById('circleControls').style.display = 'block';
+  document.getElementById('circleTapPrompt').style.display = 'none';
+  document.getElementById('circleProblemQ').style.display = 'none';
+  document.getElementById('circleResult').style.display = 'none';
+  document.getElementById('circleSubtext').textContent = 'Will circles work? Let\'s see.';
+  document.getElementById('circleTryBtn').disabled = false;
+  document.getElementById('circleProblemQ').querySelectorAll('.ans-btn').forEach(b => {
+    b.disabled = false; b.classList.remove('correct', 'wrong');
+  });
+  // Restore original prompts
+  Object.keys(ORIGINAL_PROMPTS).forEach(id => {
+    const block = document.getElementById(id);
+    if (block) {
+      const speech = block.querySelector('.speech');
+      if (speech) speech.innerHTML = ORIGINAL_PROMPTS[id];
+    }
+  });
+  circleData = [];
+}
+
+function tryCircles() {
+  document.getElementById('circleTryBtn').disabled = true;
+  const svg = document.getElementById('circleFloor');
+  const defs = el(svg, 'defs', {});
+  const clip = el(defs, 'clipPath', { id: 'cc-clip' });
+  el(clip, 'rect', { x: 0, y: 0, width: FRAME_W, height: FRAME_H });
+  const g = el(svg, 'g', { 'clip-path': 'url(#cc-clip)' });
+
+  const r = 28;
+  const dy = r * Math.sqrt(3);
+  const positions = [];
+  for (let row = 0; row < 6; row++) {
+    const y = 18 + row * dy;
+    if (y - r > FRAME_H) break;
+    const offset = (row % 2) * r;
+    for (let col = -1; col < 8; col++) {
+      const x = -4 + offset + col * (2*r);
+      if (x + r < 0) continue;
+      if (x - r > FRAME_W) break;
+      positions.push({ x, y });
+    }
+  }
+  circleData = positions.slice();
+
+  positions.forEach((p, i) => {
+    setTimeout(() => {
+      el(g, 'circle', {
+        cx: p.x, cy: p.y, r,
+        fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5,
+        class: 'click-circle'
+      });
+      playPlace();
+    }, i * 50);
+  });
+
+  setTimeout(() => {
+    document.getElementById('circleControls').style.display = 'none';
+    document.getElementById('circleTapPrompt').style.display = 'block';
+    svg.style.cursor = 'pointer';
+    svg.onclick = handleCircleClick;
+  }, positions.length * 50 + 200);
+}
+
+function handleCircleClick(e) {
+  const svg = document.getElementById('circleFloor');
+  const pt = svgPoint(svg, e.clientX, e.clientY);
+  const r = 28;
+  const inCircle = circleData.some(c => Math.hypot(pt.x - c.x, pt.y - c.y) <= r);
+  if (inCircle) {
+    playWrong();
+    document.getElementById('circleTapPrompt').querySelector('.speech').innerHTML =
+      'Not a circle — tap an <em>empty spot</em> between them.';
+  } else {
+    svg.onclick = null;
+    svg.style.cursor = 'default';
+    showGapsSubtle();
+  }
+}
+
+// Subtle: a few small arrows pointing into empty spaces, with one small label
+function showGapsSubtle() {
+  const svg = document.getElementById('circleFloor');
+  const r = 28;
+  // Compute all gap centroids (between every 3 mutually-adjacent circles)
+  const gaps = [];
+  for (let i = 0; i < circleData.length; i++) {
+    for (let j = i+1; j < circleData.length; j++) {
+      const a = circleData[i], b = circleData[j];
+      if (Math.abs(a.y - b.y) > 2) continue;
+      if (Math.abs(a.x - b.x) > 2*r + 5) continue;
+      for (let k = 0; k < circleData.length; k++) {
+        const c = circleData[k];
+        if (c.y - a.y < r * 1.5 || c.y - a.y > r * 2.2) continue;
+        const cx_avg = (a.x + b.x) / 2;
+        if (Math.abs(c.x - cx_avg) < r) {
+          gaps.push({ x: (a.x + b.x + c.x) / 3, y: (a.y + b.y + c.y) / 3 });
+        }
+      }
+    }
+  }
+
+  // Filter to gaps inside the frame
+  const inner = gaps.filter(g => g.x > 8 && g.x < 312 && g.y > 8 && g.y < 192);
+
+  // Step 1: Fill ALL gap regions with small red dots (the "wasted space")
+  inner.forEach((g, i) => {
+    setTimeout(() => {
+      el(svg, 'circle', {
+        cx: g.x, cy: g.y, r: 5,
+        fill: '#E0524A', opacity: 0.85
+      });
+    }, i * 25);
+  });
+
+  // Step 2: Pick 3 well-spaced samples from the inner gaps
+  // Prefer ones spread across left/center/right and not too close to top
+  const midGaps = inner.filter(g => g.y > 60 && g.y < 170);
+  const sample = [];
+  if (midGaps.length > 0) sample.push(midGaps[Math.floor(midGaps.length * 0.15)]);
+  if (midGaps.length > 1) sample.push(midGaps[Math.floor(midGaps.length * 0.5)]);
+  if (midGaps.length > 2) sample.push(midGaps[Math.floor(midGaps.length * 0.85)]);
+
+  const fillTime = inner.length * 25 + 200;
+
+  // Step 3: Single "wasted space" label at top center (clearly visible)
+  setTimeout(() => {
+    const lblX = 160, lblY = 18;
+    el(svg, 'rect', {
+      x: lblX - 56, y: lblY - 11, width: 112, height: 22, rx: 5,
+      fill: '#1A1A1A'
+    });
+    const txt = el(svg, 'text', {
+      x: lblX, y: lblY + 4, 'text-anchor': 'middle',
+      'font-family': 'Sora, sans-serif', 'font-weight': 800,
+      'font-size': 11, fill: 'white'
+    });
+    txt.textContent = 'wasted space';
+
+    // Step 4: red arrows from label down to each sample gap
+    sample.forEach((g, i) => {
+      setTimeout(() => {
+        const fromY = lblY + 11;
+        // Compute arrow direction
+        const dx = g.x - lblX, dy = g.y - fromY;
+        const len = Math.hypot(dx, dy);
+        const ux = dx / len, uy = dy / len;
+        // Stop a bit short of the gap dot
+        const stopX = g.x - ux * 9;
+        const stopY = g.y - uy * 9;
+        // Line
+        el(svg, 'line', {
+          x1: lblX, y1: fromY, x2: stopX, y2: stopY,
+          stroke: '#E0524A', 'stroke-width': 2.5, 'stroke-linecap': 'round'
+        });
+        // Arrowhead
+        const ah = 6;
+        const px = -uy, py = ux;
+        el(svg, 'polygon', {
+          points: `${stopX + ux*ah},${stopY + uy*ah} ${stopX + px*ah*0.6},${stopY + py*ah*0.6} ${stopX - px*ah*0.6},${stopY - py*ah*0.6}`,
+          fill: '#E0524A'
+        });
+      }, i * 200);
+    });
+  }, fillTime + 100);
+
+  setTimeout(() => {
+    playFail();
+    document.getElementById('circleTapPrompt').style.display = 'none';
+    document.getElementById('circleProblemQ').style.display = 'flex';
+  }, fillTime + sample.length * 200 + 700);
+}
+
+function answerCircleProblem(btn) {
+  handleAnswer(btn, 'circleProblemQ', () => {
+    document.getElementById('circleProblemQ').style.display = 'none';
+    document.getElementById('circleResult').style.display = 'block';
+  });
+}
+
+// ========== PHASE 4: TRIANGLES ==========
+function initTriangles() {
+  const svg = document.getElementById('triFloor');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '0 0 320 210');
+  setupFrame(svg);
+  ['triCountPill','triCountQ','triMeasurePrompt','triTapSidePrompt','triThreadQ','triReadout','triMultiplyQ','triWallsBlock','triWallsReveal','triHalveQ','triTotal','triDone'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('triControls').style.display = 'block';
+  document.getElementById('triTryBtn').disabled = false;
+  ['triCountQ','triThreadQ','triMultiplyQ','triWallsBlock','triHalveQ'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.ans-btn').forEach(b => {
+      b.disabled = false; b.classList.remove('correct', 'wrong');
+    });
+  });
+  cellState.tri.highlightVerts = null;
+  cellState.tri.placed = [];
+}
+
+function tryTriangles() {
+  document.getElementById('triTryBtn').disabled = true;
+  const svg = document.getElementById('triFloor');
+  svg.innerHTML = '';
+  const { tileGroup } = setupFrame(svg);
+
+  const triH = TRI_SIDE * Math.sqrt(3) / 2;
+  const cells = [];
+  for (let row = -1; row < 7; row++) {
+    const y = 2 + row * triH;
+    if (y > 200 + 5) break;
+    for (let i = -1; i < 14; i++) {
+      const x = i * (TRI_SIDE / 2);
+      if (x > FRAME_W + 5) break;
+      const up = (i + row + 100) % 2 === 0;
+      const v = up
+        ? [[x, y+triH], [x+TRI_SIDE/2, y], [x+TRI_SIDE, y+triH]]
+        : [[x, y], [x+TRI_SIDE/2, y+triH], [x+TRI_SIDE, y]];
+      cells.push({ v, x, y, up });
+    }
+  }
+
+  cells.forEach((c, i) => {
+    setTimeout(() => {
+      const fill = '#FDF6E3';
+      const poly = el(tileGroup, 'polygon', {
+        points: c.v.map(p => p.join(',')).join(' '),
+        fill, stroke: '#1A1A1A', 'stroke-width': 1.5
+      });
+      const cx = (c.v[0][0] + c.v[1][0] + c.v[2][0]) / 3;
+      const cy = (c.v[0][1] + c.v[1][1] + c.v[2][1]) / 3;
+      honeyDrop(tileGroup, cx, cy, 0.7);
+      cellState.tri.placed.push({ data: c, element: poly, originalFill: fill, centroid: { x: cx, y: cy } });
+      if (i % 4 === 0) playPlace();
+    }, i * 12);
+  });
+
+  setTimeout(() => {
+    const hi = cells.find(c => c.x > 100 && c.x < 200 && c.y > 50 && c.y < 130 && c.up) || cells[Math.floor(cells.length/2)];
+    cellState.tri.highlightVerts = hi.v;
+    el(tileGroup, 'polygon', {
+      points: hi.v.map(p => p.join(',')).join(' '),
+      class: 'cell-highlight cell-highlight-pulse'
+    });
+    const cx = (hi.v[0][0] + hi.v[1][0] + hi.v[2][0]) / 3;
+    const cy = (hi.v[0][1] + hi.v[1][1] + hi.v[2][1]) / 3;
+    honeyDrop(tileGroup, cx, cy, 0.95);
+    document.getElementById('triControls').style.display = 'none';
+    document.getElementById('triCountQ').style.display = 'flex';
+  }, cells.length * 12 + 300);
+}
+
+function answerTriCount(btn) {
+  handleAnswer(btn, 'triCountQ', () => {
+    document.getElementById('triCountQ').style.display = 'none';
+    animateCount('tri', cellState.tri.placed, () => {
+      document.getElementById('triMeasurePrompt').style.display = 'block';
+    });
+  });
+}
+
+function measureTri() {
+  document.querySelector('#triMeasurePrompt button').disabled = true;
+  document.getElementById('triMeasurePrompt').style.display = 'none';
+  const svg = document.getElementById('triFloor');
+  addRuler(svg);
+  document.getElementById('triTapSidePrompt').style.display = 'block';
+  makeSidesTappable('tri', cellState.tri.highlightVerts, () => {
+    document.getElementById('triTapSidePrompt').style.display = 'none';
+    flyAllSides('tri', cellState.tri.highlightVerts, () => {
+      document.getElementById('triThreadQ').style.display = 'flex';
+    });
+  });
+}
+
+function answerTriThread(btn) {
+  handleAnswer(btn, 'triThreadQ', () => {
+    document.getElementById('triThreadQ').style.display = 'none';
+    document.getElementById('triReadout').style.display = 'inline-block';
+    setTimeout(() => {
+      document.getElementById('triMultiplyQ').style.display = 'flex';
+    }, 800);
+  });
+}
+
+function answerTriMultiply(btn) {
+  handleAnswer(btn, 'triMultiplyQ', () => {
+    document.getElementById('triMultiplyQ').style.display = 'none';
+    document.getElementById('triWallsBlock').style.display = 'block';
+    drawSharedWalls('sharedWallsSvg', 'tri', true);
+  });
+}
+
+function answerTriWalls(btn) {
+  handleAnswer(btn, 'triWallsQ', () => {
+    // Keep the shared walls visual visible — only hide the question
+    document.getElementById('triWallsQ').style.display = 'none';
+    document.getElementById('triWallsReveal').style.display = 'block';
+    setTimeout(() => {
+      document.getElementById('triHalveQ').style.display = 'flex';
+    }, 1400);
+  });
+}
+
+function answerTriHalve(btn) {
+  handleAnswer(btn, 'triHalveQ', () => {
+    document.getElementById('triHalveQ').style.display = 'none';
+    document.getElementById('triTotal').style.display = 'block';
+    document.getElementById('triDone').style.display = 'block';
+  });
+}
+
+// ========== PHASE 5: SQUARES ==========
+function initSquares() {
+  const svg = document.getElementById('sqFloor');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '0 0 320 210');
+  setupFrame(svg);
+  ['sqCountPill','sqCountQ','sqMeasurePrompt','sqTapSidePrompt','sqThreadQ','sqReadout','sqMultiplyQ','sqWallsBlock','sqHalveQ','sqTotal','sqDone'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('sqControls').style.display = 'block';
+  document.getElementById('sqTryBtn').disabled = false;
+  ['sqCountQ','sqThreadQ','sqMultiplyQ','sqHalveQ'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.ans-btn').forEach(b => {
+      b.disabled = false; b.classList.remove('correct', 'wrong');
+    });
+  });
+  cellState.sq.highlightVerts = null;
+  cellState.sq.placed = [];
+}
+
+function trySquares() {
+  document.getElementById('sqTryBtn').disabled = true;
+  const svg = document.getElementById('sqFloor');
+  svg.innerHTML = '';
+  const { tileGroup } = setupFrame(svg);
+
+  const cells = [];
+  const startY = 12;
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 9; c++) {
+      const x = c * SQ_SIDE;
+      const y = startY + r * SQ_SIDE;
+      if (y > 200) break;
+      cells.push({ x, y });
+    }
+  }
+
+  cells.forEach((c, i) => {
+    setTimeout(() => {
+      const fill = '#FDF6E3';
+      const rect = el(tileGroup, 'rect', {
+        x: c.x, y: c.y, width: SQ_SIDE, height: SQ_SIDE,
+        fill, stroke: '#1A1A1A', 'stroke-width': 1.5
+      });
+      honeyDrop(tileGroup, c.x + SQ_SIDE/2, c.y + SQ_SIDE/2, 0.8);
+      cellState.sq.placed.push({
+        data: c, element: rect, originalFill: fill,
+        centroid: { x: c.x + SQ_SIDE/2, y: c.y + SQ_SIDE/2 }
+      });
+      if (i % 3 === 0) playPlace();
+    }, i * 14);
+  });
+
+  setTimeout(() => {
+    const hi = cells.find(c => c.x > 130 && c.x < 200 && c.y > 60 && c.y < 130) || cells[Math.floor(cells.length/2)];
+    const v = [
+      [hi.x, hi.y], [hi.x + SQ_SIDE, hi.y],
+      [hi.x + SQ_SIDE, hi.y + SQ_SIDE], [hi.x, hi.y + SQ_SIDE]
+    ];
+    cellState.sq.highlightVerts = v;
+    el(tileGroup, 'rect', {
+      x: hi.x, y: hi.y, width: SQ_SIDE, height: SQ_SIDE,
+      class: 'cell-highlight cell-highlight-pulse'
+    });
+    honeyDrop(tileGroup, hi.x + SQ_SIDE/2, hi.y + SQ_SIDE/2, 1);
+    document.getElementById('sqControls').style.display = 'none';
+    document.getElementById('sqCountQ').style.display = 'flex';
+  }, cells.length * 14 + 300);
+}
+
+function answerSqCount(btn) {
+  handleAnswer(btn, 'sqCountQ', () => {
+    document.getElementById('sqCountQ').style.display = 'none';
+    animateCount('sq', cellState.sq.placed, () => {
+      document.getElementById('sqMeasurePrompt').style.display = 'block';
+    });
+  });
+}
+
+function measureSq() {
+  document.querySelector('#sqMeasurePrompt button').disabled = true;
+  document.getElementById('sqMeasurePrompt').style.display = 'none';
+  const svg = document.getElementById('sqFloor');
+  addRuler(svg);
+  document.getElementById('sqTapSidePrompt').style.display = 'block';
+  makeSidesTappable('sq', cellState.sq.highlightVerts, () => {
+    document.getElementById('sqTapSidePrompt').style.display = 'none';
+    flyAllSides('sq', cellState.sq.highlightVerts, () => {
+      document.getElementById('sqThreadQ').style.display = 'flex';
+    });
+  });
+}
+
+function answerSqThread(btn) {
+  handleAnswer(btn, 'sqThreadQ', () => {
+    document.getElementById('sqThreadQ').style.display = 'none';
+    document.getElementById('sqReadout').style.display = 'inline-block';
+    setTimeout(() => {
+      document.getElementById('sqMultiplyQ').style.display = 'flex';
+    }, 800);
+  });
+}
+
+function answerSqMultiply(btn) {
+  handleAnswer(btn, 'sqMultiplyQ', () => {
+    document.getElementById('sqMultiplyQ').style.display = 'none';
+    document.getElementById('sqWallsBlock').style.display = 'block';
+    drawSharedWalls('sqSharedWallsSvg', 'sq', false);
+    setTimeout(() => {
+      document.getElementById('sqHalveQ').style.display = 'flex';
+    }, 1400);
+  });
+}
+
+function answerSqHalve(btn) {
+  handleAnswer(btn, 'sqHalveQ', () => {
+    document.getElementById('sqHalveQ').style.display = 'none';
+    document.getElementById('sqTotal').style.display = 'block';
+    document.getElementById('sqDone').style.display = 'block';
+  });
+}
+
+// ========== PHASE 6: HEXAGONS ==========
+function initHexagons() {
+  const svg = document.getElementById('hexFloor');
+  svg.innerHTML = '';
+  svg.setAttribute('viewBox', '0 0 320 210');
+  setupFrame(svg);
+  ['hexCountPill','hexCountQ','hexMeasurePrompt','hexTapSidePrompt','hexThreadQ','hexReadout','hexMultiplyQ','hexWallsBlock','hexHalveQ','hexTotal','hexDone'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('hexControls').style.display = 'block';
+  document.getElementById('hexTryBtn').disabled = false;
+  ['hexCountQ','hexThreadQ','hexMultiplyQ','hexHalveQ'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.ans-btn').forEach(b => {
+      b.disabled = false; b.classList.remove('correct', 'wrong');
+    });
+  });
+  cellState.hex.highlightVerts = null;
+  cellState.hex.placed = [];
+}
+
+function tryHexagons() {
+  document.getElementById('hexTryBtn').disabled = true;
+  const svg = document.getElementById('hexFloor');
+  svg.innerHTML = '';
+  const { tileGroup } = setupFrame(svg);
+
+  const r = HEX_SIDE;
+  const dx = r * Math.sqrt(3);
+  const dy = r * 1.5;
+  const cells = [];
+  for (let row = 0; row < 8; row++) {
+    const y = 18 + row * dy;
+    if (y > 200 + 5) break;
+    for (let col = 0; col < 11; col++) {
+      const x = 6 + col * dx + (row % 2) * dx/2;
+      if (x > FRAME_W + 5) break;
+      cells.push({ cx: x, cy: y });
+    }
+  }
+
+  cells.forEach((c, i) => {
+    setTimeout(() => {
+      const pts = hexPts(c.cx, c.cy, r);
+      const fill = '#FDF6E3';
+      const poly = el(tileGroup, 'polygon', {
+        points: pts.map(p => p.join(',')).join(' '),
+        fill, stroke: '#1A1A1A', 'stroke-width': 1.5
+      });
+      honeyDrop(tileGroup, c.cx, c.cy, 0.65);
+      cellState.hex.placed.push({
+        data: c, element: poly, originalFill: fill,
+        centroid: { x: c.cx, y: c.cy }
+      });
+      if (i % 5 === 0) playPlace();
+    }, i * 10);
+  });
+
+  setTimeout(() => {
+    const hi = cells.find(c => c.cx > 120 && c.cx < 200 && c.cy > 60 && c.cy < 130) || cells[Math.floor(cells.length/2)];
+    const pts = hexPts(hi.cx, hi.cy, r);
+    cellState.hex.highlightVerts = pts;
+    el(tileGroup, 'polygon', {
+      points: pts.map(p => p.join(',')).join(' '),
+      class: 'cell-highlight cell-highlight-pulse'
+    });
+    honeyDrop(tileGroup, hi.cx, hi.cy, 0.85);
+    document.getElementById('hexControls').style.display = 'none';
+    document.getElementById('hexCountQ').style.display = 'flex';
+  }, cells.length * 10 + 300);
+}
+
+function answerHexCount(btn) {
+  handleAnswer(btn, 'hexCountQ', () => {
+    document.getElementById('hexCountQ').style.display = 'none';
+    animateCount('hex', cellState.hex.placed, () => {
+      document.getElementById('hexMeasurePrompt').style.display = 'block';
+    });
+  });
+}
+
+function measureHex() {
+  document.querySelector('#hexMeasurePrompt button').disabled = true;
+  document.getElementById('hexMeasurePrompt').style.display = 'none';
+  const svg = document.getElementById('hexFloor');
+  addRuler(svg);
+  document.getElementById('hexTapSidePrompt').style.display = 'block';
+  makeSidesTappable('hex', cellState.hex.highlightVerts, () => {
+    document.getElementById('hexTapSidePrompt').style.display = 'none';
+    flyAllSides('hex', cellState.hex.highlightVerts, () => {
+      document.getElementById('hexThreadQ').style.display = 'flex';
+    });
+  });
+}
+
+function answerHexThread(btn) {
+  handleAnswer(btn, 'hexThreadQ', () => {
+    document.getElementById('hexThreadQ').style.display = 'none';
+    document.getElementById('hexReadout').style.display = 'inline-block';
+    setTimeout(() => {
+      document.getElementById('hexMultiplyQ').style.display = 'flex';
+    }, 800);
+  });
+}
+
+function answerHexMultiply(btn) {
+  handleAnswer(btn, 'hexMultiplyQ', () => {
+    document.getElementById('hexMultiplyQ').style.display = 'none';
+    document.getElementById('hexWallsBlock').style.display = 'block';
+    drawSharedWalls('hexSharedWallsSvg', 'hex', false);
+    setTimeout(() => {
+      document.getElementById('hexHalveQ').style.display = 'flex';
+    }, 1400);
+  });
+}
+
+function answerHexHalve(btn) {
+  handleAnswer(btn, 'hexHalveQ', () => {
+    document.getElementById('hexHalveQ').style.display = 'none';
+    document.getElementById('hexTotal').style.display = 'block';
+    document.getElementById('hexDone').style.display = 'block';
+  });
+}
+
+// ========== MAKE SIDES TAPPABLE ==========
+function makeSidesTappable(prefix, vertices, onTap) {
+  const svg = document.getElementById(prefix + 'Floor');
+  const sideElements = [];
+  let triggered = false;
+  for (let i = 0; i < vertices.length; i++) {
+    const j = (i + 1) % vertices.length;
+    const sx1 = vertices[i][0], sy1 = vertices[i][1];
+    const sx2 = vertices[j][0], sy2 = vertices[j][1];
+    const visLine = el(svg, 'line', {
+      x1: sx1, y1: sy1, x2: sx2, y2: sy2,
+      class: 'tap-side'
+    });
+    const hitLine = el(svg, 'line', {
+      x1: sx1, y1: sy1, x2: sx2, y2: sy2,
+      stroke: 'transparent', 'stroke-width': 24,
+      'stroke-linecap': 'round', style: 'cursor:pointer'
+    });
+    const handler = () => {
+      if (triggered) return;
+      triggered = true;
+      sideElements.forEach(arr => arr.forEach(elm => elm.remove()));
+      playTap();
+      onTap();
+    };
+    visLine.addEventListener('click', handler);
+    hitLine.addEventListener('click', handler);
+    sideElements.push([visLine, hitLine]);
+  }
+}
+
+// ========== FLY ALL SIDES ==========
+function flyAllSides(prefix, vertices, onComplete) {
+  const svg = document.getElementById(prefix + 'Floor');
+  const sideCount = vertices.length;
+  const sideLength = Math.hypot(vertices[1][0] - vertices[0][0], vertices[1][1] - vertices[0][1]);
+
+  const rulerY = 270;
+  const totalMarks = 10;
+  const markGap = U;
+  const rulerStartX = (320 - totalMarks * markGap) / 2;
+
+  // Scale durations inversely by sideCount: triangles slow, squares medium, hexagons fastest
+  const dur = Math.max(280, Math.round(600 * 3 / sideCount));
+  const pause = Math.max(110, Math.round(240 * 3 / sideCount));
+  const flashDelay = Math.max(110, Math.round(220 * 3 / sideCount));
+
+  let sideIdx = 0;
+  function nextSide() {
+    if (sideIdx >= sideCount) {
+      const totalLen = sideCount * sideLength;
+      const endX = rulerStartX + totalLen;
+      el(svg, 'circle', { cx: endX, cy: rulerY - 14, r: 9, fill: 'none', stroke: '#3FD68F', 'stroke-width': 3 });
+      el(svg, 'line', {
+        x1: endX, y1: rulerY - 8, x2: endX, y2: rulerY,
+        stroke: '#3FD68F', 'stroke-width': 2, 'stroke-dasharray': '2,2'
+      });
+      setTimeout(() => { playWin(); if (onComplete) onComplete(); }, 400);
+      return;
+    }
+    const i = sideIdx;
+    const j = (sideIdx + 1) % sideCount;
+    const sx1 = vertices[i][0], sy1 = vertices[i][1];
+    const sx2 = vertices[j][0], sy2 = vertices[j][1];
+
+    const flash = el(svg, 'line', {
+      x1: sx1, y1: sy1, x2: sx2, y2: sy2,
+      stroke: '#F5C43E', 'stroke-width': 7, 'stroke-linecap': 'round',
+      opacity: 0
+    });
+    flash.style.transition = 'opacity 0.15s';
+    requestAnimationFrame(() => flash.style.opacity = 1);
+
+    setTimeout(() => {
+      const flyLine = el(svg, 'line', {
+        x1: sx1, y1: sy1, x2: sx2, y2: sy2,
+        stroke: '#F5C43E', 'stroke-width': 7, 'stroke-linecap': 'round'
+      });
+      playFly();
+
+      const tx1 = rulerStartX + sideIdx * sideLength;
+      const ty1 = rulerY - 14;
+      const tx2 = rulerStartX + (sideIdx + 1) * sideLength;
+      const ty2 = rulerY - 14;
+
+      const t0 = performance.now();
+      function step(t) {
+        const p = Math.min(1, (t - t0) / dur);
+        const ease = 1 - Math.pow(1 - p, 3);
+        flyLine.setAttribute('x1', sx1 + (tx1 - sx1) * ease);
+        flyLine.setAttribute('y1', sy1 + (ty1 - sy1) * ease);
+        flyLine.setAttribute('x2', sx2 + (tx2 - sx2) * ease);
+        flyLine.setAttribute('y2', sy2 + (ty2 - sy2) * ease);
+        if (p < 1) requestAnimationFrame(step);
+        else {
+          if (sideIdx < sideCount - 1) {
+            el(svg, 'line', {
+              x1: tx2, y1: ty2 - 8, x2: tx2, y2: ty2 + 8,
+              stroke: '#1A1A1A', 'stroke-width': 1.5
+            });
+          }
+          playLand();
+          sideIdx++;
+          setTimeout(nextSide, pause);
+        }
+      }
+      requestAnimationFrame(step);
+    }, flashDelay);
+  }
+  setTimeout(nextSide, 300);
+}
+
+// ========== SHARED WALLS VISUAL ==========
+// shape: 'tri' / 'sq' / 'hex'  svgId: id of target SVG element
+function drawSharedWalls(svgId, shape, withArrow) {
+  if (svgId === undefined) svgId = 'sharedWallsSvg';
+  if (shape === undefined) shape = 'hex';
+  if (withArrow === undefined) withArrow = true;
+  const svg = document.getElementById(svgId);
+  svg.innerHTML = '';
+  el(svg, 'rect', { x: 0, y: 0, width: 320, height: 160, fill: '#FDF6E3' });
+
+  let wallStart, wallEnd;
+
+  if (shape === 'hex') {
+    const r = 50;
+    const dx = r * Math.sqrt(3);
+    const cx1 = 110, cx2 = cx1 + dx, cy = 80;
+    const pts1 = hexPts(cx1, cy, r);
+    const pts2 = hexPts(cx2, cy, r);
+    el(svg, 'polygon', { points: pts1.map(p => p.join(',')).join(' '), fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5 });
+    honeyDrop(svg, cx1, cy, 1.4);
+    el(svg, 'polygon', { points: pts2.map(p => p.join(',')).join(' '), fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5 });
+    honeyDrop(svg, cx2, cy, 1.4);
+    wallStart = pts1[1]; wallEnd = pts1[2];
+  } else if (shape === 'sq') {
+    const s = 80;
+    const cx1 = 80, cx2 = cx1 + s, cy = 40;
+    el(svg, 'rect', { x: cx1, y: cy, width: s, height: s, fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5 });
+    honeyDrop(svg, cx1 + s/2, cy + s/2, 1.6);
+    el(svg, 'rect', { x: cx2, y: cy, width: s, height: s, fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5 });
+    honeyDrop(svg, cx2 + s/2, cy + s/2, 1.6);
+    wallStart = [cx1 + s, cy];
+    wallEnd = [cx1 + s, cy + s];
+  } else if (shape === 'tri') {
+    // Two triangles sharing an edge: one up, one down
+    const s = 100;
+    const h = s * Math.sqrt(3) / 2;
+    const cx = 160, cy = 30;
+    // Up triangle on left: vertices (cx-s, cy+h), (cx, cy), (cx, cy+h)? hmm
+    // Use 2 triangles forming a rhombus
+    const upV = [[cx - s/2, cy + h], [cx, cy], [cx + s/2, cy + h]];
+    const downV = [[cx + s/2, cy + h], [cx, cy + 2*h], [cx - s/2, cy + h]];
+    el(svg, 'polygon', { points: upV.map(p => p.join(',')).join(' '), fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5 });
+    const upCx = (upV[0][0] + upV[1][0] + upV[2][0]) / 3;
+    const upCy = (upV[0][1] + upV[1][1] + upV[2][1]) / 3;
+    honeyDrop(svg, upCx, upCy, 1.4);
+    el(svg, 'polygon', { points: downV.map(p => p.join(',')).join(' '), fill: '#FBEED1', stroke: '#1A1A1A', 'stroke-width': 2.5 });
+    const dnCx = (downV[0][0] + downV[1][0] + downV[2][0]) / 3;
+    const dnCy = (downV[0][1] + downV[1][1] + downV[2][1]) / 3;
+    honeyDrop(svg, dnCx, dnCy, 1.4);
+    wallStart = [cx - s/2, cy + h];
+    wallEnd = [cx + s/2, cy + h];
+  }
+
+  // Highlighted shared wall
+  el(svg, 'line', {
+    x1: wallStart[0], y1: wallStart[1],
+    x2: wallEnd[0], y2: wallEnd[1],
+    stroke: '#E0524A', 'stroke-width': 6, 'stroke-linecap': 'round'
+  });
+
+  if (withArrow) {
+    const wallMidX = (wallStart[0] + wallEnd[0]) / 2;
+    const wallMidY = (wallStart[1] + wallEnd[1]) / 2;
+    el(svg, 'line', {
+      x1: wallMidX, y1: 145, x2: wallMidX, y2: wallMidY + 12,
+      stroke: '#1A1A1A', 'stroke-width': 2.5, 'stroke-linecap': 'round'
+    });
+    el(svg, 'polygon', {
+      points: `${wallMidX-5},${wallMidY+14} ${wallMidX+5},${wallMidY+14} ${wallMidX},${wallMidY+6}`,
+      fill: '#1A1A1A'
+    });
+    const lbl = el(svg, 'text', {
+      x: wallMidX, y: 158,
+      'text-anchor': 'middle',
+      'font-family': 'Sora, sans-serif', 'font-weight': 800,
+      'font-size': 12, fill: '#1A1A1A'
+    });
+    lbl.textContent = 'this wall';
+  }
+}
+
+// ========== PHASE 7: FINAL ==========
+function initFinal() {
+  document.getElementById('finalTitle').textContent = 'Compare them all';
+  document.getElementById('bestQ').style.display = 'flex';
+  document.getElementById('bestReveal').style.display = 'none';
+  document.getElementById('bestQ').querySelectorAll('.ans-btn').forEach(b => {
+    b.disabled = false; b.classList.remove('correct', 'wrong');
+  });
+}
+
+function answerBest(btn, shape) {
+  handleAnswer(btn, 'bestQ', () => {
+    document.getElementById('finalTitle').textContent = 'Hexagons WIN!';
+    document.getElementById('bestQ').style.display = 'none';
+    document.getElementById('bestReveal').style.display = 'block';
+  });
+}
+
+showPhase(1);
+</script>
+</body>
+</html>
