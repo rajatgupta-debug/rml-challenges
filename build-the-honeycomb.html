@@ -387,19 +387,24 @@ h2 .title-icon {
 <div class="phase active" data-phase="1">
   <h1>Build the Honeycomb</h1>
   <svg class="buzz" viewBox="0 0 100 100">
-    <ellipse cx="50" cy="55" rx="28" ry="22" fill="#F5C43E" stroke="#1A1A1A" stroke-width="2.5"/>
-    <rect x="34" y="40" width="6" height="30" fill="#1A1A1A"/>
-    <rect x="48" y="38" width="6" height="34" fill="#1A1A1A"/>
-    <rect x="62" y="40" width="6" height="30" fill="#1A1A1A"/>
-    <ellipse cx="38" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
-    <ellipse cx="62" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
-    <circle cx="42" cy="52" r="2.5" fill="#1A1A1A"/>
-    <circle cx="58" cy="52" r="2.5" fill="#1A1A1A"/>
-    <path d="M 44 62 Q 50 66 56 62" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <line x1="42" y1="32" x2="38" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
-    <line x1="58" y1="32" x2="62" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="38" cy="22" r="3" fill="#1A1A1A"/>
-    <circle cx="62" cy="22" r="3" fill="#1A1A1A"/>
+    <!-- Antennae -->
+    <line x1="42" y1="36" x2="38" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+    <line x1="58" y1="36" x2="62" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="38" cy="22" r="2.5" fill="#1A1A1A"/>
+    <circle cx="62" cy="22" r="2.5" fill="#1A1A1A"/>
+    <!-- Wings (behind body) -->
+    <ellipse cx="34" cy="42" rx="14" ry="10" fill="white" fill-opacity="0.85" stroke="#1A1A1A" stroke-width="2"/>
+    <ellipse cx="66" cy="42" rx="14" ry="10" fill="white" fill-opacity="0.85" stroke="#1A1A1A" stroke-width="2"/>
+    <!-- Body -->
+    <ellipse cx="50" cy="58" rx="30" ry="22" fill="#F5C43E" stroke="#1A1A1A" stroke-width="2.5"/>
+    <!-- Two black stripes (curved across body) -->
+    <path d="M 26 60 Q 50 66 74 60" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M 30 73 Q 50 78 70 73" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <!-- Eyes -->
+    <circle cx="42" cy="52" r="2.4" fill="#1A1A1A"/>
+    <circle cx="58" cy="52" r="2.4" fill="#1A1A1A"/>
+    <!-- Smile -->
+    <path d="M 44 56 Q 50 60 56 56" stroke="#1A1A1A" stroke-width="2" fill="none" stroke-linecap="round"/>
   </svg>
   <div class="speech">Hi! I'm Buzz. We bees need to build a honeycomb. Help us pick the right shape!</div>
   <button class="btn pulse big" onclick="next()">START →</button>
@@ -801,15 +806,18 @@ h2 .title-icon {
   <div id="bestReveal" style="display:none;">
     <div class="celebrate-card">
       <svg class="buzz" viewBox="0 0 100 100" style="width:90px; height:90px; margin: 4px auto;">
-        <ellipse cx="50" cy="55" rx="28" ry="22" fill="#F5C43E" stroke="#1A1A1A" stroke-width="2.5"/>
-        <rect x="34" y="40" width="6" height="30" fill="#1A1A1A"/>
-        <rect x="48" y="38" width="6" height="34" fill="#1A1A1A"/>
-        <rect x="62" y="40" width="6" height="30" fill="#1A1A1A"/>
-        <ellipse cx="38" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
-        <ellipse cx="62" cy="40" rx="14" ry="10" fill="white" fill-opacity="0.7" stroke="#1A1A1A" stroke-width="2"/>
-        <circle cx="42" cy="52" r="2.5" fill="#1A1A1A"/>
-        <circle cx="58" cy="52" r="2.5" fill="#1A1A1A"/>
-        <path d="M 42 60 Q 50 68 58 60" stroke="#1A1A1A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <line x1="42" y1="36" x2="38" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+        <line x1="58" y1="36" x2="62" y2="22" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="38" cy="22" r="2.5" fill="#1A1A1A"/>
+        <circle cx="62" cy="22" r="2.5" fill="#1A1A1A"/>
+        <ellipse cx="34" cy="42" rx="14" ry="10" fill="white" fill-opacity="0.85" stroke="#1A1A1A" stroke-width="2"/>
+        <ellipse cx="66" cy="42" rx="14" ry="10" fill="white" fill-opacity="0.85" stroke="#1A1A1A" stroke-width="2"/>
+        <ellipse cx="50" cy="58" rx="30" ry="22" fill="#F5C43E" stroke="#1A1A1A" stroke-width="2.5"/>
+        <path d="M 26 60 Q 50 66 74 60" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M 30 73 Q 50 78 70 73" stroke="#1A1A1A" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <circle cx="42" cy="52" r="2.4" fill="#1A1A1A"/>
+        <circle cx="58" cy="52" r="2.4" fill="#1A1A1A"/>
+        <path d="M 42 56 Q 50 62 58 56" stroke="#1A1A1A" stroke-width="2.2" fill="none" stroke-linecap="round"/>
       </svg>
       <div class="bigtext">Hexagons WIN!</div>
       <div class="speech">Real bees figured this out a long time ago. Same honey, less wax. Hexagons every time.</div>
@@ -878,83 +886,58 @@ function drawWaxScene() {
   svg.innerHTML = '';
   el(svg, 'rect', { x: 0, y: 0, width: 320, height: 170, fill: '#FDF6E3' });
 
-  // Honeycomb cluster: 7 hexagons (1 center + 6 around) — classic flower pattern
-  const r = 26;
-  const cx = 160, cy = 80;
-  const dx = r * Math.sqrt(3);
-  const centers = [
-    [cx, cy],                 // center
-    [cx, cy - r * 1.5 - 0],    // top — actually use proper hex flower placement
-  ];
-  // Proper hex flower around center
-  const flower = [
-    [cx, cy],
-    [cx + dx, cy],
-    [cx - dx, cy],
-    [cx + dx/2, cy - r*1.5],
-    [cx - dx/2, cy - r*1.5],
-    [cx + dx/2, cy + r*1.5],
-    [cx - dx/2, cy + r*1.5]
+  // 4 neutral blob-shaped cells in a row (not hex/sq/tri/circle — generic shapes)
+  // Each is a soft irregular path that doesn't reveal the answer
+  const cells = [
+    { d: "M 30 60 C 22 50 32 38 52 40 C 70 38 88 52 86 72 C 90 92 72 108 50 102 C 28 100 22 78 30 60 Z", cx: 56, cy: 70 },
+    { d: "M 102 62 C 96 50 110 38 130 42 C 148 42 164 56 160 76 C 164 94 144 108 124 102 C 102 100 96 80 102 62 Z", cx: 132, cy: 72 },
+    { d: "M 178 60 C 172 48 188 38 208 42 C 226 42 240 56 236 76 C 240 96 220 108 198 102 C 178 100 172 78 178 60 Z", cx: 208, cy: 72 },
+    { d: "M 254 62 C 248 50 264 38 282 42 C 300 44 314 58 308 78 C 312 98 290 110 270 102 C 250 100 248 80 254 62 Z", cx: 282, cy: 72 }
   ];
 
-  // Draw cells with honey
-  flower.forEach(([x, y]) => {
-    const pts = hexPts(x, y, r);
-    el(svg, 'polygon', {
-      points: pts.map(p => p.join(',')).join(' '),
-      fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 4, 'stroke-linejoin': 'round'
+  cells.forEach(c => {
+    el(svg, 'path', {
+      d: c.d, fill: '#FFE8A0', stroke: '#1A1A1A', 'stroke-width': 3, 'stroke-linejoin': 'round'
     });
-    // honey drop in cell
-    honeyDrop(svg, x, y, 1.2);
+    honeyDrop(svg, c.cx, c.cy, 1.4);
   });
 
-  // Highlight a couple of "walls" — overlay yellow strokes on shared edges
-  // Pick the wall between center and right neighbor
-  const c0 = flower[0]; // center
-  const cR = flower[1]; // right
-  const ptsC = hexPts(c0[0], c0[1], r);
-  // The shared edge with right neighbor is between vertex 1 (upper-right) and vertex 2 (lower-right) of center hex
-  const wall1 = [ptsC[1], ptsC[2]];
-  // Wall between center and top-right
-  const cTR = flower[3];
-  const wall2 = [ptsC[0], ptsC[1]];
-  // Wall between center and top-left
-  const wall3 = [ptsC[5], ptsC[0]];
-
-  // Draw highlighted walls in a wax-yellow color, thick
-  [wall1, wall2, wall3].forEach(w => {
+  // Highlighted "walls" between adjacent cells — vertical red segments where cells meet
+  const wallXs = [
+    { x: 94, y1: 50, y2: 96 },
+    { x: 169, y1: 50, y2: 96 },
+    { x: 245, y1: 50, y2: 96 }
+  ];
+  wallXs.forEach(w => {
     el(svg, 'line', {
-      x1: w[0][0], y1: w[0][1], x2: w[1][0], y2: w[1][1],
+      x1: w.x, y1: w.y1, x2: w.x, y2: w.y2,
       stroke: '#E0524A', 'stroke-width': 6, 'stroke-linecap': 'round'
     });
   });
 
-  // Label "WALLS = WAX" with arrows pointing to the walls
-  // Place label above-right of cluster
-  const labelX = 245, labelY = 22;
+  // Label "walls = WAX" at top with arrows to a couple of walls
+  const labelX = 175, labelY = 18;
   el(svg, 'rect', {
-    x: labelX - 56, y: labelY - 11, width: 112, height: 24, rx: 5,
+    x: labelX - 60, y: labelY - 11, width: 120, height: 22, rx: 5,
     fill: '#1A1A1A'
   });
   const txt = el(svg, 'text', {
-    x: labelX, y: labelY + 5, 'text-anchor': 'middle',
+    x: labelX, y: labelY + 4, 'text-anchor': 'middle',
     'font-family': 'Sora, sans-serif', 'font-weight': 900,
     'font-size': 12, fill: 'white', 'letter-spacing': 0.5
   });
   txt.textContent = 'walls = WAX';
 
-  // Arrows from label to 2 highlighted walls
-  const arrowTargets = [wall1, wall2];
-  arrowTargets.forEach(w => {
-    const tx = (w[0][0] + w[1][0]) / 2;
-    const ty = (w[0][1] + w[1][1]) / 2;
-    const fromX = labelX, fromY = labelY + 13;
-    const dxA = tx - fromX, dyA = ty - fromY;
+  // Arrows from label down to walls
+  [wallXs[0], wallXs[1], wallXs[2]].forEach(w => {
+    const tx = w.x, ty = (w.y1 + w.y2) / 2;
+    const fromY = labelY + 11;
+    const dxA = tx - labelX, dyA = ty - fromY;
     const len = Math.hypot(dxA, dyA);
     const ux = dxA / len, uy = dyA / len;
-    const stopX = tx - ux * 8, stopY = ty - uy * 8;
+    const stopX = tx - ux * 9, stopY = ty - uy * 9;
     el(svg, 'line', {
-      x1: fromX, y1: fromY, x2: stopX, y2: stopY,
+      x1: labelX, y1: fromY, x2: stopX, y2: stopY,
       stroke: '#1A1A1A', 'stroke-width': 2, 'stroke-linecap': 'round'
     });
     const ah = 6;
@@ -964,14 +947,6 @@ function drawWaxScene() {
       fill: '#1A1A1A'
     });
   });
-
-  // "hard to make!" sub-label below cluster
-  const noteY = 156;
-  el(svg, 'text', {
-    x: cx, y: noteY, 'text-anchor': 'middle',
-    'font-family': 'Sora, sans-serif', 'font-weight': 800,
-    'font-size': 12, fill: '#E0524A'
-  }).textContent = '⚒  hard to make!';
 }
 function next() { if (phase < TOTAL) showPhase(phase + 1); }
 function restart() {
