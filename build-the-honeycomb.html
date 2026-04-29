@@ -313,6 +313,18 @@ h2 .title-icon {
   border-radius: var(--r-card); padding: 18px 20px;
   margin: 12px 0; box-shadow: 0 4px 0 var(--ink);
 }
+.final-legend {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--ink-muted);
+  text-transform: uppercase; letter-spacing: 0.4px;
+  padding-bottom: 10px; margin-bottom: 4px;
+  border-bottom: 1px dashed var(--ink);
+}
+.final-legend .lbl { white-space: nowrap; }
+.final-legend .op { font-size: 14px; color: var(--ink-muted); opacity: 0.7; }
 .final-row {
   display: grid;
   grid-template-columns: 30px 88px 1fr auto;
@@ -357,6 +369,8 @@ h2 .title-icon {
   .final-row strong.total { font-size: 22px; min-width: 48px; }
   .final-row.win strong.total { font-size: 26px; }
   .final-takeaway { font-size: 15px; }
+  .final-legend { font-size: 11px; gap: 5px; padding-bottom: 8px; letter-spacing: 0.3px; }
+  .final-legend .op { font-size: 12px; }
 }
 
 .celebrate-card {
@@ -800,6 +814,13 @@ h2 .title-icon {
   <h2 id="finalTitle">Compare them all</h2>
   <div class="subtext">Same cells. Different walls.</div>
   <div class="final-totals">
+    <div class="final-legend">
+      <span class="lbl">cells</span>
+      <span class="op">×</span>
+      <span class="lbl">walls per cell</span>
+      <span class="op">÷</span>
+      <span class="lbl">shared</span>
+    </div>
     <div class="final-row">
       <svg viewBox="0 0 24 24"><polygon points="12,3 3,21 21,21" fill="#FFD4C0" stroke="#1A1A1A" stroke-width="1.5"/></svg>
       <span class="name">Triangle</span>
