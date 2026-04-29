@@ -1203,7 +1203,7 @@ const CHALLENGE = {
     { id: "intro", title: "The Assignment", kind: "intro" },
     { id: "chart-1", title: "Chart 1: Fortnite", kind: "chart", toolId: "axis", subSteps: 8 },
     { id: "chart-2", title: "Chart 2: Roblox", kind: "chart", toolId: "time", subSteps: 8 },
-    { id: "chart-3", title: "Chart 3: Ice Cream", kind: "chart", toolId: "third", subSteps: 8 },
+    { id: "chart-3", title: "Chart 3: Ice Cream", kind: "chart", toolId: "third", subSteps: 9 },
     { id: "chart-4", title: "Chart 4: iPhone", kind: "placeholder", toolId: "picture" },
     { id: "chart-5", title: "Chart 5: YouTuber", kind: "placeholder", toolId: "base" },
     { id: "newsroom-final", title: "Newsroom Final", kind: "placeholder" },
@@ -1732,20 +1732,32 @@ function renderChart2(sub) {
     <div class="frame">${progressDots(total, 0)}
       <div class="step-label">Chart 2 of 6 · The Time Window Trick</div>
       <div class="step-title">Another chart. Another scary headline.</div>
-      ${bubble(`This one looks grim — a steep drop. Same drill: look first, investigate second.`)}
+      ${bubble(`This one looks grim — a steep drop. Before we dig in, what's your gut say?`)}
       ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash. Is Gen Alpha over it?", "chart2-intro")}
-      <div class="nav-row end"><button class="btn" onclick="nextSub()">Start investigating →</button></div>
+      <div class="question">
+        <div class="q-label">🤔 Gut check</div>
+        <div class="q-text">Reading just this — does it convince you Roblox is dying?</div>
+        <div class="q-hint">No wrong answer. Just say what your gut says.</div>
+        <div class="options" id="gut-c2">
+          <button class="option gut" data-reaction="That's the chart's whole point — make you feel it. Let's see if the chart actually deserves your alarm."><span class="option-num"></span>Yes — looks bad</button>
+          <button class="option gut" data-reaction="Skeptical from the start — good instinct. Let's see what the chart's actually showing, and what it's not."><span class="option-num"></span>No — not enough info</button>
+          <button class="option gut" data-reaction="Honest answer. Most adults aren't sure either. Let's pick the chart apart and decide together."><span class="option-num"></span>Not sure</button>
+        </div>
+        <div class="lens-reaction hidden" id="gut-reaction-c2"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c2-gut" disabled onclick="nextSub()">Start investigating →</button></div>
     </div>`;
 
   if (sub === 1) return `
     <div class="frame">${progressDots(total, 1)}
-      <div class="step-label">Observe · First impression</div>
-      <div class="step-title">What's the first thing you notice?</div>
+      <div class="step-label">Investigate · Pick the chart apart</div>
+      <div class="step-title">What's the real trick here?</div>
+      ${bubble(`Every piece of this chart is a clue — the words, the bars, the time, the colours. We'll examine each one. Then you call it.`)}
       ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash.", "chart2-first")}
       <div class="question">
-        <div class="q-label">👀 Look around</div>
-        <div class="q-text">Tap anything that stands out — Lens will react to each.</div>
-        <div class="q-hint">No right answers here. Just look. Try a couple.</div>
+        <div class="q-label">🔍 Examine each clue</div>
+        <div class="q-text">Tap each piece — the headline, the bars, the time period, the colours. Lens has a take on each.</div>
+        <div class="q-hint">All four are real clues. Hear Lens out on each, then you'll decide which one is the real trick.</div>
         <div class="options" id="mcq-c2-first">
           ${exploreOpt("The word DYING", "Loud word. But the real trick is usually <em>inside</em> the chart, not in the headline.", false)}
           ${exploreOpt("The red bars", "Color is decoration. Look at the data itself.", false)}
@@ -1755,8 +1767,8 @@ function renderChart2(sub) {
         <div class="lens-reaction hidden" id="reaction-c2-first"></div>
       </div>
       <div class="question phase2 hidden" id="phase2-c2-first">
-        <div class="q-label">🎯 Commit to a lead</div>
-        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="q-label">🎯 Name the trick</div>
+        <div class="q-text">Of all four clues — which one is the real trick?</div>
         <div class="options" id="commit-c2-first">
           ${commitOpt("The word DYING", false)}
           ${commitOpt("The red bars", false)}
@@ -1896,7 +1908,24 @@ function renderChart2(sub) {
 }
 
 function mountChart2(sub) {
-  if (sub === 0) renderBars(document.getElementById("chart2-intro"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
+  if (sub === 0) {
+    renderBars(document.getElementById("chart2-intro"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
+    const gut = document.getElementById("gut-c2");
+    const reaction = document.getElementById("gut-reaction-c2");
+    const nextBtn = document.getElementById("next-c2-gut");
+    let answered = false;
+    gut.querySelectorAll(".option.gut").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (answered) return;
+        answered = true;
+        btn.classList.add("selected");
+        reaction.innerHTML = `<div class="lens-icon">🔍</div><div class="lens-text"><strong>Lens:</strong> ${btn.dataset.reaction}</div>`;
+        reaction.classList.remove("hidden");
+        SFX.soft();
+        nextBtn.disabled = false;
+      });
+    });
+  }
   if (sub === 1) {
     renderBars(document.getElementById("chart2-first"), DATA.roblox.slice(-3), 0, 100, { title: "DAILY USERS (MILLIONS) · LAST 3 MONTHS", barColor: "#E85D75" });
     setupExplore("mcq-c2-first", "reaction-c2-first", "phase2-c2-first", 4);
@@ -1957,33 +1986,80 @@ function mountChart2(sub) {
 // CHART 3 — ICE CREAM / THIRD THING (8 sub-steps)
 // ═══════════════════════════════════════════════════════════
 function renderChart3(sub) {
-  const total = 8;
+  const total = 9;
 
   if (sub === 0) return `
     <div class="frame">${progressDots(total, 0)}
       <div class="step-label">Chart 3 of 6 · The Third Thing Trick</div>
-      <div class="step-title">This one's weird. Two things moving together.</div>
-      ${bubble(`Ice cream sales and shark attacks. Same chart. Is one really causing the other?`)}
+      <div class="step-title">Two lines on one chart.</div>
+      ${bubble(`This chart has TWO lines — orange for ice cream sales, red for shark attacks. Before we judge anything, let's just confirm you can read it. Two quick reads.`)}
       <div class="news-block">
         <div class="byline">DAILY NEWS · WEIRD</div>
         <div class="headline">ICE CREAM <span class="hot">CAUSES SHARK ATTACKS!</span></div>
         <div class="subhead">Shocking US data reveals ice cream and shark attacks spike together.</div>
-        <svg class="chart" id="chart3-intro" viewBox="0 0 600 320"></svg>
+        <svg class="chart" id="chart3-sense" viewBox="0 0 600 320"></svg>
       </div>
-      <div class="nav-row end"><button class="btn" onclick="nextSub()">Start investigating →</button></div>
+      <div class="question">
+        <div class="q-label">📊 Read the chart · 1 of 2</div>
+        <div class="q-text">Looking at the <strong>orange</strong> line — when are <strong>ice cream sales</strong> highest?</div>
+        <div class="options" id="mcq-c3-sense1">
+          ${mcqOpt("A", "Winter (Jan)", false)}
+          ${mcqOpt("B", "Spring (Apr)", false)}
+          ${mcqOpt("C", "Summer (Jul)", true)}
+          ${mcqOpt("D", "Fall (Oct)", false)}
+        </div>
+      </div>
+      <div class="question hidden" id="q-c3-sense2">
+        <div class="q-label">📊 Read the chart · 2 of 2</div>
+        <div class="q-text">Now the <strong>red</strong> line — when are <strong>shark attacks</strong> highest?</div>
+        <div class="options" id="mcq-c3-sense2">
+          ${mcqOpt("A", "Winter (Jan)", false)}
+          ${mcqOpt("B", "Spring (Apr)", false)}
+          ${mcqOpt("C", "Summer (Jul)", true)}
+          ${mcqOpt("D", "Fall (Oct)", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c3-sense"><strong>Both peak in summer.</strong> You can read the chart. Now — what do you make of it?</div>
+      <div class="nav-row end"><button class="btn" id="next-c3-sense" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
 
   if (sub === 1) return `
     <div class="frame">${progressDots(total, 1)}
-      <div class="step-label">Observe · First impression</div>
-      <div class="step-title">What jumps out?</div>
+      <div class="step-label">Gut check · Before you investigate</div>
+      <div class="step-title">Two things moving together. Is one really causing the other?</div>
+      ${bubble(`Both lines rise and fall together. The headline says ice cream <em>causes</em> shark attacks. What's your gut?`)}
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · WEIRD</div>
+        <div class="headline">ICE CREAM <span class="hot">CAUSES SHARK ATTACKS!</span></div>
+        <div class="subhead">Shocking US data reveals ice cream and shark attacks spike together.</div>
+        <svg class="chart" id="chart3-gut" viewBox="0 0 600 320"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">🤔 Gut check</div>
+        <div class="q-text">Reading just this — does it convince you ice cream causes shark attacks?</div>
+        <div class="q-hint">No wrong answer. Just say what your gut says.</div>
+        <div class="options" id="gut-c3">
+          <button class="option gut" data-reaction="That's what the chart wants you to think. Both peak together — looks airtight. Let's check whether the chart deserves your belief."><span class="option-num"></span>Yes — they really do match up</button>
+          <button class="option gut" data-reaction="Smart instinct. Two things moving together doesn't always mean one causes the other. Let's find out what's really going on."><span class="option-num"></span>No — feels too weird</button>
+          <button class="option gut" data-reaction="Honest. Both rising together IS suspicious — but suspicious of what? Let's pick this apart."><span class="option-num"></span>Not sure</button>
+        </div>
+        <div class="lens-reaction hidden" id="gut-reaction-c3"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c3-gut" disabled onclick="nextSub()">Start investigating →</button></div>
+    </div>`;
+
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">Investigate · Pick the chart apart</div>
+      <div class="step-title">What's the real trick here?</div>
+      ${bubble(`Every piece of this chart is a clue — the headline, the lines, the colors, the numbers. We'll examine each one. Then you call it.`)}
       <div class="news-block">
         <svg class="chart" id="chart3-first" viewBox="0 0 600 320"></svg>
       </div>
       <div class="question">
-        <div class="q-label">👀 Look around</div>
-        <div class="q-text">Tap anything that stands out — Lens will react to each.</div>
-        <div class="q-hint">No right answers here. Just look. Try a couple.</div>
+        <div class="q-label">🔍 Examine each clue</div>
+        <div class="q-text">Tap each piece — Lens has a take on each.</div>
+        <div class="q-hint">All four are real clues. Hear Lens out on each, then you'll decide which one is the real trick.</div>
         <div class="options" id="mcq-c3-first">
           ${exploreOpt("The orange line and red line use different colors", "Color coding is just a legend — doesn't change what the chart means.", false)}
           ${exploreOpt("Shark attack numbers are small overall", "Sharp eye — sharks are rare. Side observation though. Keep looking.", false)}
@@ -1993,8 +2069,8 @@ function renderChart3(sub) {
         <div class="lens-reaction hidden" id="reaction-c3-first"></div>
       </div>
       <div class="question phase2 hidden" id="phase2-c3-first">
-        <div class="q-label">🎯 Commit to a lead</div>
-        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="q-label">🎯 Name the trick</div>
+        <div class="q-text">Of all four clues — which one is the real trick?</div>
         <div class="options" id="commit-c3-first">
           ${commitOpt("The orange line and red line use different colors", false)}
           ${commitOpt("Shark attack numbers are small overall", false)}
@@ -2007,8 +2083,8 @@ function renderChart3(sub) {
       <div class="nav-row end"><button class="btn" id="next-c3-first" disabled onclick="nextSub()">Continue →</button></div>
     </div>`;
 
-  if (sub === 2) return `
-    <div class="frame">${progressDots(total, 2)}
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
       <div class="step-label">Step 1 · Comprehension</div>
       <div class="step-title">What is this chart claiming?</div>
       ${bubble(`Before we agree or disagree — just restate the claim.`)}
@@ -2032,8 +2108,8 @@ function renderChart3(sub) {
       <div class="nav-row end"><button class="btn" id="next-c3-msg" disabled onclick="nextSub()">Next →</button></div>
     </div>`;
 
-  if (sub === 3) return `
-    <div class="frame">${progressDots(total, 3)}
+  if (sub === 4) return `
+    <div class="frame">${progressDots(total, 4)}
       <div class="step-label">Step 2 · What's actually true here?</div>
       <div class="step-title">Separate fact from claim. Pick ONLY what the data shows.</div>
       ${bubble(`The chart shows <strong>what happened</strong>. The headline adds a <em>story</em>. Let's split them apart.`)}
@@ -2052,8 +2128,8 @@ function renderChart3(sub) {
       <div class="nav-row end"><button class="btn" id="next-c3-facts" disabled onclick="nextSub()">Next →</button></div>
     </div>`;
 
-  if (sub === 4) return `
-    <div class="frame">${progressDots(total, 4)}
+  if (sub === 5) return `
+    <div class="frame">${progressDots(total, 5)}
       <div class="step-label">Step 3 · Test the claim</div>
       <div class="step-title">If ice cream really caused shark attacks…</div>
       ${bubble(`Think like a scientist. If A causes B, what else would have to be true?`)}
@@ -2071,8 +2147,8 @@ function renderChart3(sub) {
       <div class="nav-row end"><button class="btn" id="next-c3-logic" disabled onclick="nextSub()">Find the hidden thing →</button></div>
     </div>`;
 
-  if (sub === 5) return `
-    <div class="frame">${progressDots(total, 5)}
+  if (sub === 6) return `
+    <div class="frame">${progressDots(total, 6)}
       <div class="step-label">Step 4 · Find the third thing</div>
       <div class="step-title">Something's driving BOTH ice cream AND sharks. What?</div>
       ${bubble(`Click each hypothesis to test it. Only one actually explains the pattern.`)}
@@ -2093,8 +2169,8 @@ function renderChart3(sub) {
       <div class="nav-row end"><button class="btn" id="next-c3-hyp" disabled onclick="nextSub()">Apply the tool →</button></div>
     </div>`;
 
-  if (sub === 6) return `
-    <div class="frame">${progressDots(total, 6)}
+  if (sub === 7) return `
+    <div class="frame">${progressDots(total, 7)}
       <div class="step-label">Step 5 · Apply it</div>
       <div class="step-title">Here's a new claim. Same trick or not?</div>
       ${bubble(`A reporter just filed a claim. Read carefully.`)}
@@ -2116,8 +2192,8 @@ function renderChart3(sub) {
       <div class="nav-row end"><button class="btn" id="next-c3-apply" disabled onclick="nextSub()">Name the trick →</button></div>
     </div>`;
 
-  if (sub === 7) return `
-    <div class="frame">${progressDots(total, 7)}
+  if (sub === 8) return `
+    <div class="frame">${progressDots(total, 8)}
       <div class="step-label">Step 6 · Name it</div>
       <div class="step-title">Two things move together. Something else drives both.</div>
       <div class="question">
@@ -2141,19 +2217,44 @@ function renderChart3(sub) {
 }
 
 function mountChart3(sub) {
-  if (sub === 0) renderTwoLine(document.getElementById("chart3-intro"), DATA.iceCream);
+  if (sub === 0) {
+    renderTwoLine(document.getElementById("chart3-sense"), DATA.iceCream);
+    setupMCQ("mcq-c3-sense1", null, null, () => {
+      document.getElementById("q-c3-sense2").classList.remove("hidden");
+      setTimeout(() => document.getElementById("q-c3-sense2").scrollIntoView({ behavior: "smooth", block: "center" }), 200);
+    });
+    setupMCQ("mcq-c3-sense2", "fb-c3-sense", "next-c3-sense");
+  }
   if (sub === 1) {
+    renderTwoLine(document.getElementById("chart3-gut"), DATA.iceCream);
+    const gut = document.getElementById("gut-c3");
+    const reaction = document.getElementById("gut-reaction-c3");
+    const nextBtn = document.getElementById("next-c3-gut");
+    let answered = false;
+    gut.querySelectorAll(".option.gut").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (answered) return;
+        answered = true;
+        btn.classList.add("selected");
+        reaction.innerHTML = `<div class="lens-icon">🔍</div><div class="lens-text"><strong>Lens:</strong> ${btn.dataset.reaction}</div>`;
+        reaction.classList.remove("hidden");
+        SFX.soft();
+        nextBtn.disabled = false;
+      });
+    });
+  }
+  if (sub === 2) {
     renderTwoLine(document.getElementById("chart3-first"), DATA.iceCream);
     setupExplore("mcq-c3-first", "reaction-c3-first", "phase2-c3-first", 4);
     setupCommit("commit-c3-first", "commit-btn-c3-first", "commit-fb-c3-first", "next-c3-first");
   }
-  if (sub === 2) {
+  if (sub === 3) {
     renderTwoLine(document.getElementById("chart3-msg"), DATA.iceCream);
     setupMCQ("mcq-c3-msg", "fb-c3-msg", "next-c3-msg");
   }
-  if (sub === 3) setupMultiMCQ("mcq-c3-facts", "check-c3-facts", "fb-c3-facts", "next-c3-facts");
-  if (sub === 4) setupMCQ("mcq-c3-logic", "fb-c3-logic", "next-c3-logic");
-  if (sub === 5) {
+  if (sub === 4) setupMultiMCQ("mcq-c3-facts", "check-c3-facts", "fb-c3-facts", "next-c3-facts");
+  if (sub === 5) setupMCQ("mcq-c3-logic", "fb-c3-logic", "next-c3-logic");
+  if (sub === 6) {
     renderTwoLine(document.getElementById("chart3-hyp"), DATA.iceCream);
     const fb = document.getElementById("fb-c3-hyp");
     const nxt = document.getElementById("next-c3-hyp");
@@ -2175,8 +2276,8 @@ function mountChart3(sub) {
       });
     });
   }
-  if (sub === 6) setupMCQ("mcq-c3-apply", "fb-c3-apply", "next-c3-apply");
-  if (sub === 7) {
+  if (sub === 7) setupMCQ("mcq-c3-apply", "fb-c3-apply", "next-c3-apply");
+  if (sub === 8) {
     setupMCQ("mcq-c3-name", "fb-c3-name", "next-c3-name", () => {
       toolsEarned.third = true;
       document.getElementById("tool-third").classList.remove("hidden");
@@ -2438,7 +2539,24 @@ function gotoSection(idx) {
   SFX.click();
   currentSection = idx;
   currentSubStep = 0;
+  syncScreenURL();
   render();
+}
+
+function syncScreenURL() {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('screen', currentSection + 1);
+    window.history.replaceState({}, '', url.toString());
+  } catch (e) {}
+}
+
+function getScreenFromURL() {
+  const raw = new URLSearchParams(window.location.search).get('screen');
+  if (raw === null) return null;
+  const s = parseInt(raw, 10);
+  if (Number.isNaN(s) || s < 1 || s > CHALLENGE.sections.length) return null;
+  return s - 1;
 }
 
 // Only mark complete when user earns it (not just by jumping nav)
@@ -2453,7 +2571,10 @@ function nextSub() {
   render();
 }
 
-// INIT
+// INIT — honor ?screen=N
+const _urlScreen = getScreenFromURL();
+if (_urlScreen !== null) currentSection = _urlScreen;
+syncScreenURL();
 render();
 </script>
 </body>

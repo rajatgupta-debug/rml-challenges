@@ -1,0 +1,2027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your Feed Is a Choice — RML</title>
+<style>
+/* ══════════════════════════════════════════════════════════
+   DESIGN SYSTEM
+   ══════════════════════════════════════════════════════════ */
+:root {
+  --bg: #FBF5E8;
+  --bg-2: #F5EDD8;
+  --card: #FFFFFF;
+  --border: #E8DFC8;
+  --border-strong: #C9BE9F;
+  --shadow: 0 6px 24px rgba(60, 45, 30, 0.08);
+  --shadow-lift: 0 12px 40px rgba(60, 45, 30, 0.14);
+
+  --text: #2B2320;
+  --text-2: #5E544D;
+  --text-3: #99908A;
+
+  --mint: #2EB39E;
+  --mint-2: #5FC9B5;
+  --mint-bg: #DFF5EF;
+  --mint-ink: #1A6A5C;
+
+  --coral: #E85D75;
+  --coral-bg: #FDE7EB;
+  --coral-ink: #B72F47;
+
+  --orange: #F99B4E;
+  --orange-bg: #FDECDB;
+
+  --yellow: #F4C430;
+  --yellow-bg: #FDF3CA;
+
+  --purple: #8E6FD8;
+  --purple-bg: #EFE8FC;
+
+  --pink: #F472B6;
+  --pink-bg: #FDE7F1;
+
+  --navy: #2B3861;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: "Nunito", "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* TOPBAR */
+.topbar {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 17px;
+  color: var(--text);
+}
+.topbar-brand .logo {
+  background: var(--coral);
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+}
+.topbar-meta { font-size: 13px; color: var(--text-3); font-weight: 700; }
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.mute-btn {
+  background: var(--bg-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+.mute-btn:hover { transform: scale(1.08); background: var(--yellow-bg); }
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 60px);
+}
+.sidebar {
+  padding: 28px 16px 40px;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+}
+.sidebar h4 {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--text-3);
+  margin: 0 12px 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-2);
+  transition: all 0.15s;
+  margin-bottom: 3px;
+  border: 2px solid transparent;
+}
+.nav-item:hover { background: var(--bg-2); color: var(--text); }
+.nav-item.current {
+  background: var(--coral-bg);
+  color: var(--coral-ink);
+  border-color: var(--coral);
+}
+.nav-item.done { color: var(--text); }
+.nav-num {
+  background: var(--border);
+  color: var(--text-2);
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.nav-item.current .nav-num { background: var(--coral); color: white; }
+.nav-item.done .nav-num { background: var(--mint-bg); color: var(--mint-ink); }
+.nav-item.done .nav-num::before { content: "✓"; }
+.nav-item.done .nav-num-text { display: none; }
+
+.main { padding: 32px 40px 60px; min-width: 0; }
+.frame {
+  background: var(--card);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.progress-wrap { display: flex; gap: 5px; margin-bottom: 22px; }
+.progress-dot {
+  flex: 1; height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  transition: background 0.4s;
+}
+.progress-dot.active { background: var(--coral); }
+.progress-dot.current { background: var(--orange); }
+
+.step-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--coral-ink);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+}
+
+/* MASCOT BUBBLE — Pix */
+.mascot-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+.mascot {
+  flex-shrink: 0;
+  width: 64px; height: 64px;
+  animation: pixIdle 2.4s ease-in-out infinite;
+}
+.mascot svg { width: 100%; height: 100%; }
+@keyframes pixIdle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+.bubble {
+  flex: 1;
+  background: var(--coral-bg);
+  border: 2px solid var(--coral);
+  border-radius: 18px;
+  padding: 14px 18px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  position: relative;
+}
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: -10px; top: 18px;
+  width: 0; height: 0;
+  border: 10px solid transparent;
+  border-right-color: var(--coral);
+  border-left: 0;
+}
+.bubble::after {
+  content: "";
+  position: absolute;
+  left: -7px; top: 20px;
+  width: 0; height: 0;
+  border: 8px solid transparent;
+  border-right-color: var(--coral-bg);
+  border-left: 0;
+}
+.bubble .name {
+  color: var(--coral-ink);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.bubble.tiny { padding: 10px 14px; font-size: 14px; }
+
+/* PHONE — VidTok feed container */
+.phone-wrap {
+  display: flex;
+  justify-content: center;
+  margin: 4px 0 18px;
+}
+.phone {
+  width: 100%;
+  max-width: 360px;
+  background: #1A120B;
+  border-radius: 30px;
+  padding: 14px 12px 16px;
+  box-shadow: 0 16px 50px rgba(60,45,30,0.22), inset 0 0 0 2px rgba(255,255,255,0.04);
+  position: relative;
+}
+.phone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #F5E8D3;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  padding: 4px 8px 12px;
+}
+.phone-header .app-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.phone-header .app-name .logo-mark {
+  background: var(--coral);
+  color: white;
+  border-radius: 6px;
+  width: 22px; height: 22px;
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  font-size: 12px;
+}
+.phone-header .who { font-size: 10px; opacity: 0.6; letter-spacing: 1.5px; }
+.feed {
+  background: #FFFBF0;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* VIDEO CARD */
+.vcard {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.18s;
+  position: relative;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+  animation: vcardIn 0.32s ease-out;
+}
+@keyframes vcardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.vcard:hover:not(:disabled) { border-color: var(--coral); transform: translateY(-1px); box-shadow: var(--shadow); }
+.vcard.tapped { border-color: var(--coral); background: var(--coral-bg); }
+.vcard.tapped::after {
+  content: "❤";
+  position: absolute;
+  right: 10px; top: 8px;
+  color: var(--coral);
+  font-size: 18px;
+  animation: heartPop 0.4s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes heartPop {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.vcard:disabled { cursor: default; opacity: 0.65; }
+
+.vthumb {
+  width: 64px; height: 64px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  flex-shrink: 0;
+}
+.vthumb.t-sports { background: linear-gradient(135deg,#F99B4E,#E85D75); }
+.vthumb.t-cooking { background: linear-gradient(135deg,#F4C430,#F99B4E); }
+.vthumb.t-animals { background: linear-gradient(135deg,#5FC9B5,#2EB39E); }
+.vthumb.t-gaming { background: linear-gradient(135deg,#8E6FD8,#2B3861); }
+.vthumb.t-dance { background: linear-gradient(135deg,#F472B6,#8E6FD8); }
+.vthumb.t-music { background: linear-gradient(135deg,#5FC9B5,#8E6FD8); }
+.vthumb.t-comedy { background: linear-gradient(135deg,#F4C430,#E85D75); }
+.vthumb.t-challenge { background: linear-gradient(135deg,#E85D75,#F99B4E); }
+.vthumb.t-sad { background: linear-gradient(135deg,#3D2B5C,#1A1226); color: rgba(255,255,255,0.85); }
+
+.vmeta { min-width: 0; display: flex; flex-direction: column; gap: 3px; padding-right: 22px; }
+.vmeta .vtitle {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text);
+  line-height: 1.2;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.vmeta .vcreator { font-size: 12px; color: var(--text-2); font-weight: 700; }
+.vmeta .vbottom {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 800;
+  margin-top: 2px;
+}
+.vmeta .vtag {
+  background: var(--bg-2);
+  color: var(--text-2);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: lowercase;
+}
+
+/* TALLY PANEL */
+.tally {
+  background: var(--bg-2);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 14px 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.tally .row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.tally .row .label {
+  font-size: 10px;
+  color: var(--text-3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 900;
+}
+.tally .row .val {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--coral-ink);
+  font-family: "SF Mono", ui-monospace, monospace;
+}
+
+/* TOPIC SHIFT BUTTONS */
+.topic-shift {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.tshift-btn {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 10px;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  text-align: center;
+}
+.tshift-btn:hover { border-color: var(--coral); transform: translateY(-1px); }
+.tshift-btn.active { background: var(--coral-bg); border-color: var(--coral); color: var(--coral-ink); }
+.tshift-btn .big { display: block; font-size: 20px; margin-bottom: 4px; }
+
+/* DIAL */
+.dial-wrap {
+  background: var(--bg-2);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  padding: 14px 18px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+.dial-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.dial-end {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--text-2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+  flex-shrink: 0;
+  width: 86px;
+}
+.dial-end .arrow { font-size: 16px; display: block; margin-bottom: 2px; }
+input[type="range"].dial { flex: 1; accent-color: var(--coral); height: 8px; }
+.dial-readout {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-2);
+  font-family: "SF Mono", ui-monospace, monospace;
+}
+
+/* SCORE BARS (Step 4) */
+.score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+.score-item {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: 50px 1fr 70px;
+  gap: 12px;
+  align-items: center;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.score-item.top { border-color: var(--mint); background: var(--mint-bg); box-shadow: var(--shadow); }
+.score-item .rank-bubble {
+  background: var(--bg-2);
+  color: var(--text-2);
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 16px;
+  font-family: "SF Mono", ui-monospace, monospace;
+}
+.score-item.top .rank-bubble { background: var(--mint); color: white; }
+.score-item .si-meta { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.score-item .si-title { font-size: 14px; font-weight: 900; color: var(--text); line-height: 1.2; }
+.score-item .si-bars { display: flex; flex-direction: column; gap: 4px; }
+.score-item .si-bar {
+  display: grid;
+  grid-template-columns: 86px 1fr 36px;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-2);
+}
+.bar-track {
+  height: 8px;
+  background: var(--bg-2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  background: var(--orange);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+.bar-fill.alt { background: var(--purple); }
+.score-item .si-num {
+  font-family: "SF Mono", ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 900;
+  color: var(--text-2);
+  text-align: right;
+}
+.score-item .si-final {
+  background: var(--bg-2);
+  border-radius: 12px;
+  padding: 8px 6px;
+  text-align: center;
+}
+.score-item.top .si-final { background: var(--mint); color: white; }
+.score-item .si-final .lbl { font-size: 9px; letter-spacing: 1.5px; font-weight: 900; opacity: 0.8; }
+.score-item .si-final .val {
+  font-size: 18px;
+  font-weight: 900;
+  font-family: "SF Mono", ui-monospace, monospace;
+  letter-spacing: -0.5px;
+}
+
+.formula-box {
+  background: var(--purple-bg);
+  border: 2px solid var(--purple);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  font-family: "SF Mono", ui-monospace, monospace;
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.3px;
+}
+.formula-box .var { color: var(--coral-ink); }
+
+.task-list { margin-top: 4px; margin-bottom: 12px; }
+.task-row {
+  background: var(--bg-2);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 11px 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  transition: all 0.2s;
+}
+.task-row.done {
+  border-color: var(--mint);
+  background: var(--mint-bg);
+  color: var(--mint-ink);
+}
+.task-row .ck {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: white;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: transparent;
+}
+.task-row.done .ck {
+  border-color: var(--mint);
+  background: var(--mint);
+  color: white;
+}
+.task-row.done .ck::before { content: "✓"; }
+
+/* STEP 6 — side by side feeds */
+.dual {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 8px 0 18px;
+}
+.dual .phone { max-width: none; padding: 10px 8px 12px; }
+.dual .feed { padding: 8px; gap: 7px; }
+.dual .vcard { padding: 7px; grid-template-columns: 44px 1fr; gap: 7px; }
+.dual .vthumb { width: 44px; height: 44px; font-size: 22px; border-radius: 8px; }
+.dual .vmeta .vtitle { font-size: 11px; -webkit-line-clamp: 2; }
+.dual .vmeta .vcreator { font-size: 10px; }
+.dual .vmeta .vbottom { display: none; }
+.dual .vmeta { padding-right: 4px; }
+.dual-label {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 900;
+  color: var(--text-3);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+@media (max-width: 600px) {
+  .dual { grid-template-columns: 1fr; }
+}
+
+/* QUESTIONS + OPTIONS — reused */
+.question {
+  background: var(--yellow-bg);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 14px;
+}
+.q-label {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--orange);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+.q-text {
+  font-size: 17px;
+  color: var(--text);
+  font-weight: 800;
+  margin-bottom: 14px;
+  line-height: 1.35;
+}
+
+.options { display: flex; flex-direction: column; gap: 10px; }
+.option {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.option-num {
+  background: var(--bg-2);
+  color: var(--text-2);
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+.option:hover:not(:disabled) { border-color: var(--coral); transform: translateY(-1px); box-shadow: var(--shadow); }
+.option.selected { border-color: var(--coral); background: var(--coral-bg); }
+.option.correct { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
+.option.correct .option-num { background: var(--mint); color: white; }
+.option.wrong { border-color: var(--coral); background: var(--coral-bg); color: var(--coral-ink); animation: shake 0.4s; }
+.option.missed { border-color: var(--yellow); background: var(--yellow-bg); }
+.option.missed::after { content: " (missed)"; color: var(--text-3); font-size: 12px; margin-left: auto; }
+.option:disabled { cursor: default; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.option.multi .option-num {
+  border-radius: 6px;
+  background: white;
+  border: 2px solid var(--border-strong);
+  color: transparent;
+  font-size: 16px;
+}
+.option.multi.selected .option-num {
+  background: var(--coral);
+  border-color: var(--coral);
+  color: white;
+}
+.option.multi.selected .option-num::before { content: "✓"; }
+.option.multi.correct .option-num { background: var(--mint); border-color: var(--mint); color: white; }
+.option.multi.correct .option-num::before { content: "✓"; }
+.option.multi.wrong .option-num { background: var(--coral); border-color: var(--coral); color: white; }
+.option.multi.wrong .option-num::before { content: "✕"; }
+
+.check-btn {
+  background: var(--coral);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.check-btn:hover:not(:disabled) { background: #d84866; transform: translateY(-1px); }
+.check-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* FEEDBACK */
+.feedback {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border-left: 4px solid var(--mint);
+  background: var(--mint-bg);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.feedback.hot { border-color: var(--coral); background: var(--coral-bg); }
+.feedback.purple { border-color: var(--purple); background: var(--purple-bg); }
+.feedback strong { color: var(--text); font-weight: 900; }
+.feedback em { color: var(--mint-ink); font-style: normal; font-weight: 900; }
+
+/* TOOL CARD */
+.tool-card {
+  background: linear-gradient(135deg, var(--coral-bg) 0%, var(--orange-bg) 100%);
+  border: 2px solid var(--coral);
+  border-radius: 20px;
+  padding: 26px;
+  margin-bottom: 18px;
+  position: relative;
+  overflow: hidden;
+  animation: toolReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes toolReveal {
+  from { transform: scale(0.8) rotate(-4deg); opacity: 0; }
+  to { transform: scale(1) rotate(0); opacity: 1; }
+}
+.tool-card::before {
+  content: attr(data-emoji);
+  position: absolute;
+  top: -20px; right: -10px;
+  font-size: 100px;
+  opacity: 0.15;
+  transform: rotate(15deg);
+}
+.tool-card .tool-tag { font-size: 11px; letter-spacing: 2px; color: var(--coral-ink); font-weight: 900; margin-bottom: 10px; }
+.tool-card h3 { font-size: 26px; color: var(--text); margin-bottom: 10px; font-weight: 900; letter-spacing: -0.5px; }
+.tool-card p { font-size: 15px; color: var(--text-2); line-height: 1.5; font-weight: 600; }
+.tool-card ol { margin: 8px 0 0 22px; padding: 0; }
+.tool-card ol li { font-size: 14px; color: var(--text); font-weight: 700; margin-bottom: 4px; }
+
+/* NAV BUTTONS */
+.nav-row { display: flex; justify-content: space-between; margin-top: 8px; gap: 10px; }
+.nav-row.end { justify-content: flex-end; }
+.btn {
+  background: var(--coral);
+  color: white;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s;
+  letter-spacing: 0.3px;
+}
+.btn:hover:not(:disabled) { background: #d84866; transform: translateY(-2px); box-shadow: var(--shadow-lift); }
+.btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
+.btn.secondary { background: var(--bg-2); color: var(--text); }
+.btn.mint { background: var(--mint); }
+.btn.mint:hover { background: var(--mint-2); }
+
+.hidden { display: none !important; }
+
+/* INTRO HOME */
+.case-hero {
+  background:
+    radial-gradient(ellipse 520px 260px at 50% 40%, rgba(244,114,182,0.18) 0%, transparent 72%),
+    linear-gradient(165deg, #2B1B40 0%, #1A0E26 100%);
+  border-radius: 24px;
+  padding: 34px 28px;
+  margin-bottom: 22px;
+  position: relative;
+  overflow: hidden;
+  color: #F5E8D3;
+  box-shadow: inset 0 0 80px rgba(0,0,0,0.4);
+}
+.case-hero .tag-line {
+  display: inline-block;
+  background: var(--coral);
+  color: white;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  font-weight: 900;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(232,93,117,0.5);
+}
+.case-hero h1 {
+  font-size: 40px;
+  font-weight: 900;
+  color: #FFFBF0;
+  margin-bottom: 10px;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.3);
+}
+.case-hero .hook {
+  font-size: 17px;
+  color: #D5C4AD;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 18px;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.case-hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 13px;
+  color: #F5E8D3;
+  font-weight: 800;
+}
+.case-hero-meta span {
+  background: rgba(255,251,240,0.09);
+  padding: 7px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255,251,240,0.18);
+}
+
+.intro-phone {
+  display: flex;
+  justify-content: center;
+  margin: -10px auto 18px;
+  position: relative;
+  z-index: 2;
+}
+.intro-phone .phone { transform: scale(0.85); transform-origin: top center; max-width: 280px; }
+
+.postit {
+  background: #FFF8C5;
+  border: 1px solid #E6D77A;
+  border-radius: 4px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  box-shadow: 2px 4px 12px rgba(60,45,30,0.08);
+  transform: rotate(-0.5deg);
+  position: relative;
+}
+.postit::before {
+  content: "";
+  position: absolute;
+  top: -8px; left: 20px;
+  width: 40px; height: 16px;
+  background: rgba(191, 130, 30, 0.35);
+  border-radius: 2px;
+  transform: rotate(-4deg);
+}
+.postit .from {
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-3);
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+.postit p { font-size: 15px; color: var(--text); line-height: 1.45; font-weight: 700; }
+
+.cta-row { display: flex; justify-content: center; }
+.btn-big { font-size: 17px; padding: 16px 34px; }
+
+/* COMPLETION */
+.complete-hero {
+  background: linear-gradient(135deg, var(--coral-bg) 0%, var(--yellow-bg) 100%);
+  border-radius: 24px;
+  padding: 40px 32px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.complete-hero::before { content: "📱"; position: absolute; top: 20px; left: 30px; font-size: 40px; animation: float 3s ease-in-out infinite; }
+.complete-hero::after { content: "✨"; position: absolute; bottom: 20px; right: 30px; font-size: 40px; animation: float 3s ease-in-out infinite 1.5s; }
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+.complete-hero h1 { font-size: 38px; font-weight: 900; color: var(--text); margin-bottom: 8px; letter-spacing: -1px; }
+.complete-hero .tag { display: inline-block; background: var(--coral); color: white; padding: 5px 14px; border-radius: 20px; font-size: 11px; letter-spacing: 1.5px; font-weight: 900; margin-bottom: 14px; }
+.complete-summary { font-size: 17px; color: var(--text); font-weight: 700; line-height: 1.5; max-width: 480px; margin: 0 auto; }
+
+.share-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 18px;
+  padding: 24px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.share-card .preview-card {
+  background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
+  border-radius: 14px;
+  padding: 24px;
+  color: white;
+  margin-bottom: 14px;
+}
+.share-card .preview-card h4 { font-size: 22px; font-weight: 900; margin-bottom: 6px; line-height: 1.2; }
+.share-card .preview-card p { font-size: 14px; font-weight: 700; opacity: 0.95; }
+.share-card .preview-card .brand { margin-top: 14px; font-size: 11px; letter-spacing: 1.5px; opacity: 0.85; }
+
+/* REAL FEEDS reveal */
+.real-feeds {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 14px 0;
+}
+.real-feed-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 14px;
+  text-align: center;
+  transition: all 0.2s;
+}
+.real-feed-card:hover { border-color: var(--coral); transform: translateY(-2px); box-shadow: var(--shadow); }
+.real-feed-card .icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 8px;
+}
+.real-feed-card .name {
+  font-size: 14px;
+  font-weight: 900;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.real-feed-card .opt {
+  font-size: 11px;
+  color: var(--text-3);
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+}
+.real-feed-card .opt strong { color: var(--coral-ink); font-weight: 900; }
+
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .frame { padding: 20px; border-radius: 16px; }
+  .case-hero h1, .complete-hero h1 { font-size: 30px; }
+  .real-feeds { grid-template-columns: 1fr; }
+  .score-item { grid-template-columns: 40px 1fr 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mascot SVG: Pix — chunky pixel-square character -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="pix">
+      <ellipse cx="50" cy="92" rx="20" ry="3" fill="#000" opacity="0.16"/>
+      <rect x="48" y="8" width="4" height="12" fill="#C67838"/>
+      <circle cx="50" cy="7" r="4" fill="#2EB39E"/>
+      <rect x="20" y="22" width="60" height="60" rx="10" fill="#F99B4E"/>
+      <rect x="20" y="22" width="60" height="60" rx="10" fill="none" stroke="#C67838" stroke-width="2"/>
+      <rect x="24" y="26" width="6" height="6" rx="1" fill="white" opacity="0.32"/>
+      <rect x="34" y="26" width="6" height="6" rx="1" fill="white" opacity="0.18"/>
+      <rect x="24" y="36" width="6" height="6" rx="1" fill="white" opacity="0.18"/>
+      <rect x="32" y="44" width="11" height="11" rx="2" fill="white"/>
+      <rect x="57" y="44" width="11" height="11" rx="2" fill="white"/>
+      <rect x="35" y="47" width="5" height="5" rx="1" fill="#2B2320"/>
+      <rect x="60" y="47" width="5" height="5" rx="1" fill="#2B2320"/>
+      <rect x="40" y="64" width="20" height="4" rx="1.5" fill="#2B2320"/>
+      <rect x="42" y="68" width="3" height="3" rx="0.5" fill="#E85D75" opacity="0.6"/>
+      <rect x="55" y="68" width="3" height="3" rx="0.5" fill="#E85D75" opacity="0.6"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="logo">📱</div>
+    <div>Your Feed Is a Choice</div>
+  </div>
+  <div class="topbar-right">
+    <div class="topbar-meta" id="step-indicator">Step 1 of 9</div>
+    <button class="mute-btn" id="muteBtn" title="Toggle sound">🔊</button>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <main class="main" id="main"></main>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// SOUND
+// ═══════════════════════════════════════════════════════════
+let audioCtx = null, muted = false;
+function initAudio() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+function tone(f, d = 100, t = 'sine', v = 0.1) {
+  if (muted) return;
+  initAudio();
+  const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+  o.type = t; o.frequency.value = f;
+  g.gain.setValueAtTime(v, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + d/1000);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + d/1000);
+}
+const SFX = {
+  click: () => tone(600, 40, 'square', 0.05),
+  tap:   () => { tone(880, 50, 'triangle', 0.06); setTimeout(() => tone(1175, 60, 'triangle', 0.05), 40); },
+  correct: () => { tone(523, 80); setTimeout(() => tone(659, 80), 80); setTimeout(() => tone(784, 140), 160); },
+  soft: () => { tone(440, 80, 'sine', 0.06); setTimeout(() => tone(587, 100, 'sine', 0.06), 80); },
+  wrong: () => tone(200, 200, 'sawtooth', 0.08),
+  tool: () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 120, 'sine', 0.12), i * 90)),
+  tick: () => tone(1200, 15, 'square', 0.02),
+  reload: () => { tone(330, 80, 'triangle', 0.05); setTimeout(() => tone(440, 100, 'triangle', 0.05), 80); }
+};
+document.getElementById('muteBtn').addEventListener('click', () => {
+  muted = !muted;
+  document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+  if (!muted) SFX.click();
+});
+
+// ═══════════════════════════════════════════════════════════
+// VIDEO DATASET — each card has real numeric features.
+// watchtime / likes / freshness / friend are all 0..1 scores.
+// ═══════════════════════════════════════════════════════════
+const VIDEOS = [
+  // Mid-popular variety — Step 1 starting set
+  { id: "v01", title: "skater fail compilation", creator: "@FailVault", topic: "sports", watchtime: 0.85, likes: 0.32, freshness: 0.55, friend: 0.55, emoji: "🛹", views: "2.4M" },
+  { id: "v02", title: "1-min cookie recipe", creator: "@QuickBites", topic: "cooking", watchtime: 0.55, likes: 0.78, freshness: 0.85, friend: 0.42, emoji: "🍪", views: "880K" },
+  { id: "v03", title: "MrBeast gives away $1M", creator: "@MrBeast", topic: "challenge", watchtime: 0.45, likes: 0.95, freshness: 0.90, friend: 0.92, emoji: "💸", views: "82M" },
+  { id: "v04", title: "kitten learns to jump", creator: "@PawPals", topic: "animals", watchtime: 0.70, likes: 0.86, freshness: 0.40, friend: 0.55, emoji: "🐱", views: "5.1M" },
+  { id: "v05", title: "Minecraft glitch tutorial", creator: "@CraftDad", topic: "gaming", watchtime: 0.92, likes: 0.40, freshness: 0.75, friend: 0.38, emoji: "🟩", views: "1.2M" },
+  { id: "v06", title: "BTS dance cover, room", creator: "@DanceFloor", topic: "dance", watchtime: 0.62, likes: 0.70, freshness: 0.55, friend: 0.65, emoji: "💃", views: "640K" },
+  { id: "v07", title: "lo-fi beat to chill to", creator: "@SonicWave", topic: "music", watchtime: 0.40, likes: 0.50, freshness: 0.30, friend: 0.30, emoji: "🎧", views: "12M" },
+  { id: "v08", title: "soccer bicycle kick goal", creator: "@SportsRoll", topic: "sports", watchtime: 0.80, likes: 0.88, freshness: 0.70, friend: 0.55, emoji: "⚽", views: "9.4M" },
+  { id: "v09", title: "perfect grilled cheese", creator: "@SnackQueen", topic: "cooking", watchtime: 0.65, likes: 0.72, freshness: 0.60, friend: 0.45, emoji: "🧀", views: "1.8M" },
+  { id: "v10", title: "puppy meets baby goat", creator: "@FarmFriends", topic: "animals", watchtime: 0.78, likes: 0.91, freshness: 0.65, friend: 0.70, emoji: "🐶", views: "3.6M" },
+  { id: "v11", title: "speedrun world record", creator: "@RunDoc", topic: "gaming", watchtime: 0.88, likes: 0.62, freshness: 0.80, friend: 0.40, emoji: "🎮", views: "2.0M" },
+  { id: "v12", title: "TikTok dance tutorial", creator: "@MoveLab", topic: "dance", watchtime: 0.50, likes: 0.58, freshness: 0.92, friend: 0.50, emoji: "💃", views: "320K" },
+  // Long-tail (low popularity, high freshness) — for "new stuff" mode
+  { id: "v13", title: "I made bread for the first time", creator: "@TinyKitchen", topic: "cooking", watchtime: 0.30, likes: 0.10, freshness: 0.96, friend: 0.05, emoji: "🍞", views: "84" },
+  { id: "v14", title: "showing my hamster's room", creator: "@HazelHam", topic: "animals", watchtime: 0.35, likes: 0.12, freshness: 0.95, friend: 0.10, emoji: "🐹", views: "212" },
+  { id: "v15", title: "tried a kickflip 47 times", creator: "@SkateKid", topic: "sports", watchtime: 0.42, likes: 0.08, freshness: 0.94, friend: 0.05, emoji: "🛹", views: "76" },
+  { id: "v16", title: "playing roblox alone", creator: "@LonelyLogan", topic: "gaming", watchtime: 0.28, likes: 0.06, freshness: 0.95, friend: 0.02, emoji: "🎮", views: "44" },
+  { id: "v17", title: "homemade beat", creator: "@QuietBeats", topic: "music", watchtime: 0.32, likes: 0.14, freshness: 0.93, friend: 0.08, emoji: "🎵", views: "108" },
+  { id: "v18", title: "first dance try, be nice", creator: "@TryingHard", topic: "dance", watchtime: 0.30, likes: 0.05, freshness: 0.92, friend: 0.03, emoji: "💃", views: "32" },
+  // Juggernauts (high popularity, low freshness)
+  { id: "v19", title: "Khaby Lame: just don't", creator: "@khaby.lame", topic: "comedy", watchtime: 0.55, likes: 0.96, freshness: 0.30, friend: 0.88, emoji: "😂", views: "120M" },
+  { id: "v20", title: "Charli D'Amelio dance", creator: "@charlidamelio", topic: "dance", watchtime: 0.50, likes: 0.98, freshness: 0.20, friend: 0.95, emoji: "💃", views: "98M" },
+  { id: "v21", title: "Bella Poarch lip sync", creator: "@bellapoarch", topic: "music", watchtime: 0.48, likes: 0.94, freshness: 0.25, friend: 0.85, emoji: "🎵", views: "87M" },
+  // Sad set — for Maya's feed (steps 5-7)
+  { id: "s01", title: "i miss the way it used to be", creator: "@QuietMoon", topic: "sad", watchtime: 0.85, likes: 0.45, freshness: 0.50, friend: 0.20, emoji: "🌧", views: "1.4M" },
+  { id: "s02", title: "song that made me cry", creator: "@SoftHours", topic: "sad", watchtime: 0.90, likes: 0.55, freshness: 0.45, friend: 0.15, emoji: "💔", views: "2.1M" },
+  { id: "s03", title: "if you've ever felt left out", creator: "@LateNights", topic: "sad", watchtime: 0.88, likes: 0.50, freshness: 0.60, friend: 0.18, emoji: "🌙", views: "780K" },
+  { id: "s04", title: "the last text he sent", creator: "@HeartTalks", topic: "sad", watchtime: 0.82, likes: 0.60, freshness: 0.55, friend: 0.25, emoji: "📱", views: "3.4M" },
+  { id: "s05", title: "i thought i was over it", creator: "@UnsentLetters", topic: "sad", watchtime: 0.86, likes: 0.48, freshness: 0.50, friend: 0.20, emoji: "📓", views: "1.1M" },
+  { id: "s06", title: "tired of pretending", creator: "@Inside.Me", topic: "sad", watchtime: 0.80, likes: 0.42, freshness: 0.65, friend: 0.12, emoji: "🥀", views: "560K" }
+];
+
+// ═══════════════════════════════════════════════════════════
+// SCORING ENGINE — the actual algorithm running everywhere
+// score = w_topic * topicMatch + w_watchtime * watchtime
+//       + w_recent * freshness + w_friends * friend
+// ═══════════════════════════════════════════════════════════
+function scoreVideo(v, weights, topicLikes) {
+  const topicMatch = topicLikes && topicLikes[v.topic] ? Math.min(topicLikes[v.topic] / 3, 1) : 0;
+  return (weights.topic    || 0) * topicMatch
+       + (weights.watchtime|| 0) * v.watchtime
+       + (weights.recent   || 0) * v.freshness
+       + (weights.friends  || 0) * v.friend;
+}
+function rankFeed(pool, weights, topicLikes, n = 6) {
+  return [...pool]
+    .map(v => ({ v, s: scoreVideo(v, weights, topicLikes) }))
+    .sort((a, b) => b.s - a.s)
+    .slice(0, n)
+    .map(x => x.v);
+}
+
+// State
+const STATE = {
+  taps: {},      // videoId -> 1
+  topicLikes: {} // topic -> count
+};
+function tapVideo(v) {
+  STATE.taps[v.id] = (STATE.taps[v.id] || 0) + 1;
+  STATE.topicLikes[v.topic] = (STATE.topicLikes[v.topic] || 0) + 1;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHALLENGE STRUCTURE
+// ═══════════════════════════════════════════════════════════
+const CHALLENGE = {
+  title: "Your Feed Is a Choice",
+  sections: [
+    { id: "intro",   title: "The App",              kind: "intro" },
+    { id: "step-1",  title: "Step 1 · The First Tap", kind: "step1" },
+    { id: "step-2",  title: "Step 2 · Do It Again",   kind: "step2" },
+    { id: "step-3",  title: "Step 3 · Meet the Lever", kind: "step3" },
+    { id: "step-4",  title: "Step 4 · Open the Hood", kind: "step4" },
+    { id: "step-5",  title: "Step 5 · Maya's Feed",   kind: "step5" },
+    { id: "step-6",  title: "Step 6 · Two Realities", kind: "step6" },
+    { id: "step-7",  title: "Step 7 · Fix the Feed",  kind: "step7" },
+    { id: "step-8",  title: "Step 8 · The Reveal",    kind: "step8" },
+    { id: "complete", title: "Case Closed",           kind: "completion" }
+  ]
+};
+
+let currentSection = 0;
+let completedSections = new Set();
+let earnedTool = false;
+
+// ═══════════════════════════════════════════════════════════
+// SIDEBAR + STEP INDICATOR
+// ═══════════════════════════════════════════════════════════
+function renderSidebar() {
+  const nav = document.getElementById("sidebar");
+  let html = `<h4>The Walkthrough</h4>`;
+  CHALLENGE.sections.forEach((s, i) => {
+    const current = i === currentSection ? 'current' : '';
+    const done = completedSections.has(i) ? 'done' : '';
+    html += `
+      <div class="nav-item ${current} ${done}" data-section="${i}">
+        <div class="nav-num"><span class="nav-num-text">${i + 1}</span></div>
+        <div>${s.title}</div>
+      </div>`;
+  });
+  nav.innerHTML = html;
+  nav.querySelectorAll('.nav-item').forEach(el => {
+    el.addEventListener('click', () => gotoSection(parseInt(el.dataset.section)));
+  });
+}
+function updateStepIndicator() {
+  document.getElementById('step-indicator').textContent = `Step ${currentSection + 1} of ${CHALLENGE.sections.length}`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// PRIMITIVES
+// ═══════════════════════════════════════════════════════════
+function progressDots(total, current) {
+  let html = '<div class="progress-wrap">';
+  for (let i = 0; i < total; i++) {
+    const cls = i < current ? 'active' : (i === current ? 'current' : '');
+    html += `<div class="progress-dot ${cls}"></div>`;
+  }
+  return html + '</div>';
+}
+function bubble(text, name = "PIX") {
+  return `<div class="mascot-row"><div class="mascot"><svg viewBox="0 0 100 100"><use href="#pix"/></svg></div><div class="bubble"><div class="name">${name}</div>${text}</div></div>`;
+}
+function tinyBubble(text) {
+  return `<div class="mascot-row"><div class="mascot"><svg viewBox="0 0 100 100"><use href="#pix"/></svg></div><div class="bubble tiny"><div class="name">PIX</div>${text}</div></div>`;
+}
+function videoCard(v, idx, opts = {}) {
+  const tapped = opts.tapped ? 'tapped' : '';
+  const disabled = opts.disabled ? 'disabled' : '';
+  return `
+    <button class="vcard ${tapped}" data-vid="${v.id}" data-idx="${idx}" ${disabled}>
+      <div class="vthumb t-${v.topic}">${v.emoji}</div>
+      <div class="vmeta">
+        <div class="vtitle">${v.title}</div>
+        <div class="vcreator">${v.creator}</div>
+        <div class="vbottom">
+          <span class="vtag">${v.topic}</span>
+          <span>${v.views} views</span>
+        </div>
+      </div>
+    </button>`;
+}
+function feedHTML(videos, opts = {}) {
+  return `<div class="phone">
+    <div class="phone-header">
+      <div class="app-name"><span class="logo-mark">V</span> VidTok</div>
+      <div class="who">${opts.who || 'YOU'}</div>
+    </div>
+    <div class="feed">
+      ${videos.map((v, i) => videoCard(v, i, opts)).join('')}
+    </div>
+  </div>`;
+}
+function mcqOpt(letter, text, correct) {
+  return `<button class="option" data-correct="${correct}"><span class="option-num">${letter}</span>${text}</button>`;
+}
+function multiOpt(text, correct) {
+  return `<button class="option multi" data-correct="${correct}"><span class="option-num"></span>${text}</button>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTERACTION HELPERS
+// ═══════════════════════════════════════════════════════════
+function setupMCQ(mcqId, fbId, nextId, onCorrect) {
+  const mcq = document.getElementById(mcqId);
+  if (!mcq) return;
+  mcq.querySelectorAll(".option").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const correct = btn.dataset.correct === "true";
+      if (correct) {
+        SFX.correct();
+        mcq.querySelectorAll(".option").forEach(o => o.disabled = true);
+        btn.classList.add("correct");
+        if (fbId) document.getElementById(fbId).classList.remove("hidden");
+        if (nextId) document.getElementById(nextId).disabled = false;
+        if (onCorrect) onCorrect();
+      } else {
+        SFX.wrong();
+        btn.classList.add("wrong");
+        setTimeout(() => btn.classList.remove("wrong"), 800);
+      }
+    });
+  });
+}
+
+function setupMultiMCQ(mcqId, checkBtnId, fbId, nextId) {
+  const mcq = document.getElementById(mcqId);
+  if (!mcq) return;
+  const checkBtn = document.getElementById(checkBtnId);
+  const fb = document.getElementById(fbId);
+  const nxt = document.getElementById(nextId);
+
+  mcq.querySelectorAll(".option.multi").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if (btn.disabled) return;
+      btn.classList.toggle("selected");
+      SFX.click();
+      const anySelected = mcq.querySelectorAll(".option.multi.selected").length > 0;
+      checkBtn.disabled = !anySelected;
+    });
+  });
+
+  checkBtn.addEventListener("click", () => {
+    let allCorrect = true;
+    mcq.querySelectorAll(".option.multi").forEach(btn => {
+      const shouldBeSelected = btn.dataset.correct === "true";
+      const isSelected = btn.classList.contains("selected");
+      btn.classList.remove("selected");
+      btn.disabled = true;
+      if (shouldBeSelected && isSelected) btn.classList.add("correct");
+      else if (!shouldBeSelected && isSelected) { btn.classList.add("wrong"); allCorrect = false; }
+      else if (shouldBeSelected && !isSelected) { btn.classList.add("missed"); allCorrect = false; }
+    });
+    checkBtn.disabled = true;
+    if (allCorrect) { SFX.correct(); } else { SFX.soft(); }
+    if (fb) fb.classList.remove("hidden");
+    if (nxt) nxt.disabled = false;
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTRO — case landing
+// ═══════════════════════════════════════════════════════════
+function renderIntro() {
+  return `
+    <div class="frame">
+      <div class="case-hero">
+        <div style="text-align:center;"><span class="tag-line">RML · CASE #007</span></div>
+        <h1>Your Feed Is a Choice</h1>
+        <div class="hook">Open any app. Scroll any feed. The order isn't random — it's an algorithm picking what you see. In the next 18 minutes, you'll <em style="color:#FFC8C8;font-style:normal;">become</em> the algorithm.</div>
+        <div class="case-hero-meta">
+          <span>📚 Grade 7–9</span>
+          <span>⏱ ~18 min</span>
+          <span>🛠 1 tool to earn</span>
+        </div>
+      </div>
+
+      <div class="postit">
+        <div class="from">FROM PIX</div>
+        <p>You're about to use VidTok. It looks like every other short-video app. It's not — because <em>you'll see how it works from the inside</em>. Tap. Watch what changes. That's the whole challenge.</p>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn btn-big" onclick="markAndGoto(0, 1)">📱 Open VidTok →</button>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 1 — The First Tap (no instructions, just do)
+// ═══════════════════════════════════════════════════════════
+const STEP1_INITIAL = ["v01", "v02", "v03", "v04", "v05", "v06"];
+
+function renderStep1() {
+  // Reset state for this challenge
+  STATE.taps = {};
+  STATE.topicLikes = {};
+  const videos = STEP1_INITIAL.map(id => VIDEOS.find(v => v.id === id));
+  return `
+    <div class="frame">${progressDots(8, 0)}
+      <div class="step-label">Step 1 of 8</div>
+      <div class="step-title">Tap the videos you'd actually watch.</div>
+      <div id="s1-feed">${feedHTML(videos, { who: "YOU · just opened the app" })}</div>
+      <div id="s1-after" class="hidden">
+        ${tinyBubble(`<strong>…the app already changed.</strong>`)}
+        <div class="nav-row end"><button class="btn" onclick="markAndGoto(1, 2)">Keep tapping →</button></div>
+      </div>
+    </div>`;
+}
+
+function mountStep1() {
+  const feed = document.getElementById("s1-feed");
+  const after = document.getElementById("s1-after");
+  let taps = 0;
+  const initial = STEP1_INITIAL.map(id => VIDEOS.find(v => v.id === id));
+
+  function attach() {
+    feed.querySelectorAll(".vcard").forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (btn.classList.contains("tapped")) return;
+        if (btn.disabled) return;
+        const id = btn.dataset.vid;
+        const v = VIDEOS.find(x => x.id === id);
+        if (!v) return;
+        btn.classList.add("tapped");
+        SFX.tap();
+        tapVideo(v);
+        taps++;
+        if (taps === 3) {
+          // Disable further taps, then re-rank.
+          feed.querySelectorAll(".vcard").forEach(c => c.disabled = true);
+          setTimeout(() => {
+            SFX.reload();
+            // New feed: heavy on tapped topics + 1 wildcard.
+            const pool = VIDEOS.filter(v => !STATE.taps[v.id] && v.topic !== "sad");
+            const weights = { topic: 1.0, watchtime: 0.15, recent: 0.05, friends: 0.05 };
+            const reranked = rankFeed(pool, weights, STATE.topicLikes, 6);
+            feed.innerHTML = feedHTML(reranked, { who: "YOU · after 3 taps" });
+            // No further interaction — purely observational change.
+            feed.querySelectorAll(".vcard").forEach(c => c.disabled = true);
+            after.classList.remove("hidden");
+            setTimeout(() => after.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+          }, 600);
+        }
+      });
+    });
+  }
+  attach();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 2 — Do It Again (tally + topic-shift buttons)
+// ═══════════════════════════════════════════════════════════
+function renderStep2() {
+  const tappedVids = Object.keys(STATE.taps).map(id => VIDEOS.find(v => v.id === id));
+  const topicCounts = {};
+  Object.values(STATE.taps).forEach(() => {});
+  Object.keys(STATE.taps).forEach(id => {
+    const v = VIDEOS.find(x => x.id === id);
+    topicCounts[v.topic] = (topicCounts[v.topic] || 0) + 1;
+  });
+  // Top 3 topics tapped (from step 1)
+  const topTopics = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const tallyHTML = topTopics.length > 0
+    ? topTopics.map(([t, c]) => `
+        <div class="row"><div class="label">${t}</div><div class="val">${c}</div></div>
+      `).join('') + Array(Math.max(0, 3 - topTopics.length)).fill('<div class="row"></div>').join('')
+    : `<div class="row"><div class="label">no taps yet</div><div class="val">—</div></div><div class="row"></div><div class="row"></div>`;
+
+  // Build a fresh feed weighted by topic from step 1
+  const pool = VIDEOS.filter(v => v.topic !== "sad");
+  const weights = { topic: 0.7, watchtime: 0.2, recent: 0.05, friends: 0.05 };
+  const initialFeed = rankFeed(pool, weights, STATE.topicLikes, 6);
+
+  return `
+    <div class="frame">${progressDots(8, 1)}
+      <div class="step-label">Step 2 of 8</div>
+      <div class="step-title">The app counted. Here's what it saw.</div>
+
+      <div class="tally" id="s2-tally">${tallyHTML}</div>
+
+      ${tinyBubble(`The app remembers <strong>every tap</strong>. Want a different feed? Push it.`)}
+
+      <div class="topic-shift" id="s2-shift">
+        <button class="tshift-btn" data-topic="sports"><span class="big">⚽</span>More sports</button>
+        <button class="tshift-btn" data-topic="cooking"><span class="big">🧁</span>More cooking</button>
+        <button class="tshift-btn" data-topic="surprise"><span class="big">🎲</span>Surprise me</button>
+      </div>
+
+      <div id="s2-feed">${feedHTML(initialFeed, { who: "YOU · default", disabled: true })}</div>
+
+      <div id="s2-after" class="hidden">
+        ${tinyBubble(`You're not watching the feed. <strong>The feed is watching you.</strong>`)}
+        <div class="nav-row end"><button class="btn" onclick="markAndGoto(2, 3)">Show me the lever →</button></div>
+      </div>
+    </div>`;
+}
+
+function mountStep2() {
+  const shift = document.getElementById("s2-shift");
+  const feed = document.getElementById("s2-feed");
+  const after = document.getElementById("s2-after");
+  let switchCount = 0;
+
+  shift.querySelectorAll(".tshift-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      shift.querySelectorAll(".tshift-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      SFX.reload();
+      const topic = btn.dataset.topic;
+      let videos;
+      const pool = VIDEOS.filter(v => v.topic !== "sad");
+      if (topic === "surprise") {
+        // Wide spread — boost variety, dampen topic match
+        const weights = { topic: 0.0, watchtime: 0.3, recent: 0.4, friends: 0.3 };
+        videos = rankFeed(pool, weights, {}, 6);
+        // Force topic variety: ensure no topic appears > 2x
+        const seen = {};
+        videos = videos.filter(v => {
+          seen[v.topic] = (seen[v.topic] || 0) + 1;
+          return seen[v.topic] <= 2;
+        });
+        if (videos.length < 6) {
+          const more = pool.filter(v => !videos.includes(v));
+          videos = videos.concat(more.slice(0, 6 - videos.length));
+        }
+      } else {
+        // Boost the chosen topic hard
+        const fakeTopicLikes = { [topic]: 5 };
+        const weights = { topic: 1.0, watchtime: 0.2, recent: 0.1, friends: 0.05 };
+        videos = rankFeed(pool, weights, fakeTopicLikes, 6);
+      }
+      feed.innerHTML = feedHTML(videos, { who: `YOU · ${topic === 'surprise' ? 'surprise mix' : 'more ' + topic}`, disabled: true });
+      switchCount++;
+      if (switchCount >= 2 && after.classList.contains("hidden")) {
+        after.classList.remove("hidden");
+        setTimeout(() => after.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+      }
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 3 — Meet the Lever (one dial: NEW vs POPULAR)
+// ═══════════════════════════════════════════════════════════
+function renderStep3() {
+  const pool = VIDEOS.filter(v => v.topic !== "sad");
+  const initialFeed = rankFeed(pool, { topic: 0, watchtime: 0, recent: 0.5, friends: 0.5 }, {}, 6);
+  return `
+    <div class="frame">${progressDots(8, 2)}
+      <div class="step-label">Step 3 of 8</div>
+      <div class="step-title">One dial. Slide it. Watch the feed flip.</div>
+
+      ${tinyBubble(`Drag the dial. Each end is a different feed.`)}
+
+      <div class="dial-wrap">
+        <div class="dial-row">
+          <div class="dial-end"><span class="arrow">←</span>NEW STUFF</div>
+          <input type="range" class="dial" id="s3-dial" min="0" max="100" value="50">
+          <div class="dial-end">POPULAR STUFF<span class="arrow">→</span></div>
+        </div>
+        <div class="dial-readout" id="s3-readout">50% new · 50% popular</div>
+      </div>
+
+      <div id="s3-feed">${feedHTML(initialFeed, { who: "YOU · 50/50 mix", disabled: true })}</div>
+
+      <div id="s3-question" class="hidden">
+        <div class="question">
+          <div class="q-label">🤔 Quick Q</div>
+          <div class="q-text">Which feed is the <em>right</em> feed?</div>
+          <div class="options" id="s3-mcq">
+            ${mcqOpt("A", "All-popular — that's what most people watch", false)}
+            ${mcqOpt("B", "All-new — fairness, give creators a chance", false)}
+            ${mcqOpt("C", "Neither — both are choices, even the middle is a choice", true)}
+            ${mcqOpt("D", "Whatever the app picks for me", false)}
+          </div>
+        </div>
+        <div class="feedback hidden" id="s3-fb">
+          <strong>Right.</strong> There's no "neutral" setting on this dial. Even the middle is a choice — the app picked 50/50 because someone decided that was the default.
+        </div>
+        <div class="nav-row end"><button class="btn" id="s3-next" disabled onclick="markAndGoto(3, 4)">Open the hood →</button></div>
+      </div>
+    </div>`;
+}
+
+function mountStep3() {
+  const dial = document.getElementById("s3-dial");
+  const readout = document.getElementById("s3-readout");
+  const feed = document.getElementById("s3-feed");
+  const qWrap = document.getElementById("s3-question");
+  let lastTick = 50;
+  let movedExtremes = { left: false, right: false };
+
+  function render() {
+    const v = parseInt(dial.value);
+    const popularWeight = v / 100;     // 0..1
+    const newWeight = 1 - popularWeight;
+    readout.textContent = `${Math.round(newWeight * 100)}% new · ${Math.round(popularWeight * 100)}% popular`;
+    if (Math.abs(v - lastTick) >= 8) { SFX.tick(); lastTick = v; }
+    const pool = VIDEOS.filter(x => x.topic !== "sad");
+    const weights = { topic: 0, watchtime: 0, recent: newWeight, friends: popularWeight };
+    const ranked = rankFeed(pool, weights, {}, 6);
+    feed.innerHTML = feedHTML(ranked, { who: v < 30 ? 'YOU · new stuff' : (v > 70 ? 'YOU · popular' : 'YOU · mixed'), disabled: true });
+    if (v <= 15) movedExtremes.left = true;
+    if (v >= 85) movedExtremes.right = true;
+    if (movedExtremes.left && movedExtremes.right && qWrap.classList.contains("hidden")) {
+      qWrap.classList.remove("hidden");
+      setupMCQ("s3-mcq", "s3-fb", "s3-next");
+      setTimeout(() => qWrap.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+    }
+  }
+  dial.addEventListener("input", render);
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 4 — Open the Hood (real weighted-average math)
+// 4 cards. Slider shifts weight between watchtime & likes.
+// ═══════════════════════════════════════════════════════════
+const STEP4_CARDS = [
+  { id: "A", title: "skater fail compilation", emoji: "🛹", topic: "sports", watchtime: 0.80, likes: 0.30 },
+  { id: "B", title: "MrBeast gives away $1M", emoji: "💸", topic: "challenge", watchtime: 0.30, likes: 0.90 },
+  { id: "C", title: "perfect grilled cheese", emoji: "🧀", topic: "cooking", watchtime: 0.60, likes: 0.60 },
+  { id: "D", title: "showing my hamster's room", emoji: "🐹", topic: "animals", watchtime: 0.50, likes: 0.40 }
+];
+
+function renderStep4() {
+  return `
+    <div class="frame">${progressDots(8, 3)}
+      <div class="step-label">Step 4 of 8 · The Math</div>
+      <div class="step-title">Each video gets a score. Highest score wins. Here's the actual formula.</div>
+
+      ${tinyBubble(`The whole algorithm is just <strong>multiplication and addition</strong>. Watch.`)}
+
+      <div class="formula-box" id="s4-formula">
+        score = <span class="var" id="s4-w-watch">0.50</span> × watch&nbsp;time + <span class="var" id="s4-w-likes">0.50</span> × likes
+      </div>
+
+      <div class="dial-wrap">
+        <div class="dial-row">
+          <div class="dial-end"><span class="arrow">←</span>LIKES MATTER MORE</div>
+          <input type="range" class="dial" id="s4-dial" min="0" max="100" value="50">
+          <div class="dial-end">WATCH TIME MATTERS MORE<span class="arrow">→</span></div>
+        </div>
+      </div>
+
+      <div class="score-list" id="s4-scores"></div>
+
+      <div class="task-list">
+        <div class="task-row" id="s4-task1"><div class="ck"></div><div>Make <strong>🛹 skater fail</strong> the #1 video.</div></div>
+        <div class="task-row" id="s4-task2"><div class="ck"></div><div>Make <strong>💸 MrBeast</strong> the #1 video.</div></div>
+        <div class="task-row" id="s4-task3"><div class="ck"></div><div>Find the slider position where <strong>🛹 skater</strong> and <strong>🧀 grilled cheese</strong> are <em>tied</em> at the top.</div></div>
+      </div>
+
+      <div id="s4-after" class="hidden">
+        ${tinyBubble(`That's the whole engine. Multiplication. Addition. Sort. The hard part is <strong>who picks the weights</strong>.`)}
+        <div class="nav-row end"><button class="btn" onclick="markAndGoto(4, 5)">Meet Maya →</button></div>
+      </div>
+    </div>`;
+}
+
+function mountStep4() {
+  const dial = document.getElementById("s4-dial");
+  const wWatch = document.getElementById("s4-w-watch");
+  const wLikes = document.getElementById("s4-w-likes");
+  const scoresEl = document.getElementById("s4-scores");
+  const t1 = document.getElementById("s4-task1");
+  const t2 = document.getElementById("s4-task2");
+  const t3 = document.getElementById("s4-task3");
+  const after = document.getElementById("s4-after");
+  let lastTick = 50;
+
+  function render() {
+    const v = parseInt(dial.value);
+    const w = v / 100;          // weight on watchtime
+    const ww = w, wl = 1 - w;   // ww + wl = 1
+    wWatch.textContent = ww.toFixed(2);
+    wLikes.textContent = wl.toFixed(2);
+
+    if (Math.abs(v - lastTick) >= 6) { SFX.tick(); lastTick = v; }
+
+    const scored = STEP4_CARDS.map(c => ({
+      ...c,
+      score: ww * c.watchtime + wl * c.likes
+    })).sort((a, b) => b.score - a.score);
+
+    scoresEl.innerHTML = scored.map((c, i) => `
+      <div class="score-item ${i === 0 ? 'top' : ''}">
+        <div class="rank-bubble">#${i + 1}</div>
+        <div class="si-meta">
+          <div class="si-title">${c.emoji} ${c.title}</div>
+          <div class="si-bars">
+            <div class="si-bar">
+              <span>watch&nbsp;time</span>
+              <div class="bar-track"><div class="bar-fill" style="width:${c.watchtime * 100}%"></div></div>
+              <span class="si-num">${c.watchtime.toFixed(2)}</span>
+            </div>
+            <div class="si-bar">
+              <span>likes</span>
+              <div class="bar-track"><div class="bar-fill alt" style="width:${c.likes * 100}%"></div></div>
+              <span class="si-num">${c.likes.toFixed(2)}</span>
+            </div>
+          </div>
+        </div>
+        <div class="si-final">
+          <div class="lbl">SCORE</div>
+          <div class="val">${c.score.toFixed(2)}</div>
+        </div>
+      </div>
+    `).join('');
+
+    // Task checks
+    const top = scored[0];
+    const second = scored[1];
+    if (top.id === "A" && !t1.classList.contains("done")) {
+      t1.classList.add("done"); SFX.soft();
+    }
+    if (top.id === "B" && !t2.classList.contains("done")) {
+      t2.classList.add("done"); SFX.soft();
+    }
+    // Task 3: A and C tied at top.
+    // A: ww*0.8 + wl*0.3 = 0.8w + 0.3(1-w) = 0.5w + 0.3
+    // C: ww*0.6 + wl*0.6 = 0.6
+    // Equal at 0.5w + 0.3 = 0.6 → w = 0.6 (slider at 60).
+    // Both A and C must currently be tied AND at the top (not B/D ahead).
+    const sA = 0.8 * w + 0.3 * (1 - w);
+    const sC = 0.6;
+    const tied = Math.abs(sA - sC) < 0.005;
+    const aOnTop = top.id === "A" && second.id === "C";
+    const cOnTop = top.id === "C" && second.id === "A";
+    if (tied && (aOnTop || cOnTop) && !t3.classList.contains("done")) {
+      t3.classList.add("done"); SFX.correct();
+    }
+
+    if (t1.classList.contains("done") && t2.classList.contains("done") && t3.classList.contains("done")
+        && after.classList.contains("hidden")) {
+      after.classList.remove("hidden");
+      setTimeout(() => after.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+    }
+  }
+  dial.addEventListener("input", render);
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 5 — Maya's Feed
+// ═══════════════════════════════════════════════════════════
+const MAYA_TAPS = { sad: 14, music: 2, dance: 1 };
+function renderStep5() {
+  // Maya's feed is generated by SAME scoreVideo function.
+  // High weight on topic match (sad), high watchtime weight (the algorithm rewards "kept watching").
+  const mayaWeights = { topic: 0.6, watchtime: 0.3, recent: 0.05, friends: 0.05 };
+  const mayaPool = VIDEOS;  // includes sad
+  const mayaFeed = rankFeed(mayaPool, mayaWeights, MAYA_TAPS, 6);
+
+  return `
+    <div class="frame">${progressDots(8, 4)}
+      <div class="step-label">Step 5 of 8</div>
+      <div class="step-title">Meet Maya. Same app. Different feed.</div>
+
+      ${bubble(`Maya is 13. For two weeks, she's been tapping mostly sad songs and breakup videos. Same VidTok you used. Same code. Look at her feed today.`)}
+
+      ${feedHTML(mayaFeed, { who: "MAYA · today", disabled: true })}
+
+      <div class="question">
+        <div class="q-label">🤔 What's going on?</div>
+        <div class="q-text">Why does Maya's feed look like this?</div>
+        <div class="options" id="s5-mcq">
+          ${mcqOpt("A", "The app is being mean to her", false)}
+          ${mcqOpt("B", "Sad content is just more popular than other content", false)}
+          ${mcqOpt("C", "Maya tapped sad content for two weeks. The app counted.", true)}
+          ${mcqOpt("D", "Maya's friends are all sad", false)}
+        </div>
+      </div>
+
+      <div class="feedback hidden" id="s5-fb">
+        <strong>Yep.</strong> Same app you used. Same algorithm. Same scoring formula from Step 4. The only thing that's different is — <em>her taps stacked up</em>.
+      </div>
+
+      <div class="nav-row end"><button class="btn" id="s5-next" disabled onclick="markAndGoto(5, 6)">See both feeds →</button></div>
+    </div>`;
+}
+function mountStep5() {
+  setupMCQ("s5-mcq", "s5-fb", "s5-next");
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 6 — Two Realities (side-by-side)
+// ═══════════════════════════════════════════════════════════
+function renderStep6() {
+  // Kid's feed: re-rank from STATE.topicLikes
+  const pool = VIDEOS.filter(v => v.topic !== "sad");
+  const kidWeights = { topic: 0.6, watchtime: 0.2, recent: 0.1, friends: 0.1 };
+  const kidFeed = Object.keys(STATE.topicLikes).length > 0
+    ? rankFeed(pool, kidWeights, STATE.topicLikes, 5)
+    : rankFeed(pool, { topic: 0, watchtime: 0.3, recent: 0.4, friends: 0.3 }, {}, 5);
+
+  const mayaWeights = { topic: 0.6, watchtime: 0.3, recent: 0.05, friends: 0.05 };
+  const mayaFeed = rankFeed(VIDEOS, mayaWeights, MAYA_TAPS, 5);
+
+  return `
+    <div class="frame">${progressDots(8, 5)}
+      <div class="step-label">Step 6 of 8</div>
+      <div class="step-title">Same app. Same algorithm. Different feeds.</div>
+
+      <div class="dual">
+        <div>
+          <div class="dual-label">YOUR VIDTOK · TODAY</div>
+          ${feedHTML(kidFeed, { who: "YOU", disabled: true })}
+        </div>
+        <div>
+          <div class="dual-label">MAYA'S VIDTOK · TODAY</div>
+          ${feedHTML(mayaFeed, { who: "MAYA", disabled: true })}
+        </div>
+      </div>
+
+      ${tinyBubble(`If you and Maya argue about <strong>"what's on VidTok this week,"</strong> who's right?`)}
+
+      <div class="question">
+        <div class="q-label">🤔 Pick one</div>
+        <div class="options" id="s6-mcq">
+          ${mcqOpt("A", "Me — I see the real feed", false)}
+          ${mcqOpt("B", "Maya — she sees the real feed", false)}
+          ${mcqOpt("C", "Neither — both feeds are real, both are partial", true)}
+          ${mcqOpt("D", "Whoever has more friends online wins", false)}
+        </div>
+      </div>
+
+      <div class="feedback hidden" id="s6-fb">
+        <strong>That's it.</strong> You're not seeing the internet. You're seeing <em>your slice</em>. Maya's seeing hers. Two truths. Both real. Both incomplete. There's a name for this — it's called a <strong>filter bubble</strong>.
+      </div>
+
+      <div class="nav-row end"><button class="btn" id="s6-next" disabled onclick="markAndGoto(6, 7)">Help fix Maya's feed →</button></div>
+    </div>`;
+}
+function mountStep6() {
+  setupMCQ("s6-mcq", "s6-fb", "s6-next");
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 7 — Fix Maya's Feed (surprise dial + multi-correct)
+// ═══════════════════════════════════════════════════════════
+function renderStep7() {
+  const mayaFeed = rankFeed(VIDEOS, { topic: 0.6, watchtime: 0.3, recent: 0.05, friends: 0.05 }, MAYA_TAPS, 6);
+  return `
+    <div class="frame">${progressDots(8, 6)}
+      <div class="step-label">Step 7 of 8</div>
+      <div class="step-title">Help Maya. One dial — how much surprise to add.</div>
+
+      ${tinyBubble(`This is what an engineer does. They pick a dial. They live with what it does.`)}
+
+      <div class="dial-wrap">
+        <div class="dial-row">
+          <div class="dial-end"><span class="arrow">←</span>STAY IN HER ZONE</div>
+          <input type="range" class="dial" id="s7-dial" min="0" max="100" value="0">
+          <div class="dial-end">ADD SURPRISE<span class="arrow">→</span></div>
+        </div>
+        <div class="dial-readout" id="s7-readout">0% surprise · 100% her usual</div>
+      </div>
+
+      <div id="s7-feed">${feedHTML(mayaFeed, { who: "MAYA · before", disabled: true })}</div>
+
+      <div id="s7-question" class="hidden">
+        <div class="question">
+          <div class="q-label">✅ Pick all that are true (you need 3)</div>
+          <div class="q-text">Adding surprise to Maya's feed — what's actually happening?</div>
+          <div class="options" id="s7-mcq">
+            ${multiOpt("Adding surprise is censoring Maya's choices", false)}
+            ${multiOpt("The feed was already filtered — adding surprise is just a different filter", true)}
+            ${multiOpt("'No filter' isn't an option that exists for any feed", true)}
+            ${multiOpt("Maya can still find sad content if she searches for it", true)}
+            ${multiOpt("The original sad feed was the 'real' feed", false)}
+          </div>
+          <button class="check-btn" id="s7-check" disabled style="margin-top: 10px;">Check my picks</button>
+        </div>
+        <div class="feedback hidden" id="s7-fb">
+          <strong>Right.</strong> Every feed is filtered. The only question is — <em>filtered toward what?</em> Toward what she already taps? Toward what surprises her? Toward what makes the app the most money? Someone is always choosing.
+        </div>
+        <div class="nav-row end"><button class="btn" id="s7-next" disabled onclick="markAndGoto(7, 8)">See the reveal →</button></div>
+      </div>
+    </div>`;
+}
+
+function mountStep7() {
+  const dial = document.getElementById("s7-dial");
+  const readout = document.getElementById("s7-readout");
+  const feed = document.getElementById("s7-feed");
+  const qWrap = document.getElementById("s7-question");
+  let lastTick = 0;
+  let opened = false;
+
+  function render() {
+    const v = parseInt(dial.value);
+    const surprise = v / 100;       // 0..1
+    readout.textContent = `${v}% surprise · ${100 - v}% her usual`;
+    if (Math.abs(v - lastTick) >= 8) { SFX.tick(); lastTick = v; }
+
+    // Mix: weight on sad topic decreases with surprise; weight on freshness/variety rises.
+    const sadWeight = 0.6 * (1 - surprise);
+    const recentWeight = 0.05 + 0.4 * surprise;
+    const friendWeight = 0.05 + 0.2 * surprise;
+    const watchWeight = 0.3 - 0.1 * surprise;
+    const weights = { topic: sadWeight, watchtime: watchWeight, recent: recentWeight, friends: friendWeight };
+    let videos = rankFeed(VIDEOS, weights, MAYA_TAPS, 6);
+    // When surprise is high, force at least 2 non-sad
+    if (surprise > 0.4) {
+      const nonSad = videos.filter(v => v.topic !== "sad");
+      if (nonSad.length < 2) {
+        const extra = VIDEOS.filter(v => v.topic !== "sad" && !videos.includes(v))
+                            .sort((a, b) => (b.likes + b.freshness) - (a.likes + a.freshness));
+        videos = videos.filter(v => v.topic === "sad").slice(0, 4).concat(extra.slice(0, 2));
+      }
+    }
+    feed.innerHTML = feedHTML(videos, { who: surprise === 0 ? 'MAYA · before' : `MAYA · ${v}% surprise`, disabled: true });
+    if (v >= 50 && !opened) {
+      opened = true;
+      qWrap.classList.remove("hidden");
+      setupMultiMCQ("s7-mcq", "s7-check", "s7-fb", "s7-next");
+      setTimeout(() => qWrap.scrollIntoView({ behavior: "smooth", block: "center" }), 300);
+    }
+  }
+  dial.addEventListener("input", render);
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════
+// STEP 8 — The Reveal + Tool Earned
+// ═══════════════════════════════════════════════════════════
+function renderStep8() {
+  return `
+    <div class="frame">${progressDots(8, 7)}
+      <div class="step-label">Step 8 of 8 · The Reveal</div>
+      <div class="step-title">It's not just VidTok. It's every feed in your life.</div>
+
+      ${bubble(`Look at these three. They look different. They're not. Each one is sorted by a number — chosen by an engineer somewhere.`)}
+
+      <div class="real-feeds">
+        <div class="real-feed-card">
+          <span class="icon">▶️</span>
+          <div class="name">YouTube home</div>
+          <div class="opt">optimized for:<br><strong>time you'll spend watching</strong></div>
+        </div>
+        <div class="real-feed-card">
+          <span class="icon">🎵</span>
+          <div class="name">Spotify Discover</div>
+          <div class="opt">optimized for:<br><strong>songs you'll save to a playlist</strong></div>
+        </div>
+        <div class="real-feed-card">
+          <span class="icon">🔎</span>
+          <div class="name">Google search</div>
+          <div class="opt">optimized for:<br><strong>clicks that don't bounce back</strong></div>
+        </div>
+      </div>
+
+      <div class="tool-card" data-emoji="📱">
+        <div class="tool-tag">🎁 TOOL EARNED</div>
+        <h3>📱 The Algorithm Lens</h3>
+        <p>When you look at any feed, ask three things:</p>
+        <ol>
+          <li>What is this <strong>sorted by</strong>?</li>
+          <li>What's being <strong>hidden</strong> to make it look this clean?</li>
+          <li>Whose <strong>choice</strong> was that?</li>
+        </ol>
+        <p style="margin-top:10px;"><em style="font-style:normal;color:var(--coral-ink);font-weight:900;">If you can't answer, you're not reading the feed — the feed is reading you.</em></p>
+      </div>
+
+      <div class="nav-row end"><button class="btn" onclick="markAndGoto(8, 9)">Close the case →</button></div>
+    </div>`;
+}
+function mountStep8() {
+  if (!earnedTool) { earnedTool = true; SFX.tool(); }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPLETION
+// ═══════════════════════════════════════════════════════════
+function renderCompletion() {
+  return `
+    <div class="frame">
+      <div class="complete-hero">
+        <div class="tag">CASE CLOSED</div>
+        <h1>You ran the algorithm.</h1>
+        <div class="complete-summary">You tapped, you tuned, you watched two kids end up in two different versions of the internet. From now on, every feed you scroll, you'll see the math underneath.</div>
+      </div>
+
+      ${bubble(`Nice. The next time someone says "the algorithm is just showing me what's popular" — you'll know to ask: <strong>popular by what measure? popular for whom? whose choice?</strong>`)}
+
+      <div class="share-card">
+        <div class="preview-card">
+          <h4>I tuned a real algorithm and watched two kids get two different internets.</h4>
+          <p>Try it. → Your Feed Is a Choice, a Real Math League case.</p>
+          <div class="brand">📱 RML · cuemath.com/league</div>
+        </div>
+        <button class="btn">Share the case</button>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn secondary" onclick="location.reload()">↻ Try again</button>
+        <a href="./index-v2.html" style="text-decoration:none;"><button class="btn">More cases →</button></a>
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// RENDER + NAVIGATION
+// ═══════════════════════════════════════════════════════════
+function render() {
+  const s = CHALLENGE.sections[currentSection];
+  const main = document.getElementById("main");
+  let html = '';
+  if (s.kind === "intro") html = renderIntro();
+  else if (s.kind === "step1") html = renderStep1();
+  else if (s.kind === "step2") html = renderStep2();
+  else if (s.kind === "step3") html = renderStep3();
+  else if (s.kind === "step4") html = renderStep4();
+  else if (s.kind === "step5") html = renderStep5();
+  else if (s.kind === "step6") html = renderStep6();
+  else if (s.kind === "step7") html = renderStep7();
+  else if (s.kind === "step8") html = renderStep8();
+  else if (s.kind === "completion") html = renderCompletion();
+  main.innerHTML = html;
+
+  if (s.kind === "step1") mountStep1();
+  else if (s.kind === "step2") mountStep2();
+  else if (s.kind === "step3") mountStep3();
+  else if (s.kind === "step4") mountStep4();
+  else if (s.kind === "step5") mountStep5();
+  else if (s.kind === "step6") mountStep6();
+  else if (s.kind === "step7") mountStep7();
+  else if (s.kind === "step8") mountStep8();
+
+  renderSidebar();
+  updateStepIndicator();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function gotoSection(idx) {
+  if (idx < 0 || idx >= CHALLENGE.sections.length) return;
+  SFX.click();
+  currentSection = idx;
+  syncScreenURL();
+  render();
+}
+
+function syncScreenURL() {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('screen', currentSection + 1);
+    window.history.replaceState({}, '', url.toString());
+  } catch (e) {}
+}
+
+function getScreenFromURL() {
+  const raw = new URLSearchParams(window.location.search).get('screen');
+  if (raw === null) return null;
+  const s = parseInt(raw, 10);
+  if (Number.isNaN(s) || s < 1 || s > CHALLENGE.sections.length) return null;
+  return s - 1;
+}
+
+function markAndGoto(markIdx, goIdx) {
+  completedSections.add(markIdx);
+  gotoSection(goIdx);
+}
+
+// INIT — honor ?screen=N
+const _urlScreen = getScreenFromURL();
+if (_urlScreen !== null) currentSection = _urlScreen;
+syncScreenURL();
+render();
+</script>
+</body>
+</html>
