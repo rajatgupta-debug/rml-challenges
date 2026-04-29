@@ -936,6 +936,21 @@ function showPhase(n) {
   if (n === 6) initSquares();
   if (n === 7) initHexagons();
   if (n === 8) initFinal();
+  // Sync ?screen=N so the current step is shareable / refresh-safe for review
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('screen', n);
+    window.history.replaceState({}, '', url.toString());
+  } catch (e) { /* file:// or older browser — ignore */ }
+}
+
+function getScreenFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const raw = params.get('screen');
+  if (raw === null) return null;
+  const s = parseInt(raw, 10);
+  if (Number.isNaN(s) || s < 1 || s > TOTAL) return null;
+  return s;
 }
 
 function drawWaxScene() {
@@ -2067,7 +2082,9 @@ function answerBest(btn, shape) {
   });
 }
 
-showPhase(1);
+// Init — honor ?screen=N for direct nav / review
+const _urlScreen = getScreenFromURL();
+showPhase(_urlScreen ?? 1);
 </script>
 </body>
 </html>
