@@ -308,24 +308,56 @@ h2 .title-icon {
 
 /* Final reveal */
 .final-totals {
-  width: 100%; max-width: 460px;
-  background: var(--cream); border: 2px solid var(--ink);
-  border-radius: var(--r-card); padding: 14px 18px;
-  margin: 10px 0; box-shadow: 0 3px 0 var(--ink);
+  width: 100%; max-width: 520px;
+  background: var(--cream); border: 2.5px solid var(--ink);
+  border-radius: var(--r-card); padding: 18px 20px;
+  margin: 12px 0; box-shadow: 0 4px 0 var(--ink);
 }
 .final-row {
   display: grid;
-  grid-template-columns: 32px 1fr auto;
+  grid-template-columns: 30px 88px 1fr auto;
   align-items: center; gap: 10px;
-  padding: 6px 0;
+  padding: 12px 0;
   font-family: var(--font-display); font-weight: 800; font-size: 17px;
   text-align: left;
 }
 .final-row + .final-row { border-top: 1px dashed var(--ink); }
-.final-row svg { width: 28px; height: 28px; }
-.final-row strong { font-size: 22px; font-weight: 900; }
+.final-row svg { width: 26px; height: 26px; }
+.final-row .name { font-size: 16px; }
+.final-row .formula {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 800; font-size: 18px; color: var(--ink);
+}
+.final-row .formula .n { font-size: 22px; font-weight: 900; }
+.final-row .formula .op { font-size: 16px; color: var(--ink-muted); font-weight: 700; }
+.final-row strong.total {
+  font-size: 26px; font-weight: 900;
+  font-family: var(--font-display);
+  min-width: 60px; text-align: right;
+}
 .final-row.win { color: var(--bold-mint); }
-.final-row.win strong { font-size: 26px; }
+.final-row.win .formula { color: var(--bold-mint); }
+.final-row.win .formula .op { color: var(--bold-mint); opacity: 0.7; }
+.final-row.win strong.total { font-size: 30px; }
+.final-takeaway {
+  width: 100%; max-width: 520px;
+  text-align: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 17px;
+  color: var(--ink); margin: 6px 0 10px;
+}
+.final-takeaway .arrow { color: var(--ink-muted); margin: 0 6px; }
+
+@media (max-width: 480px) {
+  .final-row { grid-template-columns: 24px 70px 1fr auto; gap: 6px; padding: 10px 0; }
+  .final-row .name { font-size: 14px; }
+  .final-row .formula { font-size: 15px; gap: 4px; }
+  .final-row .formula .n { font-size: 19px; }
+  .final-row .formula .op { font-size: 13px; }
+  .final-row strong.total { font-size: 22px; min-width: 48px; }
+  .final-row.win strong.total { font-size: 26px; }
+  .final-takeaway { font-size: 15px; }
+}
 
 .celebrate-card {
   background: var(--tint-mint);
@@ -766,24 +798,28 @@ h2 .title-icon {
 <!-- ========== PHASE 8: FINAL ========== -->
 <div class="phase" data-phase="8">
   <h2 id="finalTitle">Compare them all</h2>
-  <div class="subtext">Total wax for each:</div>
+  <div class="subtext">Same cells. Different walls.</div>
   <div class="final-totals">
     <div class="final-row">
       <svg viewBox="0 0 24 24"><polygon points="12,3 3,21 21,21" fill="#FFD4C0" stroke="#1A1A1A" stroke-width="1.5"/></svg>
-      <span>Triangle</span>
-      <strong>180</strong>
+      <span class="name">Triangle</span>
+      <span class="formula"><span class="n">40</span><span class="op">×</span><span class="n">9</span><span class="op">÷</span><span class="n">2</span><span class="op">=</span></span>
+      <strong class="total">180</strong>
     </div>
     <div class="final-row">
       <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" fill="#C8E5F2" stroke="#1A1A1A" stroke-width="1.5"/></svg>
-      <span>Square</span>
-      <strong>160</strong>
+      <span class="name">Square</span>
+      <span class="formula"><span class="n">40</span><span class="op">×</span><span class="n">8</span><span class="op">÷</span><span class="n">2</span><span class="op">=</span></span>
+      <strong class="total">160</strong>
     </div>
     <div class="final-row win">
       <svg viewBox="0 0 24 24"><polygon points="12,3 21,8 21,16 12,21 3,16 3,8" fill="#F5C43E" stroke="#1A1A1A" stroke-width="1.5"/></svg>
-      <span>Hexagon</span>
-      <strong>140 ★</strong>
+      <span class="name">Hexagon</span>
+      <span class="formula"><span class="n">40</span><span class="op">×</span><span class="n">7</span><span class="op">÷</span><span class="n">2</span><span class="op">=</span></span>
+      <strong class="total">140 ★</strong>
     </div>
   </div>
+  <div class="final-takeaway">Fewer walls per cell <span class="arrow">→</span> less wax!</div>
 
   <div id="bestQ" class="q-block">
     <div class="speech">Which is the BEST shape for bees?</div>
