@@ -164,7 +164,7 @@ body {
 }
 .frame {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 28px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
@@ -220,7 +220,7 @@ body {
   flex: 1;
   background: var(--purple-bg);
   border: 2px solid var(--purple);
-  border-radius: 18px;
+  border-radius: 0;
   padding: 14px 18px;
   color: var(--text);
   font-size: 15px;
@@ -260,7 +260,7 @@ body {
    ══════════════════════════════════════════════════════════ */
 .news-block {
   background: var(--bg-2);
-  border-radius: 18px;
+  border-radius: 0;
   padding: 22px 22px 18px;
   margin-bottom: 18px;
   border: 1px solid var(--border);
@@ -285,7 +285,7 @@ svg.chart { width: 100%; height: auto; display: block; }
 .question {
   background: var(--yellow-bg);
   border: 2px solid var(--border);
-  border-radius: 16px;
+  border-radius: 0;
   padding: 18px 20px;
   margin-bottom: 14px;
 }
@@ -316,7 +316,7 @@ svg.chart { width: 100%; height: auto; display: block; }
 .option {
   background: var(--card);
   border: 2px solid var(--border);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 14px 16px;
   color: var(--text);
   font-size: 15px;
@@ -401,7 +401,7 @@ svg.chart { width: 100%; height: auto; display: block; }
   flex: 1;
   background: var(--card);
   border: 2px solid var(--border);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 14px 16px;
   color: var(--text);
   font-size: 18px;
@@ -415,7 +415,7 @@ svg.chart { width: 100%; height: auto; display: block; }
   background: var(--mint);
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 6px;
   padding: 12px 20px;
   font-size: 15px;
   font-weight: 900;
@@ -453,7 +453,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 .predict-btn {
   background: var(--card);
   border: 2px solid var(--border);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 14px 10px;
   color: var(--text);
   font-size: 13px;
@@ -473,7 +473,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 .hyp-btn {
   background: var(--card);
   border: 2px solid var(--border);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 14px 14px;
   color: var(--text);
   font-size: 14px;
@@ -503,7 +503,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 /* Feedback */
 .feedback {
   padding: 14px 18px;
-  border-radius: 14px;
+  border-radius: 0;
   border-left: 4px solid var(--mint);
   background: var(--mint-bg);
   font-size: 15px;
@@ -521,7 +521,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 .lens-reaction {
   background: var(--purple-bg);
   border: 2px solid var(--purple);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 12px 16px;
   margin-top: 12px;
   display: flex;
@@ -541,7 +541,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 .tool-card {
   background: linear-gradient(135deg, var(--mint-bg) 0%, var(--yellow-bg) 100%);
   border: 2px solid var(--mint);
-  border-radius: 20px;
+  border-radius: 0;
   padding: 26px;
   margin-bottom: 18px;
   position: relative;
@@ -608,7 +608,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
   background:
     radial-gradient(ellipse 520px 260px at 50% 40%, rgba(255,215,130,0.22) 0%, transparent 72%),
     linear-gradient(165deg, #2B1B10 0%, #1A120B 100%);
-  border-radius: 24px;
+  border-radius: 0;
   padding: 34px 28px;
   margin-bottom: 22px;
   position: relative;
@@ -637,12 +637,13 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
   box-shadow: 0 2px 8px rgba(232,93,117,0.5);
 }
 .case-hero h1 {
-  font-size: 40px;
+  font-size: 52px;
   font-weight: 900;
   color: #FFFBF0;
-  margin-bottom: 10px;
-  letter-spacing: -1.5px;
-  line-height: 1;
+  margin-top: 6px;
+  margin-bottom: 14px;
+  letter-spacing: -2px;
+  line-height: 0.95;
   text-align: center;
   text-shadow: 0 2px 16px rgba(0,0,0,0.3);
 }
@@ -651,7 +652,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
   color: #D5C4AD;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 4px;
   max-width: 540px;
   margin-left: auto;
   margin-right: auto;
@@ -811,14 +812,14 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 .share-card {
   background: var(--card);
   border: 2px solid var(--border);
-  border-radius: 18px;
+  border-radius: 0;
   padding: 24px;
   margin-bottom: 18px;
   text-align: center;
 }
 .share-card .preview-card {
   background: linear-gradient(135deg, var(--coral) 0%, var(--orange) 100%);
-  border-radius: 14px;
+  border-radius: 0;
   padding: 24px;
   color: white;
   margin-bottom: 14px;
@@ -836,7 +837,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
 .tool-preview {
   background: var(--card);
   border: 2px dashed var(--border-strong);
-  border-radius: 12px;
+  border-radius: 0;
   padding: 12px 14px;
   display: flex;
   align-items: center;
@@ -849,21 +850,23 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
   .layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .main { padding: 16px 12px 60px; }
-  .frame { padding: 18px 16px; border-radius: 14px; }
-  .case-hero h1, .complete-hero h1 { font-size: 30px; }
+  .frame { padding: 18px 16px; border-radius: 0; }
+  .case-hero h1, .complete-hero h1 { font-size: 40px; letter-spacing: -1.5px; }
+  .case-hero { padding: 28px 20px; border-radius: 0; }
+  .case-hero .hook { font-size: 15px; }
   .topbar { padding: 10px 14px; }
   .topbar-brand { gap: 8px; font-size: 14px; }
   .topbar-brand .logo { width: 28px; height: 28px; font-size: 14px; }
   .topbar-meta { font-size: 11px; }
   .mute-btn { width: 34px; height: 34px; }
-  .news-block { padding: 14px 14px 12px; border-radius: 14px; margin-bottom: 14px; }
+  .news-block { padding: 14px 14px 12px; border-radius: 0; margin-bottom: 14px; }
   .headline { font-size: 22px; line-height: 1.1; }
   .subhead { font-size: 13px; margin-bottom: 10px; }
   .byline { font-size: 9px; margin-bottom: 6px; }
-  .question { padding: 14px 14px; border-radius: 12px; margin-bottom: 12px; }
+  .question { padding: 14px 14px; border-radius: 0; margin-bottom: 12px; }
   .q-text { font-size: 15px; margin-bottom: 12px; }
   .q-label { font-size: 10px; margin-bottom: 6px; }
-  .option { padding: 12px 14px; font-size: 14px; border-radius: 10px; }
+  .option { padding: 12px 14px; font-size: 14px; border-radius: 0; }
   .option-num { width: 22px; height: 22px; font-size: 11px; }
   .options { gap: 8px; }
   .bubble { padding: 12px 14px; font-size: 14px; }
@@ -871,7 +874,7 @@ input[type="range"] { flex: 1; accent-color: var(--mint); height: 8px; }
   .mascot { width: 56px; height: 56px; }
   .step-label { font-size: 10px; letter-spacing: 1.5px; }
   .step-title { font-size: 19px; line-height: 1.2; margin-bottom: 14px; }
-  .feedback { padding: 12px 14px; font-size: 13px; border-radius: 10px; }
+  .feedback { padding: 12px 14px; font-size: 13px; border-radius: 0; }
   .btn { padding: 13px 18px; font-size: 15px; }
   .btn-big { padding: 16px 24px; font-size: 17px; }
   .progress-wrap { margin-bottom: 16px; }
@@ -1005,21 +1008,21 @@ function renderBars(svgEl, data, yMin, yMax, opts = {}) {
     const v = yMin + (yMax - yMin) * (i / 4);
     const y = yToPx(v);
     html += `<line x1="${cL}" y1="${y}" x2="${cR}" y2="${y}" stroke="#E8DFC8" stroke-width="1" stroke-dasharray="3,4"/>`;
-    html += `<text x="${cL - 4}" y="${y + 3}" fill="#5E544D" font-size="9" text-anchor="end" font-family="SF Mono, ui-monospace, monospace" font-weight="800">${fmt(v)}${unit}</text>`;
+    html += `<text x="${cL - 4}" y="${y + 3}" fill="#5E544D" font-size="11" text-anchor="end" font-family="SF Mono, ui-monospace, monospace" font-weight="800">${fmt(v)}${unit}</text>`;
   }
   html += `<line x1="${cL}" y1="${cT - 6}" x2="${cL}" y2="${cB}" stroke="#C9BE9F" stroke-width="1.5"/>`;
   html += `<line x1="${cL}" y1="${cB}" x2="${cR}" y2="${cB}" stroke="#C9BE9F" stroke-width="1.5"/>`;
-  if (opts.title) html += `<text x="${(cL + cR) / 2}" y="14" fill="#99908A" font-size="9" text-anchor="middle" letter-spacing="1.2" font-weight="900">${opts.title}</text>`;
+  if (opts.title) html += `<text x="${(cL + cR) / 2}" y="14" fill="#99908A" font-size="10" text-anchor="middle" letter-spacing="1.2" font-weight="900">${opts.title}</text>`;
   data.forEach((d, i) => {
     const x = cL + gap + i * (barW + gap);
     const y = yToPx(d.value);
     const h = cB - y;
     const color = opts.barColor || '#2EB39E';
     html += `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${color}" rx="3"/>`;
-    if (n <= 6) html += `<text x="${x + barW / 2}" y="${y - 5}" fill="#2B2320" font-size="11" text-anchor="middle" font-weight="900">${d.value}${unit}</text>`;
-    const fs = n > 10 ? 8 : 10;
-    const rot = n > 10 ? `transform="rotate(-45, ${x + barW / 2}, ${cB + 14})"` : '';
-    html += `<text x="${x + barW / 2}" y="${cB + 14}" fill="#5E544D" font-size="${fs}" text-anchor="middle" font-weight="700" ${rot}>${d.month}</text>`;
+    if (n <= 6) html += `<text x="${x + barW / 2}" y="${y - 5}" fill="#2B2320" font-size="12" text-anchor="middle" font-weight="900">${d.value}${unit}</text>`;
+    const fs = n > 10 ? 10 : 12;
+    const rot = n > 10 ? `transform="rotate(-45, ${x + barW / 2}, ${cB + 16})"` : '';
+    html += `<text x="${x + barW / 2}" y="${cB + 16}" fill="#5E544D" font-size="${fs}" text-anchor="middle" font-weight="700" ${rot}>${d.month}</text>`;
   });
   svgEl.innerHTML = html;
 }
@@ -1058,13 +1061,13 @@ function renderTwoLine(svgEl, data, opts = {}) {
   const skipX = n > 8 ? 2 : 1;
   data.forEach((d, i) => {
     if (i % skipX !== 0 && i !== n - 1) return;
-    html += `<text x="${cL + i * xStep}" y="${cB + 14}" fill="#5E544D" font-size="9" text-anchor="middle" font-weight="700">${d.month}</text>`;
+    html += `<text x="${cL + i * xStep}" y="${cB + 16}" fill="#5E544D" font-size="11" text-anchor="middle" font-weight="700">${d.month}</text>`;
   });
   // Compact legend — short labels, fits 3 across at viewBox 360
   let legend = '';
-  legend += `<circle cx="${cL + 6}" cy="14" r="4" fill="#F99B4E"/><text x="${cL + 14}" y="17" fill="#5E544D" font-size="10" font-weight="800">🍦 Ice Cream</text>`;
-  legend += `<circle cx="${cL + 110}" cy="14" r="4" fill="#E85D75"/><text x="${cL + 118}" y="17" fill="#5E544D" font-size="10" font-weight="800">🦈 Sharks</text>`;
-  if (opts.showThird) legend += `<circle cx="${cL + 200}" cy="14" r="4" fill="#8E6FD8"/><text x="${cL + 208}" y="17" fill="#5E544D" font-size="10" font-weight="800">🌞 Beach</text>`;
+  legend += `<circle cx="${cL + 6}" cy="14" r="4" fill="#F99B4E"/><text x="${cL + 14}" y="18" fill="#5E544D" font-size="11" font-weight="800">🍦 Ice Cream</text>`;
+  legend += `<circle cx="${cL + 116}" cy="14" r="4" fill="#E85D75"/><text x="${cL + 124}" y="18" fill="#5E544D" font-size="11" font-weight="800">🦈 Sharks</text>`;
+  if (opts.showThird) legend += `<circle cx="${cL + 210}" cy="14" r="4" fill="#8E6FD8"/><text x="${cL + 218}" y="18" fill="#5E544D" font-size="11" font-weight="800">🌞 Beach</text>`;
   html = legend + html;
   svgEl.innerHTML = html;
 }
@@ -1438,7 +1441,7 @@ function setupCommit(commitId, commitBtnId, fbId, nextId) {
       selected.classList.add("correct");
       commit.querySelectorAll(".option.commit").forEach(o => o.disabled = true);
       commitBtn.disabled = true;
-      commitBtn.textContent = "Lead confirmed ✓";
+      commitBtn.textContent = "Got it ✓";
       if (fb) {
         fb.classList.remove("hidden");
         fb.className = "feedback";
@@ -1463,48 +1466,21 @@ function setupCommit(commitId, commitBtnId, fbId, nextId) {
 // INTRO (HOME) — case-file aesthetic
 // ═══════════════════════════════════════════════════════════
 function renderIntro() {
-  const evidence = [
-    { stamp: "CASE 01", mini: miniBar(400, 410, [401,403,406,409], "#E85D75"), head: 'Fortnite <span class="hot">EXPLODES!</span>', tool: "🔍 Axis Trick" },
-    { stamp: "CASE 02", mini: miniBar(0, 100, [68,62,55], "#E85D75"), head: 'Roblox <span class="hot">DYING.</span>', tool: "📅 Time Window" },
-    { stamp: "CASE 03", mini: miniTwoLine(), head: 'Ice cream <span class="hot">causes</span> shark attacks!', tool: "🔗 Third Thing" },
-    { stamp: "CASE 04", mini: miniPicto(), head: 'iPhone <span class="hot">outsells</span> Samsung 2-to-1!', tool: "🖼 Picture Trick", locked: true },
-    { stamp: "CASE 05", mini: miniBase(), head: 'New YouTuber up <span class="hot">500%</span> this month!', tool: "🧮 Base Trick", locked: true },
-    { stamp: "FINAL", mini: miniNewsroom(), head: 'Newsroom Final — 4 charts, your call.', tool: "Apply all 5", locked: true }
-  ];
-
   return `
     <div class="frame">
       <div class="case-hero">
         ${DESK_ILLO}
-        <div style="text-align:center;"><span class="tag-line">RML · REAL MATH LEAGUE CASE #001</span></div>
         <h1>Fake Chart Detective</h1>
-        <div class="hook">Charts can tell the truth — or bend it. Your job: spot the liars. The numbers are correct — the framing isn't.</div>
-        <div class="case-hero-meta">
-          <span>📚 Grade 6–8</span>
-          <span>⏱ ~18 min</span>
-          <span>🛠 5 tools to earn</span>
-        </div>
+        <div class="hook">Charts can tell the truth. Or bend it. Your job — spot the ones that lie.</div>
       </div>
 
       <div class="postit">
-        <div class="from">FROM MAYA · SENIOR EDITOR</div>
-        <p>Six charts came in. Four are lying. Find them before we print. Lens'll work the case with you.</p>
-      </div>
-
-      <div class="evidence-title">🗂 The Evidence</div>
-      <div class="evidence-grid">
-        ${evidence.map(e => `
-          <div class="evidence-card ${e.locked ? 'locked' : ''}">
-            <div class="stamp">${e.stamp}</div>
-            <div class="thumb">${e.mini}</div>
-            <div class="mini-head">${e.head}</div>
-            <div class="tool-hint">${e.tool}</div>
-          </div>
-        `).join('')}
+        <div class="from">MAYA · EDITOR</div>
+        <p>Six charts came in today. Four of them are lying. Catch them before we print.</p>
       </div>
 
       <div class="cta-row">
-        <button class="btn coral btn-big" onclick="markAndGoto(0, 1)">🔍 Take the Case →</button>
+        <button class="btn coral btn-big" onclick="markAndGoto(0, 1)">Take the case →</button>
       </div>
     </div>`;
 }
@@ -1528,7 +1504,7 @@ function renderChart1(sub) {
   // 1 — First impression (EXPLORE pattern — all valid)
   if (sub === 1) return `
     <div class="frame">${progressDots(total, 1)}
-      <div class="step-label">Observe · First impression</div>
+      <div class="step-label">Look around</div>
       <div class="step-title">What's the first thing you notice?</div>
       ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-first")}
       <div class="question">
@@ -1544,7 +1520,7 @@ function renderChart1(sub) {
         <div class="lens-reaction hidden" id="reaction-c1-first"></div>
       </div>
       <div class="question phase2 hidden" id="phase2-c1-first">
-        <div class="q-label">🎯 Commit to a lead</div>
+        <div class="q-label">Pick what to look at first</div>
         <div class="q-text">Of what you noticed, which is worth investigating?</div>
         <div class="options" id="commit-c1-first">
           ${commitOpt("The bars are all bright red", false)}
@@ -1561,7 +1537,7 @@ function renderChart1(sub) {
   // 2 — Chart's message (SINGLE MCQ — comprehension)
   if (sub === 2) return `
     <div class="frame">${progressDots(total, 2)}
-      <div class="step-label">Step 1 · Comprehension</div>
+      <div class="step-label">What is it saying?</div>
       <div class="step-title">What is this chart trying to make you believe?</div>
       ${bubble(`Forget the numbers for a second. Read the headline and look at the shape. What's the <strong>story</strong> this chart wants you to walk away with?`)}
       ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-msg")}
@@ -1582,7 +1558,7 @@ function renderChart1(sub) {
   // 3 — Axis check (MULTI-CORRECT)
   if (sub === 3) return `
     <div class="frame">${progressDots(total, 3)}
-      <div class="step-label">Step 2 · Read the axes</div>
+      <div class="step-label">Look at the side numbers</div>
       <div class="step-title">Two true things about the y-axis. Pick both.</div>
       ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-axis")}
       <div class="question">
@@ -1603,11 +1579,11 @@ function renderChart1(sub) {
   // 4 — Hypothesize (SINGLE MCQ)
   if (sub === 4) return `
     <div class="frame">${progressDots(total, 4)}
-      <div class="step-label">Step 3 · Think it through</div>
+      <div class="step-label">Make a guess</div>
       <div class="step-title">What does a high-starting axis DO to the bars?</div>
       ${bubble(`A y-axis that starts at 400 instead of 0 — before any math — what effect does that have on how the chart looks?`)}
       <div class="question">
-        <div class="q-label">💡 Hypothesize</div>
+        <div class="q-label">What do you think?</div>
         <div class="options" id="mcq-c1-hyp">
           ${mcqOpt("A", "Makes small differences look massive", true)}
           ${mcqOpt("B", "Makes big differences look tiny", false)}
@@ -1622,7 +1598,7 @@ function renderChart1(sub) {
   // 5 — Real numbers (numeric chain)
   if (sub === 5) return `
     <div class="frame">${progressDots(total, 5)}
-      <div class="step-label">Step 4 · Check the real numbers</div>
+      <div class="step-label">Now do the math</div>
       <div class="step-title">Your hunch was right. Let's confirm.</div>
       <div class="question">
         <div class="q-label">🧮 Part A — Players added</div>
@@ -1651,7 +1627,7 @@ function renderChart1(sub) {
   // 6 — Fix (slider)
   if (sub === 6) return `
     <div class="frame">${progressDots(total, 6)}
-      <div class="step-label">Step 5 · Fix it yourself</div>
+      <div class="step-label">Fix the chart</div>
       <div class="step-title">Drag the y-axis down to 0. Watch the lie collapse.</div>
       ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-fix")}
       <div class="question">
@@ -1669,7 +1645,7 @@ function renderChart1(sub) {
   // 7 — Name + tool
   if (sub === 7) return `
     <div class="frame">${progressDots(total, 7)}
-      <div class="step-label">Step 6 · Name it</div>
+      <div class="step-label">Name the trick</div>
       <div class="step-title">You figured it out. Give the trick a name.</div>
       <div class="question">
         <div class="q-label">🏷 Name the trick</div>
@@ -1785,12 +1761,12 @@ function renderChart2(sub) {
 
   if (sub === 1) return `
     <div class="frame">${progressDots(total, 1)}
-      <div class="step-label">Investigate · Pick the chart apart</div>
+      <div class="step-label">Look around</div>
       <div class="step-title">What's the real trick here?</div>
       ${bubble(`Every piece of this chart is a clue — the words, the bars, the time, the colours. We'll examine each one. Then you call it.`)}
       ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash.", "chart2-first")}
       <div class="question">
-        <div class="q-label">🔍 Examine each clue</div>
+        <div class="q-label">Tap each thing you spot</div>
         <div class="q-text">Tap each piece — the headline, the bars, the time period, the colours. Lens has a take on each.</div>
         <div class="q-hint">All four are real clues. Hear Lens out on each, then you'll decide which one is the real trick.</div>
         <div class="options" id="mcq-c2-first">
@@ -1818,7 +1794,7 @@ function renderChart2(sub) {
 
   if (sub === 2) return `
     <div class="frame">${progressDots(total, 2)}
-      <div class="step-label">Step 1 · Comprehension</div>
+      <div class="step-label">What is it saying?</div>
       <div class="step-title">What's this chart's message?</div>
       ${bubble(`Read the headline + bars together. What story is this chart telling?`)}
       ${newsBlock("DAILY NEWS · TECH", 'ROBLOX <span class="hot">DYING.</span>', "Daily users crash.", "chart2-msg")}
@@ -1838,7 +1814,7 @@ function renderChart2(sub) {
 
   if (sub === 3) return `
     <div class="frame">${progressDots(total, 3)}
-      <div class="step-label">Step 2 · What's missing?</div>
+      <div class="step-label">What's missing?</div>
       <div class="step-title">Before you believe the headline — what would you WANT to see?</div>
       ${bubble(`Good detectives ask what's <em>missing</em>. If you were verifying this claim, what context would you demand?`)}
       <div class="question">
@@ -1858,7 +1834,7 @@ function renderChart2(sub) {
 
   if (sub === 4) return `
     <div class="frame">${progressDots(total, 4)}
-      <div class="step-label">Step 3 · Predict</div>
+      <div class="step-label">Make a guess</div>
       <div class="step-title">If the 3-month trend kept going…</div>
       ${bubble(`Based ONLY on what you see here, where does Roblox end up 3 more months from now?`)}
       <div class="question">
@@ -1874,7 +1850,7 @@ function renderChart2(sub) {
 
   if (sub === 5) return `
     <div class="frame">${progressDots(total, 5)}
-      <div class="step-label">Step 4 · Zoom out</div>
+      <div class="step-label">Zoom out</div>
       <div class="step-title">Drag the lens back. How does more history change things?</div>
       ${newsBlock("DAILY NEWS · TECH · FULL HISTORY", 'Roblox follows a rhythm.', "Pull back the lens — see the full picture.", "chart2-full")}
       <div class="question">
@@ -1891,7 +1867,7 @@ function renderChart2(sub) {
 
   if (sub === 6) return `
     <div class="frame">${progressDots(total, 6)}
-      <div class="step-label">Step 5 · Find the rhythm</div>
+      <div class="step-label">Find the pattern</div>
       <div class="step-title">This pattern repeats. What's driving it?</div>
       ${newsBlock("DAILY NEWS · TECH · 18 MONTHS", 'Roblox follows a rhythm.', "Two summers. Two school years. Same shape.", "chart2-rhythm")}
       <div class="question" id="q-peak">
@@ -1920,7 +1896,7 @@ function renderChart2(sub) {
 
   if (sub === 7) return `
     <div class="frame">${progressDots(total, 7)}
-      <div class="step-label">Step 6 · Name it</div>
+      <div class="step-label">Name the trick</div>
       <div class="step-title">This lie had a signature move.</div>
       <div class="question">
         <div class="q-label">🏷 Name the trick</div>
@@ -2060,7 +2036,7 @@ function renderChart3(sub) {
 
   if (sub === 1) return `
     <div class="frame">${progressDots(total, 1)}
-      <div class="step-label">Gut check · Before you investigate</div>
+      <div class="step-label">First — what do you think?</div>
       <div class="step-title">Two things moving together. Is one really causing the other?</div>
       ${bubble(`Both lines rise and fall together. The headline says ice cream <em>causes</em> shark attacks. What's your gut?`)}
       <div class="news-block">
@@ -2085,14 +2061,14 @@ function renderChart3(sub) {
 
   if (sub === 2) return `
     <div class="frame">${progressDots(total, 2)}
-      <div class="step-label">Investigate · Pick the chart apart</div>
+      <div class="step-label">Look around</div>
       <div class="step-title">What's the real trick here?</div>
       ${bubble(`Every piece of this chart is a clue — the headline, the lines, the colors, the numbers. We'll examine each one. Then you call it.`)}
       <div class="news-block">
         <svg class="chart" id="chart3-first" viewBox="0 0 360 240"></svg>
       </div>
       <div class="question">
-        <div class="q-label">🔍 Examine each clue</div>
+        <div class="q-label">Tap each thing you spot</div>
         <div class="q-text">Tap each piece — Lens has a take on each.</div>
         <div class="q-hint">All four are real clues. Hear Lens out on each, then you'll decide which one is the real trick.</div>
         <div class="options" id="mcq-c3-first">
@@ -2120,7 +2096,7 @@ function renderChart3(sub) {
 
   if (sub === 3) return `
     <div class="frame">${progressDots(total, 3)}
-      <div class="step-label">Step 1 · Comprehension</div>
+      <div class="step-label">What is it saying?</div>
       <div class="step-title">What is this chart claiming?</div>
       ${bubble(`Before we agree or disagree — just restate the claim.`)}
       <div class="news-block">
@@ -2145,7 +2121,7 @@ function renderChart3(sub) {
 
   if (sub === 4) return `
     <div class="frame">${progressDots(total, 4)}
-      <div class="step-label">Step 2 · What's actually true here?</div>
+      <div class="step-label">What's really true?</div>
       <div class="step-title">Separate fact from claim. Pick ONLY what the data shows.</div>
       ${bubble(`The chart shows <strong>what happened</strong>. The headline adds a <em>story</em>. Let's split them apart.`)}
       <div class="question">
@@ -2165,7 +2141,7 @@ function renderChart3(sub) {
 
   if (sub === 5) return `
     <div class="frame">${progressDots(total, 5)}
-      <div class="step-label">Step 3 · Test the claim</div>
+      <div class="step-label">Test the claim</div>
       <div class="step-title">If ice cream really caused shark attacks…</div>
       ${bubble(`Think like a scientist. If A causes B, what else would have to be true?`)}
       <div class="question">
@@ -2184,7 +2160,7 @@ function renderChart3(sub) {
 
   if (sub === 6) return `
     <div class="frame">${progressDots(total, 6)}
-      <div class="step-label">Step 4 · Find the third thing</div>
+      <div class="step-label">Find the third thing</div>
       <div class="step-title">Something's driving BOTH ice cream AND sharks. What?</div>
       ${bubble(`Click each hypothesis to test it. Only one actually explains the pattern.`)}
       <div class="news-block">
@@ -2206,7 +2182,7 @@ function renderChart3(sub) {
 
   if (sub === 7) return `
     <div class="frame">${progressDots(total, 7)}
-      <div class="step-label">Step 5 · Apply it</div>
+      <div class="step-label">Use what you learned</div>
       <div class="step-title">Here's a new claim. Same trick or not?</div>
       ${bubble(`A reporter just filed a claim. Read carefully.`)}
       <div class="postit">
@@ -2229,7 +2205,7 @@ function renderChart3(sub) {
 
   if (sub === 8) return `
     <div class="frame">${progressDots(total, 8)}
-      <div class="step-label">Step 6 · Name it</div>
+      <div class="step-label">Name the trick</div>
       <div class="step-title">Two things move together. Something else drives both.</div>
       <div class="question">
         <div class="q-label">🏷 Name the trick</div>
@@ -2372,7 +2348,7 @@ function renderFinale(sub) {
 
   if (sub === 1) return `
     <div class="frame">${progressDots(total, 1)}
-      <div class="step-label">Step 1 · Diagnose</div>
+      <div class="step-label">What's the trick?</div>
       <div class="step-title">Which trick is this chart pulling?</div>
       <div class="news-block">
         <div class="byline">PARENTING TIMES · TECHNOLOGY</div>
@@ -2396,7 +2372,7 @@ function renderFinale(sub) {
 
   if (sub === 2) return `
     <div class="frame">${progressDots(total, 2)}
-      <div class="step-label">Step 2 · Fix the chart</div>
+      <div class="step-label">Fix the chart</div>
       <div class="step-title">Rebuild it honestly. Pull the y-axis to 0.</div>
       <div class="news-block">
         <div class="byline" id="fn-byline">PARENTING TIMES · DISHONEST VERSION</div>
@@ -2418,7 +2394,7 @@ function renderFinale(sub) {
 
   if (sub === 3) return `
     <div class="frame">${progressDots(total, 3)}
-      <div class="step-label">Step 3 · Rewrite</div>
+      <div class="step-label">Pick the honest title</div>
       <div class="step-title">The chart is honest now. Pick the headline that matches.</div>
       <div class="news-block">
         <div class="byline">PARENTING TIMES · HONEST VERSION</div>
