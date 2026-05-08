@@ -365,6 +365,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   flex-wrap: wrap;
   gap: 8px;
 }
+.chips.chips-stack {
+  flex-direction: column;
+  align-items: stretch;
+}
+.chips.chips-stack .chip { flex: 0 0 auto; }
 .chip {
   font-family: var(--font-display);
   font-weight: 800;
@@ -955,38 +960,33 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
     <div class="chip-feedback hidden" id="s3-addup-fb"></div>
 
+    <div class="chips hidden" id="s3-dealA-chips">
+      <button class="chip" data-v="30">$30</button>
+      <button class="chip" data-v="50">$50</button>
+      <button class="chip" data-v="100">$100</button>
+      <button class="chip" data-v="300">$300</button>
+    </div>
+    <div class="chip-feedback hidden" id="s3-dealA-fb"></div>
+
     <button class="cta full hidden" id="s3-next">CONTINUE →</button>
   </section>
 
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- STEP 4 — Predict the flip                                    -->
+  <!-- STEP 4 — Sentiment check                                     -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="4">
+    <h2 class="step-title">What do you think?</h2>
+
     <div class="bubble with-penny peach">
-      <div class="penny s-sm"></div>
-      <div class="bubble-text">Right now Deal A's got <strong>$50</strong>. I've got <strong>31¢</strong>. When do you think I catch up?</div>
+      <div class="penny s-md"></div>
+      <div class="bubble-text">$50 vs 31¢. <strong>Honest take —</strong> is this over? Or do I ever catch up?</div>
     </div>
 
-    <h2 class="step-title">Penny's catching up. When?</h2>
-    <p class="step-sub">Right now Deal A is way ahead. When does Deal B pass it?</p>
-
-    <div class="compare-strip">
-      <div class="compare-cell a">
-        <div class="compare-label">DEAL A (DAY 5)</div>
-        <div class="compare-value">$50.00</div>
-      </div>
-      <div class="compare-cell b">
-        <div class="compare-label">DEAL B (DAY 5)</div>
-        <div class="compare-value">$0.31</div>
-      </div>
-    </div>
-
-    <div class="chips" id="s4-chips">
-      <button class="chip" data-v="14">Day 14</button>
-      <button class="chip" data-v="22">Day 22</button>
-      <button class="chip" data-v="28">Day 28</button>
-      <button class="chip" data-v="never">Never — A wins</button>
+    <div class="chips chips-stack" id="s4-chips">
+      <button class="chip" data-sentiment="a-wins">DEAL A WINS — IT'S OVER</button>
+      <button class="chip" data-sentiment="catches-up">PENNY CATCHES UP</button>
+      <button class="chip" data-sentiment="not-sure">NOT SURE</button>
     </div>
 
     <button class="cta full disabled" id="s4-lock" disabled>LOCK MY GUESS</button>
@@ -997,7 +997,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 5 — March to the flip                                   -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="5">
-    <div class="recall" id="s5-recall">YOU PREDICTED: <b id="s5-pred-display">Day 22</b></div>
+    <div class="recall hidden" id="s5-recall">YOU PREDICTED: <b id="s5-pred-display">Day 22</b></div>
 
     <h2 class="step-title" id="s5-title">Day 7 = ?</h2>
 
@@ -1024,6 +1024,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <div class="jar"><div class="jar-fill b-fill" id="s5-b-fill" style="height: 1%;"></div></div>
         <div class="jar-total b-total" id="s5-b-total">$1.27</div>
       </div>
+    </div>
+
+    <!-- After Day 7 reveal: ask the kid "When?" -->
+    <div class="hidden" id="s5-when-block">
+      <div class="bubble peach">
+        <strong>So — when do YOU think I catch up?</strong>
+      </div>
+      <div class="chips chips-stack mt-md" id="s5-when-chips">
+        <button class="chip" data-v="14">Day 14</button>
+        <button class="chip" data-v="22">Day 22</button>
+        <button class="chip" data-v="28">Day 28</button>
+        <button class="chip" data-v="never">Never — A wins</button>
+      </div>
+      <button class="cta full disabled mt-md" id="s5-when-lock" disabled>LOCK MY GUESS</button>
     </div>
 
     <div class="status-pill flip-callout hidden" id="s5-flip-callout">FLIP! 🪙 Penny passed Deal A.</div>
@@ -1491,6 +1505,7 @@ const state = {
   currentStep: '1',
   muted: false,
   gut_pick: null,
+  s4_sentiment: null,
   flip_prediction: null,
   day30_prediction: null,
   final_pick: null,
@@ -1803,6 +1818,8 @@ function runStep3Setup() {
   }
   hide('s3-addup-chips');
   hide('s3-addup-fb');
+  hide('s3-dealA-chips');
+  hide('s3-dealA-fb');
   hide('s3-next');
   renderS3Question();
 }
@@ -1859,7 +1876,33 @@ function finishStep3() {
     displayOnReveal: (v) => '31¢',
     onDone: () => {
       sfx('reveal');
-      $('s3-bubble').innerHTML = `<strong>Yep — 31¢.</strong> 5 days in, that's all. Tiny.`;
+      $('s3-bubble').innerHTML = `<strong>Yep — 31¢.</strong> Now what about Deal A — what's it got at Day 5?`;
+      // Disable addup chips visually but keep on screen as locked-in answer
+      document.querySelectorAll('#s3-addup-chips .chip').forEach(c => c.classList.add('disabled'));
+      setTimeout(askDealAStep3, 1100);
+    }
+  });
+}
+
+function askDealAStep3() {
+  $('s3-title').textContent = `Deal A at Day 5?`;
+  $('s3-bubble').innerHTML = `Quick — <strong>5 days × $10 = ?</strong>`;
+  hide('s3-addup-chips');
+  show('s3-dealA-chips');
+  hide('s3-dealA-fb');
+
+  setupRetryChips({
+    chipsId: 's3-dealA-chips',
+    fbId: 's3-dealA-fb',
+    correctValue: 50,
+    hintFn: (p, c, n) => {
+      if (p === 300) return `That's 30 days. We're only at Day 5.`;
+      return p < c ? `Bigger. 5 × $10.` : `Smaller. Just 5 days.`;
+    },
+    displayOnReveal: (v) => '$50',
+    onDone: () => {
+      sfx('reveal');
+      $('s3-bubble').innerHTML = `<strong>$50 vs 31¢.</strong> Deal A is way ahead.`;
       setTimeout(() => show('s3-next'), 700);
     }
   });
@@ -1870,14 +1913,14 @@ function setupStep3() {
 }
 
 /* ═════════════════════════════════════════════════════════ */
-/*  STEP 4 — Predict the flip                                 */
+/*  STEP 4 — Sentiment check                                  */
 /* ═════════════════════════════════════════════════════════ */
 function setupStep4() {
   setupSingleChoiceChips({
     chipsId: 's4-chips',
     lockBtnId: 's4-lock',
     onLock: (chip) => {
-      state.flip_prediction = chip.dataset.v;
+      state.s4_sentiment = chip.dataset.sentiment;
       setTimeout(() => { showStep('5'); runStep5Setup(); }, 500);
     }
   });
@@ -1914,19 +1957,44 @@ function runStep5Setup() {
     }
     cal.appendChild(cell);
   }
-  // Display flip prediction
-  const pred = state.flip_prediction;
-  $('s5-pred-display').textContent = pred === 'never' ? 'Never' : 'Day ' + pred;
+  // Recall: hidden until kid commits a prediction inside this step
+  if (state.flip_prediction) {
+    $('s5-pred-display').textContent = state.flip_prediction === 'never' ? 'Never' : 'Day ' + state.flip_prediction;
+    show('s5-recall');
+  } else {
+    hide('s5-recall');
+  }
+  hide('s5-when-block');
+  hide('s5-flip-callout');
+  hide('s5-next');
   // Reset beat counter
   s5Beat = 0;
   // Penny size starts small
   $('s5-penny').className = 'penny s-sm';
-  // Initial jar state (after Day 5: A=$50, B=$0.31). Show as transitioning to Beat 0.
+  // Initial jar state (after Day 5: A=$50, B=$0.31)
   $('s5-a-total').textContent = '$50';
   $('s5-b-total').textContent = '$0.31';
   $('s5-a-fill').style.height = '17%';
   $('s5-b-fill').style.height = '1%';
   renderS5Beat();
+}
+
+function showS5WhenPrediction() {
+  show('s5-when-block');
+  setupSingleChoiceChips({
+    chipsId: 's5-when-chips',
+    lockBtnId: 's5-when-lock',
+    onLock: (chip) => {
+      state.flip_prediction = chip.dataset.v;
+      const predDisplay = state.flip_prediction === 'never' ? 'Never' : 'Day ' + state.flip_prediction;
+      $('s5-pred-display').textContent = predDisplay;
+      hide('s5-when-block');
+      show('s5-recall');
+      // Advance to next beat (Day 10)
+      s5Beat += 1;
+      setTimeout(() => renderS5Beat(), 700);
+    }
+  });
 }
 
 function renderS5Beat() {
@@ -1993,6 +2061,12 @@ function renderS5Beat() {
           $('s5-bubble').innerHTML = reflectMsg;
           show('s5-next');
         }, 2400);
+      } else if (b.day === 7 && !state.flip_prediction) {
+        // After Day 7 reveal, ask the kid "When?" before continuing
+        $('s5-bubble').innerHTML = b.bubble;
+        $('s5-chips').innerHTML = '';
+        $('s5-title').textContent = `Day 7 — still tiny.`;
+        setTimeout(showS5WhenPrediction, 1000);
       } else {
         $('s5-bubble').innerHTML = b.bubble;
         s5Beat += 1;
@@ -2430,7 +2504,7 @@ if (initScreen) {
   showStep(initScreen);
   // Initialize specific step setups for direct nav
   if (initScreen === '3') runStep3Setup();
-  if (initScreen === '5') { state.flip_prediction = state.flip_prediction || '22'; runStep5Setup(); }
+  if (initScreen === '5') runStep5Setup();
   if (initScreen === '7') runStep7Setup();
   if (initScreen === '8') { state.gut_pick = state.gut_pick || 'A'; runStep8Setup(); }
   if (initScreen === '10') runStep10Setup();
