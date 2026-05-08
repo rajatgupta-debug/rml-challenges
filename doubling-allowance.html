@@ -121,6 +121,56 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .step { display: none; flex-direction: column; gap: 18px; }
 .step.active { display: flex; }
 
+/* ─── intro screen (Step 0) ───────────────────────────── */
+.step.intro-step.active {
+  align-items: center;
+  justify-content: center;
+  min-height: 70vh;
+  text-align: center;
+  gap: 0;
+}
+.intro-card {
+  text-align: center;
+  padding: 36px 24px 28px;
+  background: var(--cream);
+  border: 2.5px solid var(--ink);
+  box-shadow: 0 5px 0 var(--ink);
+  width: 100%;
+  max-width: 480px;
+}
+.intro-card .penny { margin: 0 auto 20px; }
+.intro-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(34px, 9vw, 46px);
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin-bottom: 14px;
+}
+.intro-sub {
+  font-size: 17px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  line-height: 1.5;
+  margin-bottom: 24px;
+}
+.intro-meta {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.intro-pill {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.8px;
+  padding: 5px 10px;
+  background: white;
+  border: 2px solid var(--ink);
+}
+
 .step-title {
   font-family: var(--font-display);
   font-weight: 900;
@@ -268,61 +318,46 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 .cal-mini-a-cell::after { content: '$'; }
 
-/* Animated preview for Deal B */
+/* Simplified preview for Deal B — values with prominent ×2 chips */
 .preview-b {
   display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 4px;
-  margin-top: 10px;
-  padding: 12px 8px;
-  background: white;
-  border: 1.5px solid var(--ink);
-  min-height: 90px;
-}
-.preview-day {
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  flex: 1;
-  opacity: 0;
-  transition: opacity 0.4s;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 14px 10px;
+  background: white;
+  border: 2px solid var(--ink);
+  flex-wrap: wrap;
 }
-.preview-day.shown { opacity: 1; }
-.preview-coins {
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 1px;
-}
-.coin {
-  width: 10px;
-  height: 10px;
-  background: var(--penny-copper);
-  border: 1px solid var(--ink);
-  border-radius: 50%;
-}
-.preview-label {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 11px;
-}
-.preview-day-label {
-  font-size: 9px;
-  color: var(--ink-muted);
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-.preview-arrow {
+.prev-val {
   font-family: var(--font-display);
   font-weight: 900;
-  font-size: 11px;
-  color: var(--status-red);
-  align-self: center;
-  opacity: 0;
-  transition: opacity 0.3s;
+  font-size: 17px;
+  padding: 7px 11px;
+  border: 2px solid var(--ink);
+  background: var(--bold-orange);
+  min-width: 38px;
+  text-align: center;
+  color: var(--ink);
 }
-.preview-arrow.shown { opacity: 1; }
+.prev-x2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--status-red);
+  padding: 4px 8px;
+  border: 2px solid var(--status-red);
+  background: white;
+  letter-spacing: 0.5px;
+}
+.prev-dots {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 20px;
+  color: var(--ink-muted);
+  padding-left: 4px;
+}
 
 /* ─── chips ─────────────────────────────────────────────── */
 .chips {
@@ -760,20 +795,28 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   </header>
 
   <!-- ═══════════════════════════════════════════════════════════ -->
-  <!-- STEP 1 — Mom's deal                                          -->
+  <!-- STEP 0 — Intro                                               -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step intro-step" data-step="0">
+    <div class="intro-card">
+      <div class="penny s-xl bounce"></div>
+      <h1 class="intro-title">Mom's Deal</h1>
+      <div class="intro-sub">Your mom's offering you allowance for a month.<br/>Two ways to take it.<br/><strong>Pick the one you'd take.</strong></div>
+      <div class="intro-meta">
+        <span class="intro-pill">📚 GRADE 4–5</span>
+        <span class="intro-pill">⏱ ~12 MIN</span>
+      </div>
+      <button class="cta full" id="s0-start">START →</button>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 1 — Mom's deal (the pick)                               -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="1">
-    <div class="scene-row">
-      <div class="penny s-md bounce"></div>
-      <div class="bubble peach bubble-text" style="flex:1;">
-        <strong>Hey, I'm Penny.</strong><br/>
-        Your mom's giving you allowance for the next 30 days. Two ways to take it. Read both — pick the one you'd actually take.
-      </div>
-      <div class="mom-doodle"></div>
-    </div>
-
-    <h1 class="step-title">Mom's deal</h1>
-    <p class="step-sub">Allowance for the next 30 days. Which one would you take?</p>
+    <h1 class="step-title">Mom's deal.</h1>
+    <p class="step-sub">Pick one.</p>
 
     <div class="deals-row" id="s1-deals">
 
@@ -782,7 +825,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
         <div class="deal-header a-tone">DEAL A</div>
         <div class="deal-body a-body">
           <div class="deal-line">$10 every day</div>
-          <div class="deal-sub">For 30 days. Same amount, every day.</div>
+          <div class="deal-sub">For 30 days.</div>
           <div class="cal-mini-a" id="cal-a"></div>
         </div>
       </div>
@@ -791,18 +834,20 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <div class="deal-card" data-deal="B" id="card-b">
         <div class="deal-header b-tone">DEAL B</div>
         <div class="deal-body b-body">
-          <div class="deal-line">1¢ on Day 1.</div>
-          <div class="deal-line" style="margin-bottom:4px;">Each day = <strong>TWICE</strong> the day before.</div>
-          <div class="deal-sub">For 30 days.</div>
+          <div class="deal-line">Start: 1¢</div>
+          <div class="deal-sub">Each day doubles. For 30 days.</div>
           <div class="preview-b" id="preview-b">
-            <!-- 5 days populated by JS -->
+            <span class="prev-val">1¢</span>
+            <span class="prev-x2">×2</span>
+            <span class="prev-val">2¢</span>
+            <span class="prev-x2">×2</span>
+            <span class="prev-val">4¢</span>
+            <span class="prev-dots">…</span>
           </div>
         </div>
       </div>
 
     </div>
-
-    <div class="recall hidden" id="s1-status">Tap a card to pick it.</div>
 
     <button class="cta full disabled" id="s1-lock" disabled>LOCK IT IN</button>
   </section>
@@ -1500,12 +1545,19 @@ function sfx(kind) {
 /*  STEP CONTROLLER                                           */
 /* ═════════════════════════════════════════════════════════ */
 const TOTAL_STEPS = 14;
+const NUMBERED_STEPS = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14'];
 function showStep(n) {
   state.currentStep = String(n);
   document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
   const step = document.querySelector(`.step[data-step="${n}"]`);
   if (step) step.classList.add('active');
-  $('step-num').textContent = n;
+  const pill = $('step-pill');
+  if (NUMBERED_STEPS.includes(String(n))) {
+    pill.classList.remove('hidden');
+    $('step-num').textContent = n;
+  } else {
+    pill.classList.add('hidden');
+  }
   syncURL();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -1604,7 +1656,14 @@ function setupSingleChoiceChips({ chipsId, lockBtnId, onLock }) {
 }
 
 /* ═════════════════════════════════════════════════════════ */
-/*  STEP 1 — Mom's deal                                       */
+/*  STEP 0 — Intro                                            */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep0() {
+  $('s0-start').addEventListener('click', () => { sfx('select'); showStep('1'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 1 — Mom's deal (the pick)                            */
 /* ═════════════════════════════════════════════════════════ */
 function setupStep1() {
   // Build mini-calendar A
@@ -1614,65 +1673,6 @@ function setupStep1() {
     cell.className = 'cal-mini-a-cell';
     calA.appendChild(cell);
   }
-
-  // Build animated preview B
-  const preview = $('preview-b');
-  const days = [
-    { day: 1, val: '1¢', coins: 1 },
-    { day: 2, val: '2¢', coins: 2 },
-    { day: 3, val: '4¢', coins: 4 },
-    { day: 4, val: '8¢', coins: 8 },
-    { day: 5, val: '16¢', coins: 16 },
-  ];
-  days.forEach((d, i) => {
-    if (i > 0) {
-      const arrow = document.createElement('div');
-      arrow.className = 'preview-arrow';
-      arrow.dataset.idx = i;
-      arrow.textContent = '×2';
-      preview.appendChild(arrow);
-    }
-    const dayEl = document.createElement('div');
-    dayEl.className = 'preview-day';
-    dayEl.dataset.idx = i;
-    const lbl = document.createElement('div');
-    lbl.className = 'preview-day-label';
-    lbl.textContent = `D${d.day}`;
-    const coins = document.createElement('div');
-    coins.className = 'preview-coins';
-    const showCoins = Math.min(d.coins, 6);
-    for (let k = 0; k < showCoins; k++) {
-      const c = document.createElement('div');
-      c.className = 'coin';
-      coins.appendChild(c);
-    }
-    const val = document.createElement('div');
-    val.className = 'preview-label';
-    val.textContent = d.val;
-    dayEl.appendChild(lbl);
-    dayEl.appendChild(coins);
-    dayEl.appendChild(val);
-    preview.appendChild(dayEl);
-  });
-
-  function playPreview() {
-    const dayEls = preview.querySelectorAll('.preview-day');
-    const arrows = preview.querySelectorAll('.preview-arrow');
-    dayEls.forEach(d => d.classList.remove('shown'));
-    arrows.forEach(a => a.classList.remove('shown'));
-    let t = 0;
-    dayEls.forEach((d, i) => {
-      setTimeout(() => d.classList.add('shown'), t);
-      t += 500;
-      if (i < arrows.length) {
-        setTimeout(() => arrows[i].classList.add('shown'), t);
-        t += 300;
-      }
-    });
-  }
-  // Auto-play once on first activation
-  setTimeout(playPreview, 400);
-  $('card-b').addEventListener('mouseenter', playPreview);
 
   // Card selection
   let selectedDeal = null;
@@ -2363,6 +2363,7 @@ $('restart-btn').addEventListener('click', () => { sfx('tap'); location.reload()
 /* ═════════════════════════════════════════════════════════ */
 /*  INIT                                                      */
 /* ═════════════════════════════════════════════════════════ */
+setupStep0();
 setupStep1();
 setupStep2();
 setupStep3();
@@ -2389,7 +2390,7 @@ if (initScreen) {
   if (initScreen === '8') { state.gut_pick = state.gut_pick || 'A'; runStep8Setup(); }
   if (initScreen === '10') runStep10Setup();
 } else {
-  showStep('1');
+  showStep('0');
 }
 
 </script>
