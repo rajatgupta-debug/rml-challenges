@@ -178,6 +178,18 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   line-height: 1.15;
   letter-spacing: -0.5px;
 }
+.step-title.sm {
+  font-size: clamp(20px, 5vw, 26px);
+}
+.soft-prompt {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
 
 .step-sub {
   font-size: 16px;
@@ -1304,41 +1316,33 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 11 — Apply 1: 10-day deal (TIME)                        -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="11">
-    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px;">Apply 1 — Sasha's deal.</p>
+    <h2 class="step-title sm">Sasha's mom — same deals, but only 10 days.</h2>
+    <p class="step-sub">Which would you pick?</p>
 
-    <div class="bubble with-penny peach">
-      <div class="penny s-md"></div>
-      <div class="bubble-text">Sasha's mom offers the same deal. <strong>But only for 10 days.</strong> Same options. Which would you pick?</div>
-    </div>
-
-    <h2 class="step-title">Same deal. 10 days. Which?</h2>
-
-    <!-- Beat A: opinion pick -->
-    <div class="chips" id="s11-pickA">
-      <button class="chip" data-deal="A">Deal A: $10/day · 10 days</button>
-      <button class="chip" data-deal="B">Deal B: 1¢ doubling · 10 days</button>
+    <div class="chips chips-stack" id="s11-pickA">
+      <button class="chip" data-deal="A">Deal A · $10/day · 10 days</button>
+      <button class="chip" data-deal="B">Deal B · 1¢ doubling · 10 days</button>
     </div>
     <button class="cta full disabled mt-md" id="s11-pick-lock" disabled>LOCK PICK</button>
 
-    <!-- Beat B: math reveal -->
-    <div class="hidden mt-md" id="s11-reveal">
+    <!-- Reveal phase -->
+    <div class="hidden" id="s11-reveal">
       <div class="compare-strip">
         <div class="compare-cell a">
           <div class="compare-label">DEAL A · 10 DAYS</div>
-          <div class="compare-value">$100.00</div>
+          <div class="compare-value">$100</div>
         </div>
         <div class="compare-cell b">
           <div class="compare-label">DEAL B · 10 DAYS</div>
           <div class="compare-value">$10.23</div>
         </div>
       </div>
-      <div class="bubble peach mt-md">Whoa. <strong>A wins by 10×.</strong> Even though I'm doubling.</div>
     </div>
 
-    <!-- Beat C: name the lesson -->
-    <div class="hidden mt-md" id="s11-lessonQ">
-      <div class="status-pill orange" style="margin-bottom:10px;">Why did the boring deal win this time?</div>
-      <div class="chips" id="s11-lesson-chips">
+    <!-- Lesson question -->
+    <div class="hidden" id="s11-lessonQ">
+      <p class="soft-prompt">Why did the boring deal win?</p>
+      <div class="chips chips-stack" id="s11-lesson-chips">
         <button class="chip" data-correct="1">Doubling needs more time to catch up</button>
         <button class="chip">Mom rigged it</button>
         <button class="chip">Doubling is actually bad</button>
@@ -1347,7 +1351,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <div class="chip-feedback hidden" id="s11-lesson-fb"></div>
     </div>
 
-    <div class="lesson-card mint hidden mt-md" id="s11-card">
+    <div class="lesson-card mint hidden" id="s11-card">
       <div class="lesson-icon">⏱</div>
       <div class="lesson-text">
         <span class="lesson-name">TIME MATTERS</span>
@@ -1363,18 +1367,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 12 — Apply 2: stop at Day 20 (STAYING POWER)            -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="12">
-    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px;">Apply 2 — Stop early?</p>
+    <h2 class="step-title sm">If Mom had stopped on Day 20 — how much?</h2>
 
-    <div class="bubble with-penny peach">
-      <div class="penny s-md"></div>
-      <div class="bubble-text">What if Mom had stopped on <strong>Day 20</strong> instead of Day 30? How much was I worth then?</div>
-    </div>
-
-    <h2 class="step-title">Stop at Day 20?</h2>
-
-    <!-- Beat A: predict -->
-    <div class="status-pill orange" style="margin-bottom:10px;">If Mom stopped at Day 20 — Deal B's total?</div>
-    <div class="chips" id="s12-chips">
+    <div class="chips chips-stack" id="s12-chips">
       <button class="chip" data-v="1000">$1,000</button>
       <button class="chip" data-v="10000" data-correct="1">$10,000</button>
       <button class="chip" data-v="1000000">$1 million</button>
@@ -1382,25 +1377,25 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     </div>
     <div class="chip-feedback hidden" id="s12-fb"></div>
 
-    <!-- Beat B: comparison reveal -->
-    <div class="hidden mt-md" id="s12-reveal">
+    <!-- Reveal -->
+    <div class="hidden" id="s12-reveal">
       <div class="compare-strip">
         <div class="compare-cell a" style="background: var(--tint-peach);">
-          <div class="compare-label">STOP AT DAY 20</div>
+          <div class="compare-label">STOPPED AT DAY 20</div>
           <div class="compare-value">$10,485</div>
         </div>
         <div class="compare-cell b" style="background: var(--tint-peach); border-left-color: var(--ink);">
-          <div class="compare-label">GO TO DAY 30</div>
-          <div class="compare-value">$10,737,418</div>
+          <div class="compare-label">WENT TO DAY 30</div>
+          <div class="compare-value">$10.7 M</div>
         </div>
       </div>
-      <div class="bubble peach mt-md">Just 10 more days. <strong>A thousand times more money.</strong></div>
+      <p class="soft-prompt mt-md" style="text-align:center;">10 more days = <strong>1,000× more money.</strong></p>
     </div>
 
-    <!-- Beat C: name the lesson -->
-    <div class="hidden mt-md" id="s12-lessonQ">
-      <div class="status-pill orange" style="margin-bottom:10px;">What does this tell you about doubling?</div>
-      <div class="chips" id="s12-lesson-chips">
+    <!-- Lesson question -->
+    <div class="hidden" id="s12-lessonQ">
+      <p class="soft-prompt">What's the takeaway?</p>
+      <div class="chips chips-stack" id="s12-lesson-chips">
         <button class="chip">Most of the magic is at the START</button>
         <button class="chip" data-correct="1">Most of the magic is at the END</button>
         <button class="chip">Doubling is the same throughout</button>
@@ -1409,11 +1404,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <div class="chip-feedback hidden" id="s12-lesson-fb"></div>
     </div>
 
-    <div class="lesson-card lavender hidden mt-md" id="s12-card">
+    <div class="lesson-card lavender hidden" id="s12-card">
       <div class="lesson-icon">📈</div>
       <div class="lesson-text">
         <span class="lesson-name">STAYING POWER</span>
-        Most of doubling's payoff happens in the final stretch. The end is where it explodes.
+        Most of doubling's payoff happens in the final stretch.
       </div>
     </div>
 
@@ -1425,37 +1420,27 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 13 — Apply 3: Penny vs Trippy (RATE)                    -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="13">
-    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px;">Apply 3 — Penny vs Trippy.</p>
+    <h2 class="step-title sm">Trippy triples. 10 days each. Who wins?</h2>
 
-    <div class="scene-row">
-      <div class="penny s-md"></div>
-      <div class="bubble bubble-text peach" style="flex:1;">Meet my brother <strong>Trippy</strong>. He triples instead of doubles. <strong>10 days each.</strong> Who wins?</div>
-      <div class="trippy s-md"></div>
-    </div>
-
-    <h2 class="step-title">Penny vs Trippy.</h2>
-
-    <div class="compare-strip">
-      <div class="compare-cell a" style="background: var(--tint-peach);">
-        <div class="compare-label">PENNY · DAY 5</div>
-        <div class="compare-value">$0.31</div>
+    <div class="scene-row" style="justify-content: center; gap: 28px;">
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+        <div class="penny s-md"></div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:11px; letter-spacing:0.5px;">PENNY · ×2</div>
       </div>
-      <div class="compare-cell b" style="background: var(--cream);">
-        <div class="compare-label">TRIPPY · DAY 5</div>
-        <div class="compare-value">$1.21</div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+        <div class="trippy s-md"></div>
+        <div style="font-family:var(--font-display); font-weight:800; font-size:11px; letter-spacing:0.5px;">TRIPPY · ×3</div>
       </div>
     </div>
 
-    <!-- Beat A: pick winner -->
-    <div class="status-pill orange" style="margin-bottom:10px;">Over 10 days — who gives more?</div>
-    <div class="chips" id="s13-chips">
-      <button class="chip" data-pick="penny">Penny (×2)</button>
-      <button class="chip" data-pick="trippy">Trippy (×3)</button>
+    <div class="chips chips-stack" id="s13-chips">
+      <button class="chip" data-pick="penny">Penny (doubling)</button>
+      <button class="chip" data-pick="trippy">Trippy (tripling)</button>
       <button class="chip" data-pick="same">Same</button>
     </div>
 
-    <!-- Beat B: reveal -->
-    <div class="hidden mt-md" id="s13-reveal">
+    <!-- Reveal -->
+    <div class="hidden" id="s13-reveal">
       <div class="compare-strip">
         <div class="compare-cell a" style="background: var(--tint-peach);">
           <div class="compare-label">PENNY · 10 DAYS</div>
@@ -1466,22 +1451,22 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
           <div class="compare-value">$295.24</div>
         </div>
       </div>
-      <div class="bubble peach mt-md">Trippy wins. By <strong>29×</strong>. Just from going 2× to 3×. That's it.</div>
+      <p class="soft-prompt mt-md" style="text-align:center;">Trippy wins by <strong>29×</strong>. Just from going 2× to 3×.</p>
     </div>
 
-    <!-- Beat C: name the lesson -->
-    <div class="hidden mt-md" id="s13-lessonQ">
-      <div class="status-pill orange" style="margin-bottom:10px;">What does this tell you?</div>
-      <div class="chips" id="s13-lesson-chips">
+    <!-- Lesson question -->
+    <div class="hidden" id="s13-lessonQ">
+      <p class="soft-prompt">What's the takeaway?</p>
+      <div class="chips chips-stack" id="s13-lesson-chips">
         <button class="chip">3× is a tiny bit better than 2×</button>
-        <button class="chip" data-correct="1">A small change in growth rate = HUGE change in result</button>
+        <button class="chip" data-correct="1">A tiny change in growth rate = HUGE change in result</button>
         <button class="chip">Trippy is just better, no math needed</button>
         <button class="chip">Doesn't matter — both end up at millions</button>
       </div>
       <div class="chip-feedback hidden" id="s13-lesson-fb"></div>
     </div>
 
-    <div class="lesson-card sky hidden mt-md" id="s13-card">
+    <div class="lesson-card sky hidden" id="s13-card">
       <div class="lesson-icon">⚡</div>
       <div class="lesson-text">
         <span class="lesson-name">RATE MATTERS</span>
@@ -2400,7 +2385,8 @@ function setupStep11() {
     if (!pickedDeal) return;
     sfx('select');
     state.s11_pick = pickedDeal;
-    document.querySelectorAll('#s11-pickA .chip').forEach(c => c.classList.add('disabled'));
+    // Hide pick UI entirely
+    hide('s11-pickA');
     $('s11-pick-lock').classList.add('hidden');
     show('s11-reveal');
     sfx('reveal');
@@ -2408,7 +2394,12 @@ function setupStep11() {
   });
 
   fixCorrectChips('s11-lesson-chips', 's11-lesson-fb', () => {
-    show('s11-card'); sfx('tool'); setTimeout(() => show('s11-next'), 900);
+    // Hide previous beats so only the lesson card stays
+    hide('s11-reveal');
+    hide('s11-lessonQ');
+    show('s11-card');
+    sfx('tool');
+    setTimeout(() => show('s11-next'), 900);
   }, 'Doubling needs more time to catch up');
 
   $('s11-next').addEventListener('click', () => { sfx('tap'); showStep('12'); });
@@ -2420,6 +2411,9 @@ function setupStep11() {
 function setupStep12() {
   // Predict Day 20 cumulative
   fixCorrectChips('s12-chips', 's12-fb', () => {
+    // Hide predict chips
+    hide('s12-chips');
+    hide('s12-fb');
     show('s12-reveal');
     sfx('reveal');
     setTimeout(() => show('s12-lessonQ'), 1400);
@@ -2427,6 +2421,9 @@ function setupStep12() {
 
   // Lesson chip
   fixCorrectChips('s12-lesson-chips', 's12-lesson-fb', () => {
+    // Hide previous beats so only the lesson card stays
+    hide('s12-reveal');
+    hide('s12-lessonQ');
     show('s12-card');
     sfx('tool');
     setTimeout(() => show('s12-next'), 900);
@@ -2444,9 +2441,9 @@ function setupStep13() {
     chip.addEventListener('click', () => {
       if (chip.classList.contains('disabled')) return;
       sfx('select');
-      document.querySelectorAll('#s13-chips .chip').forEach(c => c.classList.add('disabled'));
-      chip.classList.add('selected');
       state.s13_pick = chip.dataset.pick;
+      // Hide pick chips entirely
+      hide('s13-chips');
       show('s13-reveal');
       sfx('reveal');
       setTimeout(() => show('s13-lessonQ'), 1400);
@@ -2455,10 +2452,13 @@ function setupStep13() {
 
   // Lesson chip
   fixCorrectChips('s13-lesson-chips', 's13-lesson-fb', () => {
+    // Hide previous beats
+    hide('s13-reveal');
+    hide('s13-lessonQ');
     show('s13-card');
     sfx('tool');
     setTimeout(() => show('s13-next'), 900);
-  }, 'A small change in growth rate = HUGE change in result');
+  }, 'A tiny change in growth rate = HUGE change in result');
 
   $('s13-next').addEventListener('click', () => { sfx('tap'); showStep('14'); });
 }
