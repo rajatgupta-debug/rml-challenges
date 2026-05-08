@@ -2370,8 +2370,10 @@ function pictogram(samsungScale, iphoneScale, opts = {}) {
   const baseSize = 50;
   const sSize = baseSize * samsungScale;
   const iSize = baseSize * iphoneScale;
-  const sCx = 110, iCx = 250, baseY = 150;
-  const grid = opts.grid ? `<defs><pattern id="pgrid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="#1A1A1A" stroke-width="0.5" opacity="0.55"/></pattern></defs>` : '';
+  // sCx and iCx aligned to grid (multiples of baseSize/2 = 25) so the grid edges
+  // line up with the rect edges → Samsung is exactly 2×2, iPhone (2×) is exactly 4×4.
+  const sCx = 100, iCx = 250, baseY = 150;
+  const grid = opts.grid ? `<defs><pattern id="pgrid" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M 25 0 L 0 0 0 25" fill="none" stroke="#1A1A1A" stroke-width="0.8" opacity="0.7"/></pattern></defs>` : '';
   const sLabel = opts.samsungLabel || 'Samsung';
   const iLabel = opts.iphoneLabel || 'iPhone';
   const sSub = opts.samsungSub || '100M units';
