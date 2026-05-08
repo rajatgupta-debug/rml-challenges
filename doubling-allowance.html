@@ -596,6 +596,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-color: var(--ink);
   transform: scale(1.02);
 }
+.track-cell.filled.a-tone {
+  background: var(--cream);
+}
 .track-cell.filled .track-day { color: var(--ink); }
 .track-cell.empty .track-val::before { content: '?'; color: var(--ink-muted); opacity: 0.4; }
 
@@ -966,7 +969,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 3 — Deal B's rule                                       -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="3">
-    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px; color:var(--ink-muted);">Deal B's rule</p>
+    <p class="step-sub" id="s3-eyebrow" style="text-transform:uppercase; font-weight:800; letter-spacing:1px; color:var(--ink-muted);">Deal B's rule</p>
 
     <h2 class="step-title" id="s3-title">Day 2 = ?</h2>
 
@@ -981,6 +984,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
       <div class="track-cell empty"><div class="track-day">Day 3</div><div class="track-val"></div></div>
       <div class="track-cell empty"><div class="track-day">Day 4</div><div class="track-val"></div></div>
       <div class="track-cell empty"><div class="track-day">Day 5</div><div class="track-val"></div></div>
+    </div>
+
+    <div class="day-track hidden" id="track-s3-dealA">
+      <div class="track-cell filled a-tone"><div class="track-day">Day 1</div><div class="track-val">$10</div></div>
+      <div class="track-cell filled a-tone"><div class="track-day">Day 2</div><div class="track-val">$10</div></div>
+      <div class="track-cell filled a-tone"><div class="track-day">Day 3</div><div class="track-val">$10</div></div>
+      <div class="track-cell filled a-tone"><div class="track-day">Day 4</div><div class="track-val">$10</div></div>
+      <div class="track-cell filled a-tone"><div class="track-day">Day 5</div><div class="track-val">$10</div></div>
     </div>
 
     <div class="chips" id="s3-chips"></div>
@@ -1835,12 +1846,15 @@ const s3Sequence = [
 
 function runStep3Setup() {
   s3Day = 2;
+  // Reset eyebrow to Deal B context
+  $('s3-eyebrow').textContent = 'Deal B\'s rule';
+  // Show Deal B track, hide Deal A track
+  show('track-s3');
+  hide('track-s3-dealA');
   // Reset track cells: only Day 1 filled
   const track = $('track-s3');
   if (track) {
     track.querySelectorAll('.track-cell').forEach((cell, i) => {
-      const dayNum = i + 1;
-      const dayLabel = `Day ${dayNum}`;
       const valEl = cell.querySelector('.track-val');
       if (i === 0) {
         cell.classList.add('filled');
@@ -1922,9 +1936,14 @@ function finishStep3() {
 }
 
 function askDealAStep3() {
+  // Switch context: Deal B's rule → Deal A's tally
+  $('s3-eyebrow').textContent = 'Deal A — 5 days in';
   $('s3-title').textContent = `Deal A at Day 5?`;
   $('s3-bubble').innerHTML = `Quick — <strong>5 days × $10 = ?</strong>`;
   hide('s3-addup-chips');
+  hide('s3-addup-fb');
+  hide('track-s3');
+  show('track-s3-dealA');
   show('s3-dealA-chips');
   hide('s3-dealA-fb');
 
