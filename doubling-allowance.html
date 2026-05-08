@@ -1,0 +1,2397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Doubling Allowance — RML</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --bg: #FFFFFF;
+  --bg-tint: #F4F4F2;
+  --cream: #FBEED1;
+  --cream-soft: #FDF6E3;
+  --ink: #1A1A1A;
+  --ink-soft: #2D2D33;
+  --ink-muted: #6B6B70;
+  --yellow: #F5C43E;
+  --yellow-soft: #FFE8A0;
+  --yellow-deep: #E0A823;
+  --tint-cream: #FBEED1;
+  --tint-peach: #FFD4C0;
+  --tint-lavender: #F8C5D9;
+  --tint-sky: #C8E5F2;
+  --tint-mint: #C5F0DC;
+  --bold-yellow: #FFC93C;
+  --bold-sky: #7FCFEA;
+  --bold-magenta: #F472C8;
+  --bold-mint: #3FD68F;
+  --bold-orange: #FFB592;
+  --status-green: #00B66E;
+  --status-red: #E5483D;
+  --status-amber: #F5A623;
+  --penny-copper: #E89556;
+  --penny-shadow: #B26A36;
+  --font-display: "Sora", "Mulish", system-ui, sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --grid-line: #EAEAE6;
+  --grid-cell: 32px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: var(--grid-cell) var(--grid-cell);
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; }
+
+.app {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px 20px 80px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 480px) {
+  .app { padding: 12px 14px 60px; }
+  :root { --grid-cell: 28px; }
+}
+
+/* ─── header ──────────────────────────────────────────── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 14px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 24px;
+  gap: 8px;
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.brand span { color: var(--ink-muted); font-weight: 700; }
+
+.step-meta { display: flex; align-items: center; gap: 8px; }
+
+.step-indicator {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 5px 10px;
+  border: 2px solid var(--ink);
+  background: var(--cream);
+}
+
+.icon-btn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  padding: 5px 10px;
+  border: 2px solid var(--ink);
+  background: white;
+  color: var(--ink);
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+.icon-btn:hover { background: var(--cream); }
+
+/* ─── steps ──────────────────────────────────────────── */
+.step { display: none; flex-direction: column; gap: 18px; }
+.step.active { display: flex; }
+
+.step-title {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(24px, 6vw, 32px);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+}
+
+.step-sub {
+  font-size: 16px;
+  color: var(--ink-soft);
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+/* ─── penny mascot ────────────────────────────────────── */
+.penny {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--penny-copper);
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--ink);
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 3px 0 var(--penny-shadow);
+}
+.penny::after {
+  content: '1¢';
+  font-size: 0.42em;
+  letter-spacing: -0.5px;
+}
+.penny.s-xs { width: 28px; height: 28px; box-shadow: 0 2px 0 var(--penny-shadow); }
+.penny.s-sm { width: 44px; height: 44px; }
+.penny.s-md { width: 64px; height: 64px; }
+.penny.s-lg { width: 96px; height: 96px; }
+.penny.s-xl { width: 140px; height: 140px; box-shadow: 0 5px 0 var(--penny-shadow); }
+.penny.s-mega { width: 180px; height: 180px; box-shadow: 0 7px 0 var(--penny-shadow); }
+.penny.smug::after { content: '😏'; font-family: inherit; }
+
+@keyframes pennyBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+.penny.bounce { animation: pennyBounce 1.2s ease-in-out infinite; }
+
+/* ─── speech bubble ───────────────────────────────────── */
+.bubble {
+  background: white;
+  border: 2px solid var(--ink);
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 500;
+  position: relative;
+  box-shadow: 0 2px 0 var(--ink);
+}
+.bubble.with-penny {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.bubble-text { flex: 1; }
+
+.bubble.peach { background: var(--tint-peach); }
+.bubble.cream { background: var(--cream-soft); }
+.bubble.mint { background: var(--tint-mint); }
+
+/* ─── deal cards ──────────────────────────────────────── */
+.deals-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 480px) {
+  .deals-row { grid-template-columns: 1fr; gap: 16px; }
+}
+
+.deal-card {
+  border: 2px solid var(--ink);
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s, opacity 0.2s;
+  background: white;
+}
+.deal-card:hover { transform: translateY(-2px); box-shadow: 0 4px 0 var(--ink); }
+.deal-card.selected { transform: translateY(-4px); box-shadow: 0 6px 0 var(--ink); }
+.deal-card.dimmed { opacity: 0.5; }
+.deal-card.locked { cursor: default; }
+.deal-card.sealed { box-shadow: 0 4px 0 var(--status-green); border-color: var(--status-green); }
+
+.deal-header {
+  padding: 12px 14px;
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-align: center;
+  border-bottom: 2px solid var(--ink);
+}
+.deal-header.a-tone { background: var(--bold-yellow); color: var(--ink); }
+.deal-header.b-tone { background: var(--bold-orange); color: var(--ink); }
+
+.deal-body {
+  padding: 14px;
+  font-size: 15px;
+  line-height: 1.45;
+  flex: 1;
+}
+.deal-body.a-body { background: var(--cream); }
+.deal-body.b-body { background: var(--tint-peach); }
+.deal-body strong { font-weight: 800; }
+
+.deal-body .deal-line {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.deal-body .deal-sub {
+  font-size: 13px;
+  color: var(--ink-muted);
+  font-weight: 500;
+}
+
+/* Calendar mini for Deal A */
+.cal-mini-a {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 2px;
+  margin-top: 10px;
+}
+.cal-mini-a-cell {
+  aspect-ratio: 1;
+  background: var(--bold-yellow);
+  border: 1px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 8px;
+  font-weight: 900;
+  color: var(--ink);
+}
+.cal-mini-a-cell::after { content: '$'; }
+
+/* Animated preview for Deal B */
+.preview-b {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4px;
+  margin-top: 10px;
+  padding: 12px 8px;
+  background: white;
+  border: 1.5px solid var(--ink);
+  min-height: 90px;
+}
+.preview-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.preview-day.shown { opacity: 1; }
+.preview-coins {
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 1px;
+}
+.coin {
+  width: 10px;
+  height: 10px;
+  background: var(--penny-copper);
+  border: 1px solid var(--ink);
+  border-radius: 50%;
+}
+.preview-label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 11px;
+}
+.preview-day-label {
+  font-size: 9px;
+  color: var(--ink-muted);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.preview-arrow {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 11px;
+  color: var(--status-red);
+  align-self: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.preview-arrow.shown { opacity: 1; }
+
+/* ─── chips ─────────────────────────────────────────────── */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.chip {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  padding: 12px 18px;
+  border: 2px solid var(--ink);
+  background: white;
+  color: var(--ink);
+  letter-spacing: 0.3px;
+  transition: all 0.15s;
+  flex: 1 1 auto;
+  min-width: 80px;
+  text-align: center;
+}
+.chip:hover:not(.disabled) { background: var(--cream); transform: translateY(-1px); }
+.chip.selected { background: var(--cream); border-color: var(--ink); transform: translateY(-2px); box-shadow: 0 3px 0 var(--ink); }
+.chip.disabled { cursor: default; opacity: 0.55; }
+.chip.right { background: var(--bold-mint); color: white; border-color: var(--ink); }
+.chip.wrong { animation: chipShake 0.4s ease-in-out; background: #FBE3E0; }
+.chip.locked { opacity: 0.55; pointer-events: none; }
+@keyframes chipShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.chip-feedback {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-left: 3px solid var(--ink);
+  margin-top: 4px;
+}
+.chip-feedback.error { background: #FBE3E0; color: #8B2F26; border-color: var(--status-red); }
+.chip-feedback.correct { background: var(--tint-mint); color: #1F5A3F; border-color: var(--status-green); }
+.chip-feedback.hidden { display: none; }
+
+/* ─── primary CTA ───────────────────────────────────────── */
+.cta {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 17px;
+  padding: 16px 32px;
+  background: var(--yellow);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  letter-spacing: 0.5px;
+  transition: all 0.15s;
+  text-align: center;
+}
+.cta:hover { background: var(--yellow-deep); transform: translateY(-1px); box-shadow: 0 3px 0 var(--ink); }
+.cta:disabled, .cta.disabled { background: var(--bg-tint); color: var(--ink-muted); cursor: not-allowed; opacity: 0.7; }
+.cta.full { width: 100%; }
+
+/* ─── jars ──────────────────────────────────────────────── */
+.jars-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: end;
+}
+.jar-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.jar {
+  width: 100%;
+  max-width: 130px;
+  height: 110px;
+  border: 2.5px solid var(--ink);
+  background: white;
+  position: relative;
+  overflow: hidden;
+  border-radius: 6px 6px 14px 14px;
+}
+.jar-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, var(--bold-yellow), var(--yellow));
+  height: 0%;
+  transition: height 0.6s cubic-bezier(.5,1.7,.5,1);
+}
+.jar-fill.b-fill {
+  background: linear-gradient(to top, var(--penny-shadow), var(--penny-copper));
+}
+.jar-label {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.jar-total {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 18px;
+  text-align: center;
+  padding: 4px 8px;
+  background: white;
+  border: 2px solid var(--ink);
+  min-width: 80px;
+}
+.jar-total.b-total { background: var(--tint-peach); }
+
+/* ─── calendar grid ─────────────────────────────────────── */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  background: white;
+  border: 2px solid var(--ink);
+  padding: 6px;
+}
+.cal-cell {
+  aspect-ratio: 1;
+  background: var(--bg-tint);
+  border: 1px solid var(--ink-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--ink-muted);
+  position: relative;
+  transition: all 0.3s;
+}
+.cal-cell .cal-day-num {
+  font-size: 7px;
+  color: var(--ink-muted);
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  font-weight: 700;
+}
+.cal-cell .cal-val {
+  font-size: 8px;
+  font-weight: 900;
+  color: var(--ink);
+}
+.cal-cell.filled { background: var(--tint-peach); border-color: var(--ink); }
+.cal-cell.filled.a-fill { background: var(--cream); }
+.cal-cell.flip { background: var(--bold-orange); border-color: var(--ink); border-width: 2px; }
+.cal-cell.empty-pulse {
+  animation: cellPulse 1.4s ease-in-out infinite;
+}
+@keyframes cellPulse {
+  0%, 100% { background: var(--bg-tint); }
+  50% { background: var(--tint-peach); }
+}
+
+/* ─── status pill / callout ──────────────────────────────── */
+.status-pill {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  padding: 8px 14px;
+  border: 2px solid var(--ink);
+  background: var(--cream);
+  display: inline-block;
+  text-align: center;
+}
+.status-pill.green { background: var(--status-green); color: white; border-color: var(--ink); }
+.status-pill.orange { background: var(--bold-orange); }
+.status-pill.flip-callout {
+  background: var(--ink);
+  color: white;
+  font-size: 22px;
+  padding: 14px 22px;
+  letter-spacing: 1px;
+  animation: flipPop 0.6s cubic-bezier(.5,1.7,.5,1);
+}
+@keyframes flipPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ─── compare strip ──────────────────────────────────────── */
+.compare-strip {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 2px solid var(--ink);
+  background: white;
+}
+.compare-cell {
+  padding: 10px 14px;
+  text-align: center;
+}
+.compare-cell.a { background: var(--cream); }
+.compare-cell.b { background: var(--tint-peach); border-left: 2px solid var(--ink); }
+.compare-label {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.compare-value {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 18px;
+}
+@media (max-width: 480px) { .compare-value { font-size: 16px; } }
+
+/* ─── tool / lesson cards ────────────────────────────────── */
+.tool-card {
+  background: var(--cream);
+  border: 2.5px solid var(--ink);
+  padding: 22px 18px;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 4px 0 var(--ink);
+}
+.tool-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--bold-orange);
+  border: 3px solid var(--ink);
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  box-shadow: 0 0 0 4px white, 0 0 0 6px var(--ink);
+}
+.tool-name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 26px;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.tool-sub {
+  font-size: 16px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.lesson-card {
+  border: 2px solid var(--ink);
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  box-shadow: 0 2px 0 var(--ink);
+}
+.lesson-card.mint { background: var(--tint-mint); }
+.lesson-card.lavender { background: var(--tint-lavender); }
+.lesson-card.sky { background: var(--tint-sky); }
+.lesson-icon {
+  width: 28px;
+  height: 28px;
+  background: white;
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.lesson-text { flex: 1; font-size: 14px; line-height: 1.4; }
+.lesson-name {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 13px;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 3px;
+}
+
+/* ─── recall / continuity ─────────────────────────────────── */
+.recall {
+  background: white;
+  border: 2px dashed var(--ink);
+  padding: 10px 14px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+.recall b { background: var(--yellow); padding: 1px 6px; }
+
+/* ─── people doodles ─────────────────────────────────────── */
+.scene-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mom-doodle {
+  width: 50px;
+  height: 60px;
+  background: var(--tint-lavender);
+  border: 2px solid var(--ink);
+  border-radius: 30px 30px 14px 14px;
+  position: relative;
+  flex-shrink: 0;
+}
+.mom-doodle::before {
+  content: '';
+  position: absolute;
+  top: 6px; left: 50%;
+  transform: translateX(-50%);
+  width: 18px; height: 18px;
+  background: var(--tint-peach);
+  border: 2px solid var(--ink);
+  border-radius: 50%;
+}
+.mom-doodle::after {
+  content: 'MOM';
+  position: absolute;
+  bottom: -16px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-display);
+  letter-spacing: 0.5px;
+}
+
+.kid-icon {
+  width: 18px; height: 22px;
+  background: var(--tint-sky);
+  border: 1.5px solid var(--ink);
+  border-radius: 9px 9px 4px 4px;
+  position: relative;
+  display: inline-block;
+  margin: 1px;
+}
+.kid-icon.sick { background: var(--status-red); }
+.kid-icon.viewer { background: var(--bold-mint); }
+
+/* ─── helpers ─────────────────────────────────────────────── */
+.hidden { display: none !important; }
+.center { text-align: center; }
+.row { display: flex; gap: 12px; align-items: center; }
+.col { display: flex; flex-direction: column; gap: 12px; }
+.gap-sm { gap: 8px; }
+.gap-md { gap: 14px; }
+.gap-lg { gap: 20px; }
+.mt-sm { margin-top: 8px; }
+.mt-md { margin-top: 14px; }
+.fade-in { animation: fadeIn 0.4s ease-out; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── viral / virus visual rows ───────────────────────────── */
+.icon-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  background: white;
+  border: 2px solid var(--ink);
+  padding: 10px;
+  min-height: 80px;
+  align-content: flex-start;
+}
+.icon-row-label {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  margin-bottom: 4px;
+}
+
+/* ─── trippy mascot ───────────────────────────────────────── */
+.trippy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--yellow);
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: var(--ink);
+  position: relative;
+  flex-shrink: 0;
+  box-shadow: 0 3px 0 var(--yellow-deep);
+}
+.trippy::after { content: '×3'; font-size: 0.42em; letter-spacing: -0.5px; }
+.trippy.s-md { width: 64px; height: 64px; }
+
+/* ─── confetti for finale ─────────────────────────────────── */
+.confetti-burst {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+}
+.conf-piece {
+  position: absolute;
+  width: 8px; height: 14px;
+  animation: confFall 2s ease-out forwards;
+}
+@keyframes confFall {
+  0% { transform: translateY(-20vh) rotate(0); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.4; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ─── header ─── -->
+  <header class="header">
+    <div class="brand">RML <span>· Doubling Allowance</span></div>
+    <div class="step-meta">
+      <button class="icon-btn" id="mute-btn">🔊</button>
+      <span class="step-indicator" id="step-pill">STEP <span id="step-num">1</span> / 14</span>
+      <button class="icon-btn" id="restart-btn">↻</button>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 1 — Mom's deal                                          -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="1">
+    <div class="scene-row">
+      <div class="penny s-md bounce"></div>
+      <div class="bubble peach bubble-text" style="flex:1;">
+        <strong>Hey, I'm Penny.</strong><br/>
+        Your mom's giving you allowance for the next 30 days. Two ways to take it. Read both — pick the one you'd actually take.
+      </div>
+      <div class="mom-doodle"></div>
+    </div>
+
+    <h1 class="step-title">Mom's deal</h1>
+    <p class="step-sub">Allowance for the next 30 days. Which one would you take?</p>
+
+    <div class="deals-row" id="s1-deals">
+
+      <!-- Deal A -->
+      <div class="deal-card" data-deal="A" id="card-a">
+        <div class="deal-header a-tone">DEAL A</div>
+        <div class="deal-body a-body">
+          <div class="deal-line">$10 every day</div>
+          <div class="deal-sub">For 30 days. Same amount, every day.</div>
+          <div class="cal-mini-a" id="cal-a"></div>
+        </div>
+      </div>
+
+      <!-- Deal B -->
+      <div class="deal-card" data-deal="B" id="card-b">
+        <div class="deal-header b-tone">DEAL B</div>
+        <div class="deal-body b-body">
+          <div class="deal-line">1¢ on Day 1.</div>
+          <div class="deal-line" style="margin-bottom:4px;">Each day = <strong>TWICE</strong> the day before.</div>
+          <div class="deal-sub">For 30 days.</div>
+          <div class="preview-b" id="preview-b">
+            <!-- 5 days populated by JS -->
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="recall hidden" id="s1-status">Tap a card to pick it.</div>
+
+    <button class="cta full disabled" id="s1-lock" disabled>LOCK IT IN</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 2 — Sanity-check Deal A                                 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="2">
+    <div class="bubble with-penny peach">
+      <div class="penny s-sm"></div>
+      <div class="bubble-text">Deal A is the easy one. <strong>$10 a day, 30 days.</strong> What's the total?</div>
+    </div>
+
+    <h2 class="step-title">Deal A — let's add it up.</h2>
+    <p class="step-sub">30 days × $10 a day...</p>
+
+    <div class="calendar" id="cal-s2"></div>
+
+    <div class="chips" id="s2-chips">
+      <button class="chip" data-v="30">$30</button>
+      <button class="chip" data-v="300">$300</button>
+      <button class="chip" data-v="3000">$3,000</button>
+      <button class="chip" data-v="30000">$30,000</button>
+    </div>
+
+    <div class="chip-feedback hidden" id="s2-fb"></div>
+
+    <div class="jars-row hidden" id="s2-jar-reveal">
+      <div class="jar-block">
+        <div class="jar-label">DEAL A</div>
+        <div class="jar"><div class="jar-fill" style="height: 80%;"></div></div>
+        <div class="jar-total" id="s2-jar-total">$300</div>
+      </div>
+      <div></div>
+    </div>
+
+    <button class="cta full hidden" id="s2-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 3 — Deal B's rule                                       -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="3">
+    <div class="bubble with-penny peach">
+      <div class="penny s-sm"></div>
+      <div class="bubble-text" id="s3-bubble">Mom dropped 1¢ in the jar on Day 1. Day 2 — twice yesterday. What's that?</div>
+    </div>
+
+    <h2 class="step-title">Deal B's rule.</h2>
+    <p class="step-sub">Each day = TWICE yesterday. All your coins go in the jar.</p>
+
+    <div class="calendar" id="cal-s3"></div>
+
+    <div id="s3-question-block">
+      <div class="status-pill" id="s3-prompt" style="margin-bottom:10px;">Day 1 was 1¢. Day 2 = ?</div>
+      <div class="chips" id="s3-chips"></div>
+      <div class="chip-feedback hidden" id="s3-fb"></div>
+    </div>
+
+    <div class="jars-row" id="s3-jars">
+      <div class="jar-block">
+        <div class="jar-label">DEAL A SO FAR</div>
+        <div class="jar"><div class="jar-fill" style="height: 17%;"></div></div>
+        <div class="jar-total" id="s3-a-total">$50</div>
+      </div>
+      <div class="jar-block">
+        <div class="jar-label">DEAL B SO FAR</div>
+        <div class="jar"><div class="jar-fill b-fill" id="s3-b-fill" style="height: 0%;"></div></div>
+        <div class="jar-total b-total" id="s3-b-total">$0.00</div>
+      </div>
+    </div>
+
+    <button class="cta full hidden" id="s3-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 4 — Predict the flip                                    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="4">
+    <div class="bubble with-penny peach">
+      <div class="penny s-sm"></div>
+      <div class="bubble-text">Right now Deal A's got <strong>$50</strong>. I've got <strong>31¢</strong>. When do you think I catch up?</div>
+    </div>
+
+    <h2 class="step-title">Penny's catching up. When?</h2>
+    <p class="step-sub">Right now Deal A is way ahead. When does Deal B pass it?</p>
+
+    <div class="compare-strip">
+      <div class="compare-cell a">
+        <div class="compare-label">DEAL A (DAY 5)</div>
+        <div class="compare-value">$50.00</div>
+      </div>
+      <div class="compare-cell b">
+        <div class="compare-label">DEAL B (DAY 5)</div>
+        <div class="compare-value">$0.31</div>
+      </div>
+    </div>
+
+    <div class="chips" id="s4-chips">
+      <button class="chip" data-v="14">Day 14</button>
+      <button class="chip" data-v="22">Day 22</button>
+      <button class="chip" data-v="28">Day 28</button>
+      <button class="chip" data-v="never">Never — A wins</button>
+    </div>
+
+    <button class="cta full disabled" id="s4-lock" disabled>LOCK MY GUESS</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 5 — March to the flip                                   -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="5">
+    <div class="recall" id="s5-recall">YOU PREDICTED: <b id="s5-pred-display">Day 22</b></div>
+
+    <h2 class="step-title">Let's run the days.</h2>
+
+    <div class="bubble with-penny peach">
+      <div class="penny s-sm" id="s5-penny"></div>
+      <div class="bubble-text" id="s5-bubble">Day 6 was 32¢. Day 7 = ?</div>
+    </div>
+
+    <div class="calendar" id="cal-s5"></div>
+
+    <div id="s5-question-block">
+      <div class="status-pill orange" id="s5-prompt" style="margin-bottom:10px;">Day 6 was 32¢. Day 7 = ?</div>
+      <div class="chips" id="s5-chips"></div>
+      <div class="chip-feedback hidden" id="s5-fb"></div>
+    </div>
+
+    <div class="jars-row">
+      <div class="jar-block">
+        <div class="jar-label">DEAL A</div>
+        <div class="jar"><div class="jar-fill" id="s5-a-fill" style="height: 23%;"></div></div>
+        <div class="jar-total" id="s5-a-total">$70</div>
+      </div>
+      <div class="jar-block">
+        <div class="jar-label">DEAL B</div>
+        <div class="jar"><div class="jar-fill b-fill" id="s5-b-fill" style="height: 1%;"></div></div>
+        <div class="jar-total b-total" id="s5-b-total">$1.27</div>
+      </div>
+    </div>
+
+    <div class="status-pill flip-callout hidden" id="s5-flip-callout">FLIP! 🪙 Penny passed Deal A.</div>
+
+    <button class="cta full hidden" id="s5-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 6 — Predict Day 30                                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="6">
+    <div class="bubble with-penny peach">
+      <div class="penny s-md"></div>
+      <div class="bubble-text">Okay. 14 days down, 16 to go. I'm at <strong>$164</strong> right now. How big do I get by Day 30? Take a swing.</div>
+    </div>
+
+    <h2 class="step-title">Day 14 → Day 30.</h2>
+    <p class="step-sub">Penny just passed Deal A. Where does she end up by Day 30?</p>
+
+    <div class="chips" id="s6-chips">
+      <button class="chip" data-v="1000">$1,000</button>
+      <button class="chip" data-v="50000">$50,000</button>
+      <button class="chip" data-v="10000000">$10 million</button>
+      <button class="chip" data-v="1000000000">$1 billion</button>
+    </div>
+
+    <button class="cta full disabled" id="s6-lock" disabled>LOCK MY GUESS</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 7 — Day 30 reveal                                       -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="7">
+    <h2 class="step-title">Day 30 — let's see.</h2>
+
+    <!-- Beat A: late days reveal -->
+    <div class="bubble with-penny peach" id="s7-bubbleA">
+      <div class="penny s-md"></div>
+      <div class="bubble-text">Look at me. <strong>Day 28 alone is over a million bucks.</strong></div>
+    </div>
+
+    <div class="compare-strip" id="s7-late-days">
+      <div class="compare-cell a" style="background: var(--tint-peach);">
+        <div class="compare-label">DAY 28 (DAILY)</div>
+        <div class="compare-value">~$1.3 M</div>
+      </div>
+      <div class="compare-cell b" style="background: var(--tint-peach); border-left-color: var(--ink);">
+        <div class="compare-label">PENNY NOW</div>
+        <div class="compare-value">🪙 huge</div>
+      </div>
+    </div>
+
+    <!-- Beat B: kid doubles 29 + 30 -->
+    <div id="s7-q29-block" class="hidden">
+      <div class="status-pill orange" style="margin-bottom:10px;">Day 28 was about $1.3 million. Day 29 = ?</div>
+      <div class="chips" id="s7-q29-chips">
+        <button class="chip" data-v="2000000">$2 million</button>
+        <button class="chip" data-v="2700000">$2.7 million</button>
+        <button class="chip" data-v="4000000">$4 million</button>
+      </div>
+      <div class="chip-feedback hidden" id="s7-q29-fb"></div>
+    </div>
+
+    <div id="s7-q30-block" class="hidden">
+      <div class="status-pill orange" style="margin-bottom:10px;">Day 29 was about $2.7 million. Day 30 = ?</div>
+      <div class="chips" id="s7-q30-chips">
+        <button class="chip" data-v="4000000">$4 million</button>
+        <button class="chip" data-v="5400000">$5.4 million</button>
+        <button class="chip" data-v="10000000">$10 million</button>
+      </div>
+      <div class="chip-feedback hidden" id="s7-q30-fb"></div>
+    </div>
+
+    <!-- Beat C: cumulative count-up -->
+    <button class="cta full hidden" id="s7-add-up">ADD IT ALL UP →</button>
+
+    <div class="hidden" id="s7-totals-block">
+      <div class="status-pill flip-callout" id="s7-mega-callout" style="background:var(--ink); color:white; font-size:18px; padding: 12px 14px; display:block; text-align:center;">
+        DEAL B TOTAL:<br/>
+        <span style="font-size:28px;" id="s7-mega-num">$0</span>
+      </div>
+
+      <div class="compare-strip mt-md">
+        <div class="compare-cell a">
+          <div class="compare-label">DEAL A</div>
+          <div class="compare-value">$300</div>
+        </div>
+        <div class="compare-cell b">
+          <div class="compare-label">DEAL B</div>
+          <div class="compare-value" id="s7-cum-display">$10,737,418</div>
+        </div>
+      </div>
+
+      <div class="recall mt-md">YOU GUESSED: <b id="s7-pred-display">$50,000</b><br/>ACTUAL: $10.7 million.</div>
+
+      <div class="bubble peach mt-md">
+        <strong>Ten million seven hundred thousand bucks.</strong> Mom would've paid you $300 with Deal A.
+      </div>
+
+      <button class="cta full mt-md" id="s7-next">CONTINUE →</button>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 8 — Re-decide                                           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="8">
+    <h2 class="step-title">Knowing what you know now —</h2>
+
+    <div class="compare-strip">
+      <div class="compare-cell a">
+        <div class="compare-label">DEAL A</div>
+        <div class="compare-value">$300</div>
+      </div>
+      <div class="compare-cell b">
+        <div class="compare-label">DEAL B</div>
+        <div class="compare-value">$10.7M</div>
+      </div>
+    </div>
+
+    <div class="recall">EARLIER YOU PICKED: <b id="s8-earlier">Deal A</b></div>
+
+    <div class="bubble with-penny peach">
+      <div class="penny s-lg"></div>
+      <div class="bubble-text">What's your call now?</div>
+    </div>
+
+    <div class="chips" id="s8-chips">
+      <button class="chip" data-action="stick" id="s8-stick">STICK WITH DEAL A</button>
+      <button class="chip" data-action="flip" id="s8-flip">FLIP TO DEAL B</button>
+    </div>
+
+    <div class="bubble mint hidden" id="s8-reflect"></div>
+
+    <button class="cta full hidden" id="s8-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 9 — Compound Eyes earned                                -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="9">
+    <p class="step-sub center" style="text-transform:uppercase; letter-spacing:1px; font-weight:800;">Tool earned.</p>
+
+    <div class="tool-card">
+      <div class="tool-icon">👁</div>
+      <div class="tool-name">COMPOUND EYES</div>
+      <div class="tool-sub">When something doubles or stacks, do the math. Your gut is bad at this.</div>
+    </div>
+
+    <div class="bubble with-penny peach">
+      <div class="penny s-lg"></div>
+      <div class="bubble-text">You just used Compound Eyes on Mom's deal. You'll use it again — on viral videos, viruses, anything that grows by multiplying.</div>
+    </div>
+
+    <button class="cta full" id="s9-next">GOT IT →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 10 — Where this lives in real life                      -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="10">
+    <h2 class="step-title">This shows up everywhere.</h2>
+
+    <!-- Beat A: viral video -->
+    <div id="s10-beatA">
+      <div class="bubble with-penny peach">
+        <div class="penny s-md"></div>
+        <div class="bubble-text">You post a video. <strong>10 friends</strong> watch. Each shares with 2 friends. Sound familiar?</div>
+      </div>
+
+      <div class="icon-row-label">📱 Day 5 — viewers so far</div>
+      <div class="icon-row" id="s10-viewers"></div>
+
+      <div class="status-pill orange mt-md" id="s10-viral-prompt" style="margin-bottom:10px;">Day 10 — how many viewers?</div>
+      <div class="chips" id="s10-viral-chips">
+        <button class="chip" data-v="1000">1,000</button>
+        <button class="chip" data-v="5120">5,120</button>
+        <button class="chip" data-v="100000">100,000</button>
+      </div>
+      <div class="chip-feedback hidden" id="s10-viral-fb"></div>
+
+      <button class="cta full hidden mt-md" id="s10-to-beatB">NEXT →</button>
+    </div>
+
+    <!-- Beat B: virus -->
+    <div id="s10-beatB" class="hidden">
+      <div class="bubble with-penny peach">
+        <div class="penny s-md"></div>
+        <div class="bubble-text">Same math, different jar. <strong>One sick kid.</strong> Each one infects 2 more, every day.</div>
+      </div>
+
+      <div class="icon-row-label">🤒 Day 5 — newly sick</div>
+      <div class="icon-row" id="s10-sick"></div>
+
+      <div class="status-pill orange mt-md" id="s10-virus-prompt" style="margin-bottom:10px;">Day 10 — how many newly sick?</div>
+      <div class="chips" id="s10-virus-chips">
+        <button class="chip" data-v="100">100</button>
+        <button class="chip" data-v="512">512</button>
+        <button class="chip" data-v="5000">5,000</button>
+      </div>
+      <div class="chip-feedback hidden" id="s10-virus-fb"></div>
+
+      <div class="bubble mint hidden mt-md" id="s10-close">
+        <strong>Same math. Different jar.</strong> A few sick kids on Monday → whole school out by Friday.
+      </div>
+
+      <button class="cta full hidden mt-md" id="s10-next">CONTINUE →</button>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 11 — Apply 1: 10-day deal (TIME)                        -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="11">
+    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px;">Apply 1 — Sasha's deal.</p>
+
+    <div class="bubble with-penny peach">
+      <div class="penny s-md"></div>
+      <div class="bubble-text">Sasha's mom offers the same deal. <strong>But only for 10 days.</strong> Same options. Which would you pick?</div>
+    </div>
+
+    <h2 class="step-title">Same deal. 10 days. Which?</h2>
+
+    <!-- Beat A: opinion pick -->
+    <div class="chips" id="s11-pickA">
+      <button class="chip" data-deal="A">Deal A: $10/day · 10 days</button>
+      <button class="chip" data-deal="B">Deal B: 1¢ doubling · 10 days</button>
+    </div>
+    <button class="cta full disabled mt-md" id="s11-pick-lock" disabled>LOCK PICK</button>
+
+    <!-- Beat B: math reveal -->
+    <div class="hidden mt-md" id="s11-reveal">
+      <div class="compare-strip">
+        <div class="compare-cell a">
+          <div class="compare-label">DEAL A · 10 DAYS</div>
+          <div class="compare-value">$100.00</div>
+        </div>
+        <div class="compare-cell b">
+          <div class="compare-label">DEAL B · 10 DAYS</div>
+          <div class="compare-value">$10.23</div>
+        </div>
+      </div>
+      <div class="bubble peach mt-md">Whoa. <strong>A wins by 10×.</strong> Even though I'm doubling.</div>
+    </div>
+
+    <!-- Beat C: name the lesson -->
+    <div class="hidden mt-md" id="s11-lessonQ">
+      <div class="status-pill orange" style="margin-bottom:10px;">Why did the boring deal win this time?</div>
+      <div class="chips" id="s11-lesson-chips">
+        <button class="chip" data-correct="1">Doubling needs more time to catch up</button>
+        <button class="chip">Mom rigged it</button>
+        <button class="chip">Doubling is actually bad</button>
+        <button class="chip">Flat is always better</button>
+      </div>
+      <div class="chip-feedback hidden" id="s11-lesson-fb"></div>
+    </div>
+
+    <div class="lesson-card mint hidden mt-md" id="s11-card">
+      <div class="lesson-icon">⏱</div>
+      <div class="lesson-text">
+        <span class="lesson-name">TIME MATTERS</span>
+        Doubling needs enough days to bite. Without time, flat wins.
+      </div>
+    </div>
+
+    <button class="cta full hidden mt-md" id="s11-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 12 — Apply 2: stop at Day 20 (STAYING POWER)            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="12">
+    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px;">Apply 2 — Stop early?</p>
+
+    <div class="bubble with-penny peach">
+      <div class="penny s-md"></div>
+      <div class="bubble-text">What if Mom had stopped on <strong>Day 20</strong> instead of Day 30? How much was I worth then?</div>
+    </div>
+
+    <h2 class="step-title">Stop at Day 20?</h2>
+
+    <!-- Beat A: predict -->
+    <div class="status-pill orange" style="margin-bottom:10px;">If Mom stopped at Day 20 — Deal B's total?</div>
+    <div class="chips" id="s12-chips">
+      <button class="chip" data-v="1000">$1,000</button>
+      <button class="chip" data-v="10000" data-correct="1">$10,000</button>
+      <button class="chip" data-v="1000000">$1 million</button>
+      <button class="chip" data-v="5000000">$5 million</button>
+    </div>
+    <div class="chip-feedback hidden" id="s12-fb"></div>
+
+    <!-- Beat B: comparison reveal -->
+    <div class="hidden mt-md" id="s12-reveal">
+      <div class="compare-strip">
+        <div class="compare-cell a" style="background: var(--tint-peach);">
+          <div class="compare-label">STOP AT DAY 20</div>
+          <div class="compare-value">$10,485</div>
+        </div>
+        <div class="compare-cell b" style="background: var(--tint-peach); border-left-color: var(--ink);">
+          <div class="compare-label">GO TO DAY 30</div>
+          <div class="compare-value">$10,737,418</div>
+        </div>
+      </div>
+      <div class="bubble peach mt-md">Just 10 more days. <strong>A thousand times more money.</strong></div>
+    </div>
+
+    <!-- Beat C: name the lesson -->
+    <div class="hidden mt-md" id="s12-lessonQ">
+      <div class="status-pill orange" style="margin-bottom:10px;">What does this tell you about doubling?</div>
+      <div class="chips" id="s12-lesson-chips">
+        <button class="chip">Most of the magic is at the START</button>
+        <button class="chip" data-correct="1">Most of the magic is at the END</button>
+        <button class="chip">Doubling is the same throughout</button>
+        <button class="chip">Doubling is unpredictable</button>
+      </div>
+      <div class="chip-feedback hidden" id="s12-lesson-fb"></div>
+    </div>
+
+    <div class="lesson-card lavender hidden mt-md" id="s12-card">
+      <div class="lesson-icon">📈</div>
+      <div class="lesson-text">
+        <span class="lesson-name">STAYING POWER</span>
+        Most of doubling's payoff happens in the final stretch. The end is where it explodes.
+      </div>
+    </div>
+
+    <button class="cta full hidden mt-md" id="s12-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 13 — Apply 3: Penny vs Trippy (RATE)                    -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="13">
+    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px;">Apply 3 — Penny vs Trippy.</p>
+
+    <div class="scene-row">
+      <div class="penny s-md"></div>
+      <div class="bubble bubble-text peach" style="flex:1;">Meet my brother <strong>Trippy</strong>. He triples instead of doubles. <strong>10 days each.</strong> Who wins?</div>
+      <div class="trippy s-md"></div>
+    </div>
+
+    <h2 class="step-title">Penny vs Trippy.</h2>
+
+    <div class="compare-strip">
+      <div class="compare-cell a" style="background: var(--tint-peach);">
+        <div class="compare-label">PENNY · DAY 5</div>
+        <div class="compare-value">$0.31</div>
+      </div>
+      <div class="compare-cell b" style="background: var(--cream);">
+        <div class="compare-label">TRIPPY · DAY 5</div>
+        <div class="compare-value">$1.21</div>
+      </div>
+    </div>
+
+    <!-- Beat A: pick winner -->
+    <div class="status-pill orange" style="margin-bottom:10px;">Over 10 days — who gives more?</div>
+    <div class="chips" id="s13-chips">
+      <button class="chip" data-pick="penny">Penny (×2)</button>
+      <button class="chip" data-pick="trippy">Trippy (×3)</button>
+      <button class="chip" data-pick="same">Same</button>
+    </div>
+
+    <!-- Beat B: reveal -->
+    <div class="hidden mt-md" id="s13-reveal">
+      <div class="compare-strip">
+        <div class="compare-cell a" style="background: var(--tint-peach);">
+          <div class="compare-label">PENNY · 10 DAYS</div>
+          <div class="compare-value">$10.23</div>
+        </div>
+        <div class="compare-cell b" style="background: var(--cream);">
+          <div class="compare-label">TRIPPY · 10 DAYS</div>
+          <div class="compare-value">$295.24</div>
+        </div>
+      </div>
+      <div class="bubble peach mt-md">Trippy wins. By <strong>29×</strong>. Just from going 2× to 3×. That's it.</div>
+    </div>
+
+    <!-- Beat C: name the lesson -->
+    <div class="hidden mt-md" id="s13-lessonQ">
+      <div class="status-pill orange" style="margin-bottom:10px;">What does this tell you?</div>
+      <div class="chips" id="s13-lesson-chips">
+        <button class="chip">3× is a tiny bit better than 2×</button>
+        <button class="chip" data-correct="1">A small change in growth rate = HUGE change in result</button>
+        <button class="chip">Trippy is just better, no math needed</button>
+        <button class="chip">Doesn't matter — both end up at millions</button>
+      </div>
+      <div class="chip-feedback hidden" id="s13-lesson-fb"></div>
+    </div>
+
+    <div class="lesson-card sky hidden mt-md" id="s13-card">
+      <div class="lesson-icon">⚡</div>
+      <div class="lesson-text">
+        <span class="lesson-name">RATE MATTERS</span>
+        A tiny change in how fast something grows = a huge change in the result.
+      </div>
+    </div>
+
+    <button class="cta full hidden mt-md" id="s13-next">CONTINUE →</button>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- STEP 14 — Tool stash + exit                                  -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <section class="step" data-step="14">
+    <h2 class="step-title center">Case closed.</h2>
+
+    <div class="tool-card">
+      <div class="tool-icon">👁</div>
+      <div class="tool-name">COMPOUND EYES</div>
+      <div class="tool-sub">When something doubles or stacks, do the math. Your gut is bad at this.</div>
+    </div>
+
+    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px; margin-top: 8px;">Three things to remember:</p>
+
+    <div class="lesson-card mint">
+      <div class="lesson-icon">⏱</div>
+      <div class="lesson-text">
+        <span class="lesson-name">TIME MATTERS</span>
+        Doubling needs enough days to bite.
+      </div>
+    </div>
+
+    <div class="lesson-card lavender">
+      <div class="lesson-icon">📈</div>
+      <div class="lesson-text">
+        <span class="lesson-name">STAYING POWER</span>
+        Most of doubling's payoff is at the end.
+      </div>
+    </div>
+
+    <div class="lesson-card sky">
+      <div class="lesson-icon">⚡</div>
+      <div class="lesson-text">
+        <span class="lesson-name">RATE MATTERS</span>
+        A tiny change in rate = a huge change in result.
+      </div>
+    </div>
+
+    <div class="bubble with-penny peach mt-md">
+      <div class="penny s-lg"></div>
+      <div class="bubble-text">You'll see this everywhere now. Subscriptions piling up. Followers exploding. Money quietly growing. <strong>Run the math.</strong> Nice work.</div>
+    </div>
+
+    <button class="cta full" id="s14-done">DONE — CASE CLOSED</button>
+  </section>
+
+</div>
+
+<div class="confetti-burst hidden" id="confetti"></div>
+
+<script>
+/* ═════════════════════════════════════════════════════════ */
+/*  STATE                                                     */
+/* ═════════════════════════════════════════════════════════ */
+const state = {
+  currentStep: '1',
+  muted: false,
+  gut_pick: null,
+  flip_prediction: null,
+  day30_prediction: null,
+  final_pick: null,
+  s11_pick: null,
+  s13_pick: null,
+};
+
+/* ═════════════════════════════════════════════════════════ */
+/*  DAY DATA                                                  */
+/* ═════════════════════════════════════════════════════════ */
+const DAYS = [];
+(function() {
+  let cum = 0;
+  for (let i = 0; i < 30; i++) {
+    const dailyB = 0.01 * Math.pow(2, i);
+    cum += dailyB;
+    DAYS.push({
+      day: i + 1,
+      dailyB: dailyB,
+      cumB: cum,
+      dailyA: 10,
+      cumA: 10 * (i + 1),
+    });
+  }
+})();
+
+const DAY30_CUM_B = DAYS[29].cumB; // 10737418.23
+
+/* ═════════════════════════════════════════════════════════ */
+/*  HELPERS                                                   */
+/* ═════════════════════════════════════════════════════════ */
+function $(id) { return document.getElementById(id); }
+function show(id) { $(id).classList.remove('hidden'); }
+function hide(id) { $(id).classList.add('hidden'); }
+function fmt$(n) {
+  if (n < 1) return '$' + n.toFixed(2);
+  if (n < 100) return '$' + n.toFixed(2);
+  if (n < 1000) return '$' + n.toFixed(0);
+  return '$' + Math.round(n).toLocaleString();
+}
+function fmtCents(n) {
+  if (n < 1) return Math.round(n * 100) + '¢';
+  return '$' + n.toFixed(2);
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  SOUND                                                     */
+/* ═════════════════════════════════════════════════════════ */
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  }
+  return audioCtx;
+}
+function tone(freq, dur, type = 'sine', gain = 0.06) {
+  if (state.muted) return;
+  const ctx = ensureAudio();
+  if (!ctx) return;
+  const osc = ctx.createOscillator();
+  const g = ctx.createGain();
+  osc.type = type;
+  osc.frequency.value = freq;
+  g.gain.setValueAtTime(gain, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+  osc.connect(g); g.connect(ctx.destination);
+  osc.start(); osc.stop(ctx.currentTime + dur);
+}
+function sfx(kind) {
+  if (state.muted) return;
+  switch (kind) {
+    case 'tap':     tone(620, 0.07, 'triangle', 0.04); break;
+    case 'right':   tone(720, 0.10, 'triangle', 0.06); setTimeout(() => tone(960, 0.12, 'triangle', 0.05), 80); break;
+    case 'wrong':   tone(220, 0.10, 'square', 0.05); setTimeout(() => tone(180, 0.12, 'square', 0.04), 80); break;
+    case 'select':  tone(540, 0.08, 'sine', 0.05); break;
+    case 'reveal':  tone(660, 0.10, 'sine', 0.06); setTimeout(() => tone(880, 0.10, 'sine', 0.06), 100); setTimeout(() => tone(1100, 0.14, 'sine', 0.05), 200); break;
+    case 'tool':    [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.18, 'triangle', 0.06), i * 110)); break;
+    case 'flip':    [330, 440, 587, 880].forEach((f, i) => setTimeout(() => tone(f, 0.16, 'sawtooth', 0.05), i * 90)); break;
+    case 'coin':    tone(1200, 0.05, 'sine', 0.04); setTimeout(() => tone(1600, 0.08, 'sine', 0.03), 40); break;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP CONTROLLER                                           */
+/* ═════════════════════════════════════════════════════════ */
+const TOTAL_STEPS = 14;
+function showStep(n) {
+  state.currentStep = String(n);
+  document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+  const step = document.querySelector(`.step[data-step="${n}"]`);
+  if (step) step.classList.add('active');
+  $('step-num').textContent = n;
+  syncURL();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function syncURL() {
+  try {
+    const url = new URL(window.location.href);
+    url.searchParams.set('screen', state.currentStep);
+    window.history.replaceState({}, '', url.toString());
+  } catch (e) {}
+}
+
+function getURLScreen() {
+  const raw = new URLSearchParams(window.location.search).get('screen');
+  if (!raw) return null;
+  const s = parseInt(raw, 10);
+  if (Number.isNaN(s) || s < 1 || s > TOTAL_STEPS) return null;
+  return String(s);
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  CHIP UTILITIES                                            */
+/* ═════════════════════════════════════════════════════════ */
+function setupRetryChips({ chipsId, fbId, correctValue, hintFn, displayOnReveal, onDone }) {
+  let wrong = 0;
+  const chips = document.querySelectorAll(`#${chipsId} .chip`);
+  const fb = $(fbId);
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('disabled') || chip.classList.contains('right')) return;
+      sfx('tap');
+      const v = parseFloat(chip.dataset.v);
+      if (Math.abs(v - correctValue) < 0.001) {
+        sfx('right');
+        chip.classList.add('right', 'disabled');
+        chips.forEach(c => { if (c !== chip) c.classList.add('disabled'); });
+        if (fb) {
+          fb.classList.remove('hidden', 'error'); fb.classList.add('correct');
+          fb.textContent = '✓ Right.';
+        }
+        setTimeout(() => onDone && onDone(), 600);
+      } else {
+        sfx('wrong');
+        chip.classList.add('wrong');
+        wrong += 1;
+        if (fb) {
+          fb.classList.remove('hidden', 'correct'); fb.classList.add('error');
+          fb.textContent = hintFn ? hintFn(v, correctValue, wrong) : 'Try again.';
+        }
+        setTimeout(() => chip.classList.remove('wrong'), 500);
+        if (wrong >= 2) {
+          // Reveal correct on 2nd wrong
+          chips.forEach(c => {
+            const cv = parseFloat(c.dataset.v);
+            if (Math.abs(cv - correctValue) < 0.001) {
+              c.classList.add('right', 'disabled');
+            } else {
+              c.classList.add('disabled');
+            }
+          });
+          if (fb) {
+            fb.classList.remove('error'); fb.classList.add('correct');
+            fb.textContent = `✓ Answer: ${displayOnReveal ? displayOnReveal(correctValue) : correctValue}.`;
+          }
+          setTimeout(() => onDone && onDone(), 800);
+        } else {
+          // allow retry — re-enable chip after shake
+          setTimeout(() => chip.classList.remove('wrong'), 500);
+        }
+      }
+    });
+  });
+}
+
+function setupSingleChoiceChips({ chipsId, lockBtnId, onLock }) {
+  let selected = null;
+  const chips = document.querySelectorAll(`#${chipsId} .chip`);
+  const lockBtn = $(lockBtnId);
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('disabled')) return;
+      sfx('tap');
+      chips.forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      selected = chip;
+      lockBtn.classList.remove('disabled');
+      lockBtn.disabled = false;
+    });
+  });
+  lockBtn.addEventListener('click', () => {
+    if (!selected) return;
+    sfx('select');
+    chips.forEach(c => { c.classList.add('disabled'); c.classList.add('locked'); });
+    onLock(selected);
+  });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 1 — Mom's deal                                       */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep1() {
+  // Build mini-calendar A
+  const calA = $('cal-a');
+  for (let i = 0; i < 30; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-mini-a-cell';
+    calA.appendChild(cell);
+  }
+
+  // Build animated preview B
+  const preview = $('preview-b');
+  const days = [
+    { day: 1, val: '1¢', coins: 1 },
+    { day: 2, val: '2¢', coins: 2 },
+    { day: 3, val: '4¢', coins: 4 },
+    { day: 4, val: '8¢', coins: 8 },
+    { day: 5, val: '16¢', coins: 16 },
+  ];
+  days.forEach((d, i) => {
+    if (i > 0) {
+      const arrow = document.createElement('div');
+      arrow.className = 'preview-arrow';
+      arrow.dataset.idx = i;
+      arrow.textContent = '×2';
+      preview.appendChild(arrow);
+    }
+    const dayEl = document.createElement('div');
+    dayEl.className = 'preview-day';
+    dayEl.dataset.idx = i;
+    const lbl = document.createElement('div');
+    lbl.className = 'preview-day-label';
+    lbl.textContent = `D${d.day}`;
+    const coins = document.createElement('div');
+    coins.className = 'preview-coins';
+    const showCoins = Math.min(d.coins, 6);
+    for (let k = 0; k < showCoins; k++) {
+      const c = document.createElement('div');
+      c.className = 'coin';
+      coins.appendChild(c);
+    }
+    const val = document.createElement('div');
+    val.className = 'preview-label';
+    val.textContent = d.val;
+    dayEl.appendChild(lbl);
+    dayEl.appendChild(coins);
+    dayEl.appendChild(val);
+    preview.appendChild(dayEl);
+  });
+
+  function playPreview() {
+    const dayEls = preview.querySelectorAll('.preview-day');
+    const arrows = preview.querySelectorAll('.preview-arrow');
+    dayEls.forEach(d => d.classList.remove('shown'));
+    arrows.forEach(a => a.classList.remove('shown'));
+    let t = 0;
+    dayEls.forEach((d, i) => {
+      setTimeout(() => d.classList.add('shown'), t);
+      t += 500;
+      if (i < arrows.length) {
+        setTimeout(() => arrows[i].classList.add('shown'), t);
+        t += 300;
+      }
+    });
+  }
+  // Auto-play once on first activation
+  setTimeout(playPreview, 400);
+  $('card-b').addEventListener('mouseenter', playPreview);
+
+  // Card selection
+  let selectedDeal = null;
+  document.querySelectorAll('#s1-deals .deal-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (card.classList.contains('locked')) return;
+      sfx('tap');
+      document.querySelectorAll('#s1-deals .deal-card').forEach(c => {
+        c.classList.remove('selected'); c.classList.add('dimmed');
+      });
+      card.classList.add('selected');
+      card.classList.remove('dimmed');
+      selectedDeal = card.dataset.deal;
+      $('s1-lock').classList.remove('disabled');
+      $('s1-lock').disabled = false;
+    });
+  });
+
+  $('s1-lock').addEventListener('click', () => {
+    if (!selectedDeal) return;
+    sfx('select');
+    state.gut_pick = selectedDeal;
+    document.querySelectorAll('#s1-deals .deal-card').forEach(c => {
+      c.classList.add('locked');
+      if (c.dataset.deal === selectedDeal) c.classList.add('sealed');
+    });
+    $('s1-lock').textContent = 'OKAY — LET\'S SEE →';
+    setTimeout(() => showStep('2'), 700);
+  });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 2 — Sanity-check Deal A                              */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep2() {
+  // Build calendar (30 cells, Deal A flavor)
+  const cal = $('cal-s2');
+  for (let i = 0; i < 30; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    cell.innerHTML = `<span class="cal-day-num">${i+1}</span><span class="cal-val">$10</span>`;
+    cal.appendChild(cell);
+  }
+  // Animated fill
+  const cells = cal.querySelectorAll('.cal-cell');
+  cells.forEach((c, i) => {
+    setTimeout(() => { c.classList.add('filled', 'a-fill'); sfx('coin'); }, 80 + i * 50);
+  });
+
+  setupRetryChips({
+    chipsId: 's2-chips',
+    fbId: 's2-fb',
+    correctValue: 300,
+    hintFn: (p, c, n) => p < c ? 'Bigger. 30 days × $10...' : 'Smaller. Just 30 tens, not 30 hundreds.',
+    displayOnReveal: (v) => '$' + v,
+    onDone: () => {
+      show('s2-jar-reveal');
+      sfx('reveal');
+      setTimeout(() => show('s2-next'), 700);
+    }
+  });
+
+  $('s2-next').addEventListener('click', () => { sfx('tap'); showStep('3'); runStep3Setup(); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 3 — Deal B's rule                                    */
+/* ═════════════════════════════════════════════════════════ */
+let s3Day = 2;
+const s3Sequence = [
+  { day: 2, prev: 1, prevLabel: '1¢',  correct: 2,  options: ['1¢', '2¢', '10¢'], correctLabel: '2¢' },
+  { day: 3, prev: 2, prevLabel: '2¢',  correct: 4,  options: ['3¢', '4¢', '8¢'],  correctLabel: '4¢' },
+  { day: 4, prev: 4, prevLabel: '4¢',  correct: 8,  options: ['6¢', '8¢', '16¢'], correctLabel: '8¢' },
+  { day: 5, prev: 8, prevLabel: '8¢',  correct: 16, options: ['10¢', '16¢', '32¢'], correctLabel: '16¢' },
+];
+
+function runStep3Setup() {
+  // Reset
+  const cal = $('cal-s3');
+  cal.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    cell.innerHTML = `<span class="cal-day-num">${i+1}</span>`;
+    if (i === 0) {
+      cell.classList.add('filled');
+      cell.innerHTML = `<span class="cal-day-num">1</span><span class="cal-val">1¢</span>`;
+    }
+    cal.appendChild(cell);
+  }
+  s3Day = 2;
+  // Initial jar values: A = $50 (5 days), B = 0.01 after Day 1 fill
+  $('s3-a-total').textContent = '$50';
+  $('s3-b-total').textContent = '$0.01';
+  $('s3-b-fill').style.height = '1%';
+  // Render first question
+  renderS3Question();
+}
+
+function renderS3Question() {
+  const q = s3Sequence.find(x => x.day === s3Day);
+  if (!q) {
+    // Done with Days 2-5
+    finishStep3();
+    return;
+  }
+  $('s3-prompt').textContent = `Day ${q.day-1} was ${q.prevLabel}. Day ${q.day} = ?`;
+  $('s3-bubble').innerHTML = q.day === 2
+    ? `Mom dropped 1¢ in the jar on Day 1. <strong>Day 2 — twice yesterday.</strong> What's that?`
+    : `Yep — into the jar. <strong>Day ${q.day}?</strong> Twice yesterday.`;
+  const chipsHTML = q.options.map(opt => `<button class="chip" data-v="${parseFloat(opt)}" data-label="${opt}">${opt}</button>`).join('');
+  $('s3-chips').innerHTML = chipsHTML;
+  hide('s3-fb');
+
+  setupRetryChips({
+    chipsId: 's3-chips',
+    fbId: 's3-fb',
+    correctValue: q.correct,
+    hintFn: (p, c, n) => `Twice yesterday. Yesterday was ${q.prevLabel}.`,
+    displayOnReveal: (v) => q.correctLabel,
+    onDone: () => {
+      // Mark cell filled
+      const cell = $('cal-s3').children[q.day - 1];
+      cell.classList.add('filled');
+      cell.innerHTML = `<span class="cal-day-num">${q.day}</span><span class="cal-val">${q.correctLabel}</span>`;
+      // Update B jar cumulative through this day
+      const cumThruDay = DAYS[q.day - 1].cumB;
+      $('s3-b-total').textContent = fmtCents(cumThruDay);
+      $('s3-b-fill').style.height = Math.min(2 + cumThruDay * 100, 8) + '%';
+      sfx('coin');
+      s3Day += 1;
+      setTimeout(() => renderS3Question(), 800);
+    }
+  });
+}
+
+function finishStep3() {
+  $('s3-prompt').textContent = '5 days in. Jar has 31¢. Deal A is at $50.';
+  $('s3-prompt').classList.remove('orange');
+  $('s3-prompt').classList.add('green');
+  $('s3-chips').innerHTML = '';
+  $('s3-bubble').innerHTML = `<strong>31 cents after 5 days.</strong> Deal A is at fifty bucks. Easy money for you.`;
+  show('s3-next');
+}
+
+function setupStep3() {
+  $('s3-next').addEventListener('click', () => { sfx('tap'); showStep('4'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 4 — Predict the flip                                 */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep4() {
+  setupSingleChoiceChips({
+    chipsId: 's4-chips',
+    lockBtnId: 's4-lock',
+    onLock: (chip) => {
+      state.flip_prediction = chip.dataset.v;
+      setTimeout(() => { showStep('5'); runStep5Setup(); }, 500);
+    }
+  });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 5 — March to the flip                                */
+/* ═════════════════════════════════════════════════════════ */
+let s5Beat = 0;
+const s5Beats = [
+  { day: 7,  prevDay: 6,  prev: 0.32,   prevLabel: '32¢',     correct: 0.64,   options: [0.40, 0.64, 0.96], optionLabels: ['40¢', '64¢', '96¢'], correctLabel: '64¢',
+    bubble: '7 days in. I\'ve got a buck. You\'ve got 70. Easy money for you.', skipFrom: 6 },
+  { day: 10, prevDay: 9,  prev: 2.56,   prevLabel: '$2.56',   correct: 5.12,   options: [3.50, 5.12, 10.24], optionLabels: ['$3.50', '$5.12', '$10.24'], correctLabel: '$5.12',
+    bubble: '10 bucks vs your 100. Still way behind.', skipFrom: 8 },
+  { day: 12, prevDay: 11, prev: 10.24,  prevLabel: '$10.24',  correct: 20.48,  options: [15, 20.48, 30],     optionLabels: ['$15', '$20.48', '$30'], correctLabel: '$20.48',
+    bubble: 'Hmm... I\'m starting to actually mean something.', skipFrom: 11 },
+  { day: 14, prevDay: 13, prev: 40.96,  prevLabel: '$40.96',  correct: 81.92,  options: [60, 81.92, 120],    optionLabels: ['$60', '$81.92', '$120'], correctLabel: '$81.92',
+    bubble: 'Whoa. Whoa whoa whoa. I just passed you.', skipFrom: 13, isFlip: true },
+];
+
+function runStep5Setup() {
+  // Build 30-cell calendar with Days 1-5 already filled
+  const cal = $('cal-s5');
+  cal.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-cell';
+    if (i < 5) {
+      cell.classList.add('filled');
+      const d = DAYS[i];
+      cell.innerHTML = `<span class="cal-day-num">${i+1}</span><span class="cal-val">${fmtCents(d.dailyB)}</span>`;
+    } else {
+      cell.innerHTML = `<span class="cal-day-num">${i+1}</span>`;
+    }
+    cal.appendChild(cell);
+  }
+  // Display flip prediction
+  const pred = state.flip_prediction;
+  $('s5-pred-display').textContent = pred === 'never' ? 'Never' : 'Day ' + pred;
+  // Reset beat counter
+  s5Beat = 0;
+  // Penny size starts small
+  $('s5-penny').className = 'penny s-sm';
+  // Initial jar state (after Day 5: A=$50, B=$0.31). Show as transitioning to Beat 0.
+  $('s5-a-total').textContent = '$50';
+  $('s5-b-total').textContent = '$0.31';
+  $('s5-a-fill').style.height = '17%';
+  $('s5-b-fill').style.height = '1%';
+  renderS5Beat();
+}
+
+function renderS5Beat() {
+  const b = s5Beats[s5Beat];
+  if (!b) return;
+  // Auto-fill skipped days
+  const cal = $('cal-s5');
+  for (let i = b.skipFrom - 1; i < b.day - 1; i++) {
+    const cell = cal.children[i];
+    if (!cell.classList.contains('filled')) {
+      const d = DAYS[i];
+      cell.innerHTML = `<span class="cal-day-num">${i+1}</span><span class="cal-val">${fmtCents(d.dailyB)}</span>`;
+      setTimeout(() => cell.classList.add('filled'), 100 * (i - b.skipFrom + 1));
+    }
+  }
+  $('s5-prompt').textContent = `Day ${b.prevDay} was ${b.prevLabel}. Day ${b.day} = ?`;
+  $('s5-prompt').classList.remove('green');
+  $('s5-prompt').classList.add('orange');
+  const chipsHTML = b.options.map((v, i) => `<button class="chip" data-v="${v}">${b.optionLabels[i]}</button>`).join('');
+  $('s5-chips').innerHTML = chipsHTML;
+  hide('s5-fb');
+
+  setupRetryChips({
+    chipsId: 's5-chips',
+    fbId: 's5-fb',
+    correctValue: b.correct,
+    hintFn: (p, c, n) => `Twice yesterday. Yesterday was ${b.prevLabel}.`,
+    displayOnReveal: (v) => b.correctLabel,
+    onDone: () => {
+      // Mark beat day cell
+      const cell = cal.children[b.day - 1];
+      cell.innerHTML = `<span class="cal-day-num">${b.day}</span><span class="cal-val">${b.correctLabel}</span>`;
+      cell.classList.add('filled');
+      if (b.isFlip) cell.classList.add('flip');
+      // Update jars
+      const dayData = DAYS[b.day - 1];
+      $('s5-a-total').textContent = '$' + dayData.cumA;
+      $('s5-b-total').textContent = fmtCents(dayData.cumB);
+      $('s5-a-fill').style.height = Math.min(dayData.cumA / 300 * 100, 100) + '%';
+      $('s5-b-fill').style.height = Math.min(dayData.cumB / 300 * 100, 100) + '%';
+
+      // Penny growth
+      if (b.day === 7) $('s5-penny').className = 'penny s-sm';
+      else if (b.day === 10) $('s5-penny').className = 'penny s-sm';
+      else if (b.day === 12) $('s5-penny').className = 'penny s-md';
+      else if (b.day === 14) $('s5-penny').className = 'penny s-md';
+
+      sfx('coin');
+
+      // Flip moment
+      if (b.isFlip) {
+        sfx('flip');
+        $('s5-bubble').innerHTML = `<strong>${b.bubble}</strong>`;
+        setTimeout(() => {
+          show('s5-flip-callout');
+          sfx('reveal');
+        }, 800);
+        setTimeout(() => {
+          $('s5-prompt').textContent = `DAY 14 — DEAL B IS AHEAD: $163.83 vs $140.`;
+          $('s5-prompt').classList.add('green');
+          $('s5-prompt').classList.remove('orange');
+          const predDisplay = state.flip_prediction === 'never' ? 'Never' : 'Day ' + state.flip_prediction;
+          const reflectMsg = state.flip_prediction === '14'
+            ? `<strong>You called it.</strong> Actual flip: Day 14.`
+            : `You said <strong>${predDisplay}</strong>. Actual flip: <strong>Day 14</strong>. I caught up faster than you thought.`;
+          $('s5-bubble').innerHTML = reflectMsg;
+          show('s5-next');
+        }, 2400);
+      } else {
+        $('s5-bubble').innerHTML = b.bubble;
+        s5Beat += 1;
+        setTimeout(() => renderS5Beat(), 1500);
+      }
+    }
+  });
+}
+
+function setupStep5() {
+  $('s5-next').addEventListener('click', () => { sfx('tap'); showStep('6'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 6 — Predict Day 30                                   */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep6() {
+  setupSingleChoiceChips({
+    chipsId: 's6-chips',
+    lockBtnId: 's6-lock',
+    onLock: (chip) => {
+      state.day30_prediction = chip.dataset.v;
+      setTimeout(() => { showStep('7'); runStep7Setup(); }, 500);
+    }
+  });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 7 — Day 30 reveal                                    */
+/* ═════════════════════════════════════════════════════════ */
+function runStep7Setup() {
+  // Show late days (Beat A) — already in DOM
+  setTimeout(() => show('s7-q29-block'), 1400);
+}
+
+function setupStep7() {
+  setupRetryChips({
+    chipsId: 's7-q29-chips',
+    fbId: 's7-q29-fb',
+    correctValue: 2700000,
+    hintFn: (p, c, n) => `Twice yesterday. Yesterday was about $1.3M.`,
+    displayOnReveal: (v) => '$2.7 million',
+    onDone: () => {
+      setTimeout(() => show('s7-q30-block'), 700);
+    }
+  });
+
+  setupRetryChips({
+    chipsId: 's7-q30-chips',
+    fbId: 's7-q30-fb',
+    correctValue: 5400000,
+    hintFn: (p, c, n) => `Twice yesterday. Yesterday was about $2.7M.`,
+    displayOnReveal: (v) => '$5.4 million',
+    onDone: () => {
+      setTimeout(() => show('s7-add-up'), 700);
+    }
+  });
+
+  $('s7-add-up').addEventListener('click', () => {
+    sfx('tap');
+    $('s7-add-up').classList.add('hidden');
+    show('s7-totals-block');
+    // Display kid's prediction
+    const pred = state.day30_prediction;
+    let predLabel = '$10 million';
+    if (pred === '1000') predLabel = '$1,000';
+    else if (pred === '50000') predLabel = '$50,000';
+    else if (pred === '10000000') predLabel = '$10 million';
+    else if (pred === '1000000000') predLabel = '$1 billion';
+    $('s7-pred-display').textContent = predLabel;
+
+    // Cumulative count-up animation — starts where B was last shown ($164 at Day 14)
+    const numEl = $('s7-mega-num');
+    numEl.textContent = '$164';
+    const start = 164;
+    const end = DAY30_CUM_B;
+    const dur = 3000;
+    const t0 = performance.now();
+    sfx('reveal');
+    function tick(now) {
+      const elapsed = now - t0;
+      const t = Math.min(elapsed / dur, 1);
+      // Ease-out exponential for dramatic accelerate-decelerate
+      const eased = t < 1 ? 1 - Math.pow(1 - t, 3) : 1;
+      // Log-scale interpolation since values span 5 orders of magnitude
+      const logStart = Math.log10(start);
+      const logEnd = Math.log10(end);
+      const cur = Math.pow(10, logStart + (logEnd - logStart) * eased);
+      numEl.textContent = '$' + Math.round(cur).toLocaleString();
+      if (t < 1) requestAnimationFrame(tick);
+      else {
+        numEl.textContent = '$' + Math.round(end).toLocaleString();
+        sfx('flip');
+      }
+    }
+    requestAnimationFrame(tick);
+  });
+
+  $('s7-next').addEventListener('click', () => { sfx('tap'); showStep('8'); runStep8Setup(); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 8 — Re-decide                                        */
+/* ═════════════════════════════════════════════════════════ */
+function runStep8Setup() {
+  const earlier = state.gut_pick === 'A' ? 'Deal A' : 'Deal B';
+  $('s8-earlier').textContent = earlier;
+
+  // Configure chip labels based on gut pick
+  if (state.gut_pick === 'A') {
+    $('s8-stick').textContent = 'STICK WITH DEAL A';
+    $('s8-flip').textContent = 'FLIP TO DEAL B';
+  } else {
+    $('s8-stick').textContent = 'STICK WITH DEAL B';
+    $('s8-flip').textContent = 'FLIP TO DEAL A';
+  }
+}
+
+function setupStep8() {
+  document.querySelectorAll('#s8-chips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('disabled')) return;
+      sfx('select');
+      document.querySelectorAll('#s8-chips .chip').forEach(c => c.classList.add('disabled'));
+      chip.classList.add('selected', 'right');
+      const action = chip.dataset.action;
+      let reflectMsg = '';
+      if (action === 'flip') {
+        if (state.gut_pick === 'A') {
+          reflectMsg = `<strong>Your thinking just moved.</strong> Your gut wasn't crazy — pennies don't FEEL big. Even when the math says they should be.`;
+          state.final_pick = 'B';
+        } else {
+          reflectMsg = `<strong>You changed your mind.</strong> Cool — your thinking moves with the math.`;
+          state.final_pick = 'A';
+        }
+      } else {
+        if (state.gut_pick === 'B') {
+          reflectMsg = `<strong>You called it from the start.</strong> Most kids — most adults — wouldn't have. Wild.`;
+          state.final_pick = 'B';
+        } else {
+          reflectMsg = `Sticking. Hey — your call.`;
+          state.final_pick = 'A';
+        }
+      }
+      $('s8-reflect').innerHTML = reflectMsg;
+      show('s8-reflect');
+      setTimeout(() => show('s8-next'), 900);
+    });
+  });
+
+  $('s8-next').addEventListener('click', () => { sfx('tap'); showStep('9'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 9 — Compound Eyes earned                             */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep9() {
+  $('s9-next').addEventListener('click', () => { sfx('tool'); showStep('10'); runStep10Setup(); });
+  // Play tool-earned arpeggio when step opens
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 10 — Real-life examples                              */
+/* ═════════════════════════════════════════════════════════ */
+function runStep10Setup() {
+  // Build viewer icons: Day 5 = 160 viewers (or simpler — 32 scaled visual)
+  const viewers = $('s10-viewers');
+  viewers.innerHTML = '';
+  // Show 32 icons (scale of "growing rapidly"), Day 5 actual = 160
+  // Use 40 icons as visual of Day 5 = 160 (4x compression for layout)
+  let viewerCount = 0;
+  function addViewers(target) {
+    while (viewerCount < target) {
+      const v = document.createElement('span');
+      v.className = 'kid-icon viewer';
+      viewers.appendChild(v);
+      viewerCount += 1;
+    }
+  }
+  // Animate icons appearing (Day 1: 10 → Day 5: 160). Show 40 icons (representing 160 / 4)
+  setTimeout(() => addViewers(10), 300);
+  setTimeout(() => addViewers(20), 700);
+  setTimeout(() => addViewers(30), 1100);
+  setTimeout(() => addViewers(40), 1500);
+
+  // Build sick icons
+  const sick = $('s10-sick');
+  sick.innerHTML = '';
+  let sickCount = 0;
+  function addSick(target) {
+    while (sickCount < target) {
+      const s = document.createElement('span');
+      s.className = 'kid-icon sick';
+      sick.appendChild(s);
+      sickCount += 1;
+    }
+  }
+  // Day 5 newly sick = 16. Show actual.
+  setTimeout(() => addSick(1), 200);
+  setTimeout(() => addSick(2), 500);
+  setTimeout(() => addSick(4), 800);
+  setTimeout(() => addSick(8), 1100);
+  setTimeout(() => addSick(16), 1400);
+}
+
+function setupStep10() {
+  setupRetryChips({
+    chipsId: 's10-viral-chips',
+    fbId: 's10-viral-fb',
+    correctValue: 5120,
+    hintFn: (p, c, n) => p < c ? 'Bigger. Doubling 10 days = 10 × 2¹⁰ = ?' : 'Smaller — but not by a ton.',
+    displayOnReveal: (v) => v.toLocaleString(),
+    onDone: () => { setTimeout(() => show('s10-to-beatB'), 600); }
+  });
+
+  $('s10-to-beatB').addEventListener('click', () => {
+    sfx('tap');
+    hide('s10-beatA');
+    show('s10-beatB');
+    runStep10Setup(); // re-run for Beat B icons
+  });
+
+  setupRetryChips({
+    chipsId: 's10-virus-chips',
+    fbId: 's10-virus-fb',
+    correctValue: 512,
+    hintFn: (p, c, n) => p < c ? 'Bigger.' : 'Smaller — but a lot.',
+    displayOnReveal: (v) => v.toLocaleString(),
+    onDone: () => {
+      show('s10-close');
+      setTimeout(() => show('s10-next'), 1200);
+    }
+  });
+
+  $('s10-next').addEventListener('click', () => { sfx('tap'); showStep('11'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 11 — Apply 1: 10-day deal (TIME)                     */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep11() {
+  let pickedDeal = null;
+  document.querySelectorAll('#s11-pickA .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('disabled')) return;
+      sfx('tap');
+      document.querySelectorAll('#s11-pickA .chip').forEach(c => c.classList.remove('selected'));
+      chip.classList.add('selected');
+      pickedDeal = chip.dataset.deal;
+      $('s11-pick-lock').classList.remove('disabled');
+      $('s11-pick-lock').disabled = false;
+    });
+  });
+
+  $('s11-pick-lock').addEventListener('click', () => {
+    if (!pickedDeal) return;
+    sfx('select');
+    state.s11_pick = pickedDeal;
+    document.querySelectorAll('#s11-pickA .chip').forEach(c => c.classList.add('disabled'));
+    $('s11-pick-lock').classList.add('hidden');
+    show('s11-reveal');
+    sfx('reveal');
+    setTimeout(() => show('s11-lessonQ'), 1400);
+  });
+
+  fixCorrectChips('s11-lesson-chips', 's11-lesson-fb', () => {
+    show('s11-card'); sfx('tool'); setTimeout(() => show('s11-next'), 900);
+  }, 'Doubling needs more time to catch up');
+
+  $('s11-next').addEventListener('click', () => { sfx('tap'); showStep('12'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 12 — Apply 2: stop at Day 20 (STAYING POWER)         */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep12() {
+  // Predict Day 20 cumulative
+  fixCorrectChips('s12-chips', 's12-fb', () => {
+    show('s12-reveal');
+    sfx('reveal');
+    setTimeout(() => show('s12-lessonQ'), 1400);
+  }, '$10,000');
+
+  // Lesson chip
+  fixCorrectChips('s12-lesson-chips', 's12-lesson-fb', () => {
+    show('s12-card');
+    sfx('tool');
+    setTimeout(() => show('s12-next'), 900);
+  }, 'Most of the magic is at the END');
+
+  $('s12-next').addEventListener('click', () => { sfx('tap'); showStep('13'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 13 — Apply 3: Penny vs Trippy (RATE)                 */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep13() {
+  // Beat A: pick winner
+  document.querySelectorAll('#s13-chips .chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('disabled')) return;
+      sfx('select');
+      document.querySelectorAll('#s13-chips .chip').forEach(c => c.classList.add('disabled'));
+      chip.classList.add('selected');
+      state.s13_pick = chip.dataset.pick;
+      show('s13-reveal');
+      sfx('reveal');
+      setTimeout(() => show('s13-lessonQ'), 1400);
+    });
+  });
+
+  // Lesson chip
+  fixCorrectChips('s13-lesson-chips', 's13-lesson-fb', () => {
+    show('s13-card');
+    sfx('tool');
+    setTimeout(() => show('s13-next'), 900);
+  }, 'A small change in growth rate = HUGE change in result');
+
+  $('s13-next').addEventListener('click', () => { sfx('tap'); showStep('14'); });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  Helper: chips that use data-correct attribute             */
+/* ═════════════════════════════════════════════════════════ */
+function fixCorrectChips(chipsId, fbId, onDone, revealText) {
+  let wrong = 0;
+  const chips = document.querySelectorAll(`#${chipsId} .chip`);
+  const fb = $(fbId);
+  chips.forEach(chip => {
+    // Remove any existing handlers by cloning (only for these specific chips)
+  });
+
+  // Use a fresh listener
+  chips.forEach(chip => {
+    chip.replaceWith(chip.cloneNode(true));
+  });
+  document.querySelectorAll(`#${chipsId} .chip`).forEach(chip => {
+    chip.addEventListener('click', () => {
+      if (chip.classList.contains('disabled') || chip.classList.contains('right')) return;
+      sfx('tap');
+      const isCorrect = chip.dataset.correct === '1';
+      if (isCorrect) {
+        sfx('right');
+        chip.classList.add('right', 'disabled');
+        document.querySelectorAll(`#${chipsId} .chip`).forEach(c => { if (c !== chip) c.classList.add('disabled'); });
+        if (fb) {
+          fb.classList.remove('hidden', 'error'); fb.classList.add('correct');
+          fb.textContent = '✓ Right.';
+        }
+        setTimeout(() => onDone && onDone(), 600);
+      } else {
+        sfx('wrong');
+        chip.classList.add('wrong');
+        wrong += 1;
+        if (fb) {
+          fb.classList.remove('hidden', 'correct'); fb.classList.add('error');
+          fb.textContent = wrong === 1 ? 'Hmm — try again.' : 'Take another look.';
+        }
+        setTimeout(() => chip.classList.remove('wrong'), 500);
+        if (wrong >= 2) {
+          document.querySelectorAll(`#${chipsId} .chip`).forEach(c => {
+            if (c.dataset.correct === '1') c.classList.add('right', 'disabled');
+            else c.classList.add('disabled');
+          });
+          if (fb) {
+            fb.classList.remove('error'); fb.classList.add('correct');
+            fb.textContent = revealText ? `✓ ${revealText}` : '✓ Got it.';
+          }
+          setTimeout(() => onDone && onDone(), 800);
+        }
+      }
+    });
+  });
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  STEP 14 — Tool stash + exit                               */
+/* ═════════════════════════════════════════════════════════ */
+function setupStep14() {
+  $('s14-done').addEventListener('click', () => {
+    sfx('tool');
+    fireConfetti();
+    setTimeout(() => location.reload(), 2400);
+  });
+}
+
+function fireConfetti() {
+  const c = $('confetti');
+  c.innerHTML = '';
+  c.classList.remove('hidden');
+  const colors = ['#F5C43E', '#FFB592', '#7FCFEA', '#3FD68F', '#F472C8'];
+  for (let i = 0; i < 60; i++) {
+    const p = document.createElement('div');
+    p.className = 'conf-piece';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.top = (Math.random() * -10 - 5) + 'vh';
+    p.style.background = colors[i % colors.length];
+    p.style.animationDelay = (Math.random() * 0.8) + 's';
+    c.appendChild(p);
+  }
+  setTimeout(() => { c.classList.add('hidden'); c.innerHTML = ''; }, 3000);
+}
+
+/* ═════════════════════════════════════════════════════════ */
+/*  GLOBAL                                                    */
+/* ═════════════════════════════════════════════════════════ */
+$('mute-btn').addEventListener('click', () => {
+  state.muted = !state.muted;
+  $('mute-btn').textContent = state.muted ? '🔇' : '🔊';
+});
+$('restart-btn').addEventListener('click', () => { sfx('tap'); location.reload(); });
+
+/* ═════════════════════════════════════════════════════════ */
+/*  INIT                                                      */
+/* ═════════════════════════════════════════════════════════ */
+setupStep1();
+setupStep2();
+setupStep3();
+setupStep4();
+setupStep5();
+setupStep6();
+setupStep7();
+setupStep8();
+setupStep9();
+setupStep10();
+setupStep11();
+setupStep12();
+setupStep13();
+setupStep14();
+
+// Honor ?screen=N
+const initScreen = getURLScreen();
+if (initScreen) {
+  showStep(initScreen);
+  // Initialize specific step setups for direct nav
+  if (initScreen === '3') runStep3Setup();
+  if (initScreen === '5') { state.flip_prediction = state.flip_prediction || '22'; runStep5Setup(); }
+  if (initScreen === '7') runStep7Setup();
+  if (initScreen === '8') { state.gut_pick = state.gut_pick || 'A'; runStep8Setup(); }
+  if (initScreen === '10') runStep10Setup();
+} else {
+  showStep('1');
+}
+
+</script>
+</body>
+</html>
