@@ -480,48 +480,86 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .calendar {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 3px;
+  gap: 4px;
   background: white;
   border: 2px solid var(--ink);
-  padding: 6px;
+  padding: 8px;
 }
 .cal-cell {
   aspect-ratio: 1;
   background: var(--bg-tint);
-  border: 1px solid var(--ink-muted);
+  border: 1.5px solid var(--ink-muted);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
   font-weight: 700;
   color: var(--ink-muted);
   position: relative;
   transition: all 0.3s;
+  padding: 4px;
 }
 .cal-cell .cal-day-num {
-  font-size: 7px;
+  font-size: 11px;
   color: var(--ink-muted);
   position: absolute;
-  top: 1px;
-  left: 2px;
-  font-weight: 700;
+  top: 3px;
+  left: 4px;
+  font-weight: 800;
 }
 .cal-cell .cal-val {
-  font-size: 8px;
+  font-family: var(--font-display);
+  font-size: 14px;
   font-weight: 900;
   color: var(--ink);
+  margin-top: 4px;
 }
 .cal-cell.filled { background: var(--tint-peach); border-color: var(--ink); }
 .cal-cell.filled.a-fill { background: var(--cream); }
-.cal-cell.flip { background: var(--bold-orange); border-color: var(--ink); border-width: 2px; }
-.cal-cell.empty-pulse {
-  animation: cellPulse 1.4s ease-in-out infinite;
+.cal-cell.flip { background: var(--bold-orange); border-color: var(--ink); border-width: 2.5px; }
+
+/* ─── compact day track (Step 3 — only the days we're filling) ─── */
+.day-track {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  background: white;
+  border: 2px solid var(--ink);
+  padding: 12px;
 }
-@keyframes cellPulse {
-  0%, 100% { background: var(--bg-tint); }
-  50% { background: var(--tint-peach); }
+.track-cell {
+  aspect-ratio: 1;
+  background: var(--bg-tint);
+  border: 2px solid var(--ink-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  transition: all 0.4s cubic-bezier(.5, 1.4, .4, 1);
 }
+.track-cell .track-day {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+}
+.track-cell .track-val {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 5vw, 24px);
+  font-weight: 900;
+  color: var(--ink);
+  margin-top: 3px;
+}
+.track-cell.filled {
+  background: var(--tint-peach);
+  border-color: var(--ink);
+  transform: scale(1.02);
+}
+.track-cell.filled .track-day { color: var(--ink); }
+.track-cell.empty .track-val::before { content: '?'; color: var(--ink-muted); opacity: 0.4; }
 
 /* ─── status pill / callout ──────────────────────────────── */
 .status-pill {
@@ -857,13 +895,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 2 — Sanity-check Deal A                                 -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="2">
-    <div class="bubble with-penny peach">
-      <div class="penny s-sm"></div>
-      <div class="bubble-text">Deal A is the easy one. <strong>$10 a day, 30 days.</strong> What's the total?</div>
-    </div>
+    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px; color:var(--ink-muted);">Deal A</p>
 
-    <h2 class="step-title">Deal A — let's add it up.</h2>
-    <p class="step-sub">30 days × $10 a day...</p>
+    <h2 class="step-title">30 days × $10 = ?</h2>
 
     <div class="calendar" id="cal-s2"></div>
 
@@ -893,33 +927,28 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <!-- STEP 3 — Deal B's rule                                       -->
   <!-- ═══════════════════════════════════════════════════════════ -->
   <section class="step" data-step="3">
+    <p class="step-sub" style="text-transform:uppercase; font-weight:800; letter-spacing:1px; color:var(--ink-muted);">Deal B's rule</p>
+
+    <h2 class="step-title" id="s3-title">Day 2 = ?</h2>
+
     <div class="bubble with-penny peach">
       <div class="penny s-sm"></div>
-      <div class="bubble-text" id="s3-bubble">Mom dropped 1¢ in the jar on Day 1. Day 2 — twice yesterday. What's that?</div>
+      <div class="bubble-text" id="s3-bubble">Day 1 was <strong>1¢</strong>. Day 2 — twice yesterday. What's that?</div>
     </div>
 
-    <h2 class="step-title">Deal B's rule.</h2>
-    <p class="step-sub">Each day = TWICE yesterday. All your coins go in the jar.</p>
-
-    <div class="calendar" id="cal-s3"></div>
-
-    <div id="s3-question-block">
-      <div class="status-pill" id="s3-prompt" style="margin-bottom:10px;">Day 1 was 1¢. Day 2 = ?</div>
-      <div class="chips" id="s3-chips"></div>
-      <div class="chip-feedback hidden" id="s3-fb"></div>
+    <div class="day-track" id="track-s3">
+      <div class="track-cell filled"><div class="track-day">Day 1</div><div class="track-val">1¢</div></div>
+      <div class="track-cell empty"><div class="track-day">Day 2</div><div class="track-val"></div></div>
+      <div class="track-cell empty"><div class="track-day">Day 3</div><div class="track-val"></div></div>
+      <div class="track-cell empty"><div class="track-day">Day 4</div><div class="track-val"></div></div>
+      <div class="track-cell empty"><div class="track-day">Day 5</div><div class="track-val"></div></div>
     </div>
 
-    <div class="jars-row" id="s3-jars">
-      <div class="jar-block">
-        <div class="jar-label">DEAL A SO FAR</div>
-        <div class="jar"><div class="jar-fill" style="height: 17%;"></div></div>
-        <div class="jar-total" id="s3-a-total">$50</div>
-      </div>
-      <div class="jar-block">
-        <div class="jar-label">DEAL B SO FAR</div>
-        <div class="jar"><div class="jar-fill b-fill" id="s3-b-fill" style="height: 0%;"></div></div>
-        <div class="jar-total b-total" id="s3-b-total">$0.00</div>
-      </div>
+    <div class="chips" id="s3-chips"></div>
+    <div class="chip-feedback hidden" id="s3-fb"></div>
+
+    <div class="bubble peach hidden" id="s3-summary">
+      <strong>5 days in.</strong> Penny's at 31¢. Tiny.
     </div>
 
     <button class="cta full hidden" id="s3-next">CONTINUE →</button>
@@ -966,17 +995,16 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   <section class="step" data-step="5">
     <div class="recall" id="s5-recall">YOU PREDICTED: <b id="s5-pred-display">Day 22</b></div>
 
-    <h2 class="step-title">Let's run the days.</h2>
+    <h2 class="step-title" id="s5-title">Day 7 = ?</h2>
 
     <div class="bubble with-penny peach">
       <div class="penny s-sm" id="s5-penny"></div>
-      <div class="bubble-text" id="s5-bubble">Day 6 was 32¢. Day 7 = ?</div>
+      <div class="bubble-text" id="s5-bubble">Day 6 was <strong>32¢</strong>. Twice that?</div>
     </div>
 
     <div class="calendar" id="cal-s5"></div>
 
     <div id="s5-question-block">
-      <div class="status-pill orange" id="s5-prompt" style="margin-bottom:10px;">Day 6 was 32¢. Day 7 = ?</div>
       <div class="chips" id="s5-chips"></div>
       <div class="chip-feedback hidden" id="s5-fb"></div>
     </div>
@@ -1750,39 +1778,40 @@ const s3Sequence = [
 ];
 
 function runStep3Setup() {
-  // Reset
-  const cal = $('cal-s3');
-  cal.innerHTML = '';
-  for (let i = 0; i < 30; i++) {
-    const cell = document.createElement('div');
-    cell.className = 'cal-cell';
-    cell.innerHTML = `<span class="cal-day-num">${i+1}</span>`;
-    if (i === 0) {
-      cell.classList.add('filled');
-      cell.innerHTML = `<span class="cal-day-num">1</span><span class="cal-val">1¢</span>`;
-    }
-    cal.appendChild(cell);
-  }
   s3Day = 2;
-  // Initial jar values: A = $50 (5 days), B = 0.01 after Day 1 fill
-  $('s3-a-total').textContent = '$50';
-  $('s3-b-total').textContent = '$0.01';
-  $('s3-b-fill').style.height = '1%';
-  // Render first question
+  // Reset track cells: only Day 1 filled
+  const track = $('track-s3');
+  if (track) {
+    track.querySelectorAll('.track-cell').forEach((cell, i) => {
+      const dayNum = i + 1;
+      const dayLabel = `Day ${dayNum}`;
+      const valEl = cell.querySelector('.track-val');
+      if (i === 0) {
+        cell.classList.add('filled');
+        cell.classList.remove('empty');
+        valEl.textContent = '1¢';
+      } else {
+        cell.classList.remove('filled');
+        cell.classList.add('empty');
+        valEl.textContent = '';
+      }
+    });
+  }
+  hide('s3-summary');
+  hide('s3-next');
   renderS3Question();
 }
 
 function renderS3Question() {
   const q = s3Sequence.find(x => x.day === s3Day);
   if (!q) {
-    // Done with Days 2-5
     finishStep3();
     return;
   }
-  $('s3-prompt').textContent = `Day ${q.day-1} was ${q.prevLabel}. Day ${q.day} = ?`;
+  $('s3-title').textContent = `Day ${q.day} = ?`;
   $('s3-bubble').innerHTML = q.day === 2
-    ? `Mom dropped 1¢ in the jar on Day 1. <strong>Day 2 — twice yesterday.</strong> What's that?`
-    : `Yep — into the jar. <strong>Day ${q.day}?</strong> Twice yesterday.`;
+    ? `Day 1 was <strong>1¢</strong>. Day 2 — twice yesterday. What's that?`
+    : `Day ${q.day - 1} was <strong>${q.prevLabel}</strong>. Day ${q.day} — twice yesterday.`;
   const chipsHTML = q.options.map(opt => `<button class="chip" data-v="${parseFloat(opt)}" data-label="${opt}">${opt}</button>`).join('');
   $('s3-chips').innerHTML = chipsHTML;
   hide('s3-fb');
@@ -1794,28 +1823,26 @@ function renderS3Question() {
     hintFn: (p, c, n) => `Twice yesterday. Yesterday was ${q.prevLabel}.`,
     displayOnReveal: (v) => q.correctLabel,
     onDone: () => {
-      // Mark cell filled
-      const cell = $('cal-s3').children[q.day - 1];
+      // Fill the track cell
+      const track = $('track-s3');
+      const cell = track.children[q.day - 1];
       cell.classList.add('filled');
-      cell.innerHTML = `<span class="cal-day-num">${q.day}</span><span class="cal-val">${q.correctLabel}</span>`;
-      // Update B jar cumulative through this day
-      const cumThruDay = DAYS[q.day - 1].cumB;
-      $('s3-b-total').textContent = fmtCents(cumThruDay);
-      $('s3-b-fill').style.height = Math.min(2 + cumThruDay * 100, 8) + '%';
+      cell.classList.remove('empty');
+      cell.querySelector('.track-val').textContent = q.correctLabel;
       sfx('coin');
       s3Day += 1;
-      setTimeout(() => renderS3Question(), 800);
+      setTimeout(() => renderS3Question(), 900);
     }
   });
 }
 
 function finishStep3() {
-  $('s3-prompt').textContent = '5 days in. Jar has 31¢. Deal A is at $50.';
-  $('s3-prompt').classList.remove('orange');
-  $('s3-prompt').classList.add('green');
+  $('s3-title').textContent = `Each day = TWICE yesterday.`;
+  $('s3-bubble').innerHTML = `That's the rule. <strong>Twice yesterday, every day.</strong>`;
   $('s3-chips').innerHTML = '';
-  $('s3-bubble').innerHTML = `<strong>31 cents after 5 days.</strong> Deal A is at fifty bucks. Easy money for you.`;
-  show('s3-next');
+  hide('s3-fb');
+  show('s3-summary');
+  setTimeout(() => show('s3-next'), 600);
 }
 
 function setupStep3() {
@@ -1895,9 +1922,8 @@ function renderS5Beat() {
       setTimeout(() => cell.classList.add('filled'), 100 * (i - b.skipFrom + 1));
     }
   }
-  $('s5-prompt').textContent = `Day ${b.prevDay} was ${b.prevLabel}. Day ${b.day} = ?`;
-  $('s5-prompt').classList.remove('green');
-  $('s5-prompt').classList.add('orange');
+  $('s5-title').textContent = `Day ${b.day} = ?`;
+  $('s5-bubble').innerHTML = `Day ${b.prevDay} was <strong>${b.prevLabel}</strong>. Twice that?`;
   const chipsHTML = b.options.map((v, i) => `<button class="chip" data-v="${v}">${b.optionLabels[i]}</button>`).join('');
   $('s5-chips').innerHTML = chipsHTML;
   hide('s5-fb');
@@ -1932,15 +1958,14 @@ function renderS5Beat() {
       // Flip moment
       if (b.isFlip) {
         sfx('flip');
+        $('s5-title').textContent = `Day 14.`;
         $('s5-bubble').innerHTML = `<strong>${b.bubble}</strong>`;
+        $('s5-chips').innerHTML = '';
         setTimeout(() => {
           show('s5-flip-callout');
           sfx('reveal');
         }, 800);
         setTimeout(() => {
-          $('s5-prompt').textContent = `DAY 14 — DEAL B IS AHEAD: $163.83 vs $140.`;
-          $('s5-prompt').classList.add('green');
-          $('s5-prompt').classList.remove('orange');
           const predDisplay = state.flip_prediction === 'never' ? 'Never' : 'Day ' + state.flip_prediction;
           const reflectMsg = state.flip_prediction === '14'
             ? `<strong>You called it.</strong> Actual flip: Day 14.`
