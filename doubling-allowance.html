@@ -947,9 +947,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
     <div class="chips" id="s3-chips"></div>
     <div class="chip-feedback hidden" id="s3-fb"></div>
 
-    <div class="bubble peach hidden" id="s3-summary">
-      <strong>5 days in.</strong> Penny's at 31¢. Tiny.
+    <div class="chips hidden" id="s3-addup-chips">
+      <button class="chip" data-v="16">16¢</button>
+      <button class="chip" data-v="25">25¢</button>
+      <button class="chip" data-v="31">31¢</button>
+      <button class="chip" data-v="50">50¢</button>
     </div>
+    <div class="chip-feedback hidden" id="s3-addup-fb"></div>
 
     <button class="cta full hidden" id="s3-next">CONTINUE →</button>
   </section>
@@ -1797,7 +1801,8 @@ function runStep3Setup() {
       }
     });
   }
-  hide('s3-summary');
+  hide('s3-addup-chips');
+  hide('s3-addup-fb');
   hide('s3-next');
   renderS3Question();
 }
@@ -1837,12 +1842,27 @@ function renderS3Question() {
 }
 
 function finishStep3() {
-  $('s3-title').textContent = `Each day = TWICE yesterday.`;
-  $('s3-bubble').innerHTML = `That's the rule. <strong>Twice yesterday, every day.</strong>`;
+  $('s3-title').textContent = `5 days. Total?`;
+  $('s3-bubble').innerHTML = `All your coins go in the jar. <strong>Add them up.</strong> What's Penny's total?`;
   $('s3-chips').innerHTML = '';
   hide('s3-fb');
-  show('s3-summary');
-  setTimeout(() => show('s3-next'), 600);
+  show('s3-addup-chips');
+
+  setupRetryChips({
+    chipsId: 's3-addup-chips',
+    fbId: 's3-addup-fb',
+    correctValue: 31,
+    hintFn: (p, c, n) => {
+      if (p === 16) return `That's just Day 5. Add ALL the days.`;
+      return p < c ? `Bigger. 1+2+4+8+16.` : `Smaller. Add them carefully.`;
+    },
+    displayOnReveal: (v) => '31¢',
+    onDone: () => {
+      sfx('reveal');
+      $('s3-bubble').innerHTML = `<strong>Yep — 31¢.</strong> 5 days in, that's all. Tiny.`;
+      setTimeout(() => show('s3-next'), 700);
+    }
+  });
 }
 
 function setupStep3() {
