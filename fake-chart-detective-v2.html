@@ -390,7 +390,7 @@ svg.chart { width: 100%; height: auto; display: block; }
 .option.commit.selected .option-num::before { content: "●"; color: white; font-size: 14px; }
 .option.commit.correct { border-color: var(--mint); background: var(--mint-bg); color: var(--mint-ink); }
 .option.commit.correct .option-num { background: var(--mint); border-color: var(--mint); }
-.option.commit.correct .option-num::before { content: "🎯"; font-size: 12px; }
+.option.commit.correct .option-num::before { content: "✓"; color: white; font-weight: 900; font-size: 14px; }
 .option.commit.wrong { border-color: var(--coral); background: var(--coral-bg); color: var(--coral-ink); animation: shake 0.4s; }
 .option.commit.wrong .option-num { background: var(--coral); border-color: var(--coral); }
 .option.commit.wrong .option-num::before { content: "✕"; color: white; font-size: 12px; }
@@ -985,6 +985,37 @@ const DATA = {
   screen: [
     { month: "Last Year", value: 6.1 },
     { month: "This Year", value: 6.4 }
+  ],
+  // Chart 5 — Rising YouTuber (Base Trick)
+  youtube: {
+    pct: [
+      { month: "GameGuy42", value: 500 },
+      { month: "MrBeast", value: 1 }
+    ],
+    abs: [
+      { month: "GameGuy42", value: 10 },
+      { month: "MrBeast", value: 3000000 }
+    ]
+  },
+  // Newsroom Final
+  climate: [
+    { month: "1900", value: 0 },
+    { month: "1940", value: 0.6 },
+    { month: "1980", value: 1.4 },
+    { month: "2024", value: 2.5 }
+  ],
+  crime4: [
+    { month: "Aug", value: 110 },
+    { month: "Sep", value: 95 },
+    { month: "Oct", value: 78 },
+    { month: "Nov", value: 60 }
+  ],
+  unemployment: [
+    { month: "1970", value: 4.9 },
+    { month: "1985", value: 7.2 },
+    { month: "2000", value: 4.0 },
+    { month: "2015", value: 5.3 },
+    { month: "2024", value: 3.8 }
   ]
 };
 
@@ -1242,9 +1273,9 @@ const CHALLENGE = {
     { id: "chart-1", title: "Chart 1: Fortnite", kind: "chart", toolId: "axis", subSteps: 8 },
     { id: "chart-2", title: "Chart 2: Roblox", kind: "chart", toolId: "time", subSteps: 8 },
     { id: "chart-3", title: "Chart 3: Ice Cream", kind: "chart", toolId: "third", subSteps: 9 },
-    { id: "chart-4", title: "Chart 4: iPhone", kind: "placeholder", toolId: "picture" },
-    { id: "chart-5", title: "Chart 5: YouTuber", kind: "placeholder", toolId: "base" },
-    { id: "newsroom-final", title: "Newsroom Final", kind: "placeholder" },
+    { id: "chart-4", title: "Chart 4: iPhone", kind: "chart", toolId: "picture", subSteps: 8 },
+    { id: "chart-5", title: "Chart 5: YouTuber", kind: "chart", toolId: "base", subSteps: 8 },
+    { id: "newsroom-final", title: "Newsroom Final", kind: "newsroom", subSteps: 6 },
     { id: "fix-the-chart", title: "Fix the Chart", kind: "finale" },
     { id: "complete", title: "Case Closed", kind: "completion" }
   ]
@@ -1445,7 +1476,7 @@ function setupCommit(commitId, commitBtnId, fbId, nextId) {
       if (fb) {
         fb.classList.remove("hidden");
         fb.className = "feedback";
-        fb.innerHTML = `<strong>🎯 Good lead.</strong> Let's follow it.`;
+        fb.innerHTML = `<strong>Good pick.</strong> Let's follow it.`;
       }
       if (nxt) nxt.disabled = false;
     } else {
@@ -1601,7 +1632,7 @@ function renderChart1(sub) {
       <div class="step-label">Now do the math</div>
       <div class="step-title">Your hunch was right. Let's confirm.</div>
       <div class="question">
-        <div class="q-label">🧮 Part A — Players added</div>
+        <div class="q-label">Part A — Players added</div>
         <div class="q-text">March = 401M players. June = 409M. How many <strong>millions</strong> were added?</div>
         <div class="numeric-row">
           <input type="number" class="numeric-input" id="num-added" placeholder="?">
@@ -1611,7 +1642,7 @@ function renderChart1(sub) {
         <div class="feedback hidden" style="margin-top:12px; margin-bottom:0;" id="fb-added"><strong>Right — 8 million.</strong> Feels like a lot. But compared to <em>401 million</em>…</div>
       </div>
       <div class="question hidden" id="q-percent">
-        <div class="q-label">🧮 Part B — Percent growth</div>
+        <div class="q-label">Part B — Percent growth</div>
         <div class="q-text">8 million out of 401 million. What percent is that?</div>
         <div class="options" id="mcq-percent">
           ${mcqOpt("A", "About 50% — half the players are new", false)}
@@ -1631,7 +1662,7 @@ function renderChart1(sub) {
       <div class="step-title">Drag the y-axis down to 0. Watch the lie collapse.</div>
       ${newsBlock("DAILY NEWS · GAMING", 'FORTNITE <span class="hot">EXPLODES!</span>', "Player count smashes record.", "chart1-fix")}
       <div class="question">
-        <div class="q-label">🎯 Your turn</div>
+        <div class="q-label">Your turn</div>
         <div class="slider-row">
           <span class="slider-label">Y-axis starts at</span>
           <input type="range" id="axisMin" min="0" max="400" step="5" value="400">
@@ -1688,14 +1719,44 @@ function mountChart1(sub) {
     const check = document.getElementById("check-added");
     const fbA = document.getElementById("fb-added");
     const qB = document.getElementById("q-percent");
+    let wrongCount = 0;
+    let locked = false;
+    const advance = (revealed) => {
+      num.disabled = true; check.disabled = true;
+      fbA.classList.remove("hidden");
+      if (revealed) {
+        fbA.innerHTML = `It's <strong>8 million</strong> (409 − 401). Feels like a lot — until you see what we compare it against.`;
+      }
+      setTimeout(() => qB.classList.remove("hidden"), 500);
+    };
     check.addEventListener("click", () => {
-      if (parseInt(num.value) === 8) {
-        SFX.correct(); num.disabled = true; check.disabled = true;
-        fbA.classList.remove("hidden");
-        setTimeout(() => qB.classList.remove("hidden"), 500);
+      if (locked) return;
+      const v = parseInt(num.value);
+      if (v === 8) {
+        SFX.correct(); locked = true;
+        advance(false);
       } else {
-        SFX.wrong(); num.style.borderColor = "var(--coral)";
+        SFX.wrong();
+        num.style.borderColor = "var(--coral)";
         setTimeout(() => num.style.borderColor = "", 800);
+        wrongCount++;
+        if (wrongCount === 1) {
+          fbA.classList.remove("hidden");
+          fbA.className = "feedback hot";
+          fbA.style.marginTop = "12px"; fbA.style.marginBottom = "0";
+          if (Number.isNaN(v)) {
+            fbA.innerHTML = `Type a number first.`;
+          } else if (v > 8) {
+            fbA.innerHTML = `Too high. Try 409 minus 401.`;
+          } else {
+            fbA.innerHTML = `Too low. Try 409 minus 401.`;
+          }
+        } else {
+          locked = true;
+          num.value = 8;
+          fbA.className = "feedback";
+          advance(true);
+        }
       }
     });
     setupMCQ("mcq-percent", "fb-c1-math", "next-c1-math");
@@ -1778,7 +1839,7 @@ function renderChart2(sub) {
         <div class="lens-reaction hidden" id="reaction-c2-first"></div>
       </div>
       <div class="question phase2 hidden" id="phase2-c2-first">
-        <div class="q-label">🎯 Name the trick</div>
+        <div class="q-label">Name the trick</div>
         <div class="q-text">Of all four clues — which one is the real trick?</div>
         <div class="options" id="commit-c2-first">
           ${commitOpt("The word DYING", false)}
@@ -1854,7 +1915,7 @@ function renderChart2(sub) {
       <div class="step-title">Drag the lens back. How does more history change things?</div>
       ${newsBlock("DAILY NEWS · TECH · FULL HISTORY", 'Roblox follows a rhythm.', "Pull back the lens — see the full picture.", "chart2-full")}
       <div class="question">
-        <div class="q-label">🎯 Your turn</div>
+        <div class="q-label">Your turn</div>
         <div class="slider-row">
           <span class="slider-label">Show past</span>
           <input type="range" id="timeWindow" min="3" max="18" step="1" value="3">
@@ -2080,7 +2141,7 @@ function renderChart3(sub) {
         <div class="lens-reaction hidden" id="reaction-c3-first"></div>
       </div>
       <div class="question phase2 hidden" id="phase2-c3-first">
-        <div class="q-label">🎯 Name the trick</div>
+        <div class="q-label">Name the trick</div>
         <div class="q-text">Of all four clues — which one is the real trick?</div>
         <div class="options" id="commit-c3-first">
           ${commitOpt("The orange line and red line use different colors", false)}
@@ -2301,6 +2362,878 @@ function mountChart3(sub) {
 // ═══════════════════════════════════════════════════════════
 // PLACEHOLDERS
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// PICTOGRAM HELPER (used by Chart 4 + Newsroom D)
+// ═══════════════════════════════════════════════════════════
+function pictogram(samsungScale, iphoneScale, opts = {}) {
+  // viewBox 360×200. Both icons baseline-aligned.
+  const baseSize = 50;
+  const sSize = baseSize * samsungScale;
+  const iSize = baseSize * iphoneScale;
+  const sCx = 110, iCx = 250, baseY = 150;
+  const grid = opts.grid ? `<defs><pattern id="pgrid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="#1A1A1A" stroke-width="0.5" opacity="0.55"/></pattern></defs>` : '';
+  const sLabel = opts.samsungLabel || 'Samsung';
+  const iLabel = opts.iphoneLabel || 'iPhone';
+  const sSub = opts.samsungSub || '100M units';
+  const iSub = opts.iphoneSub || '200M units';
+  return `<svg viewBox="0 0 360 200" style="width:100%;height:auto;display:block;background:#FBF5E8;border-radius:0;">
+    ${grid}
+    <rect x="${sCx - sSize/2}" y="${baseY - sSize}" width="${sSize}" height="${sSize}" fill="#F472C8" stroke="#1A1A1A" stroke-width="2" rx="4"/>
+    ${opts.grid ? `<rect x="${sCx - sSize/2}" y="${baseY - sSize}" width="${sSize}" height="${sSize}" fill="url(#pgrid)"/>` : ''}
+    <text x="${sCx}" y="${baseY + 18}" text-anchor="middle" font-size="14" font-weight="900" fill="#1A1A1A">${sLabel}</text>
+    <text x="${sCx}" y="${baseY + 34}" text-anchor="middle" font-size="11" font-weight="700" fill="#5E544D">${sSub}</text>
+    <rect x="${iCx - iSize/2}" y="${baseY - iSize}" width="${iSize}" height="${iSize}" fill="#7FCFEA" stroke="#1A1A1A" stroke-width="2" rx="4"/>
+    ${opts.grid ? `<rect x="${iCx - iSize/2}" y="${baseY - iSize}" width="${iSize}" height="${iSize}" fill="url(#pgrid)"/>` : ''}
+    <text x="${iCx}" y="${baseY + 18}" text-anchor="middle" font-size="14" font-weight="900" fill="#1A1A1A">${iLabel}</text>
+    <text x="${iCx}" y="${baseY + 34}" text-anchor="middle" font-size="11" font-weight="700" fill="#5E544D">${iSub}</text>
+  </svg>`;
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHART 4 — iPhone / Picture Trick (8 sub-steps)
+// ═══════════════════════════════════════════════════════════
+function renderChart4(sub) {
+  const total = 8;
+
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Chart 4 of 6 · The Picture Trick</div>
+      <div class="step-title">Same news. Different lie.</div>
+      ${bubble(`No bars or lines this time. Just a <strong>picture</strong>. Look at the two phone shapes.`)}
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · TECH</div>
+        <div class="headline">iPhone <span class="hot">OUTSELLS</span> Samsung 2 to 1!</div>
+        <div class="subhead">In US smartphone market this quarter.</div>
+        ${pictogram(1, 2)}
+      </div>
+      <div class="nav-row end"><button class="btn" onclick="nextSub()">Look around →</button></div>
+    </div>`;
+
+  if (sub === 1) return `
+    <div class="frame">${progressDots(total, 1)}
+      <div class="step-label">Look around</div>
+      <div class="step-title">What do you spot?</div>
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · TECH</div>
+        <div class="headline">iPhone <span class="hot">OUTSELLS</span> Samsung 2 to 1!</div>
+        ${pictogram(1, 2)}
+      </div>
+      <div class="question">
+        <div class="q-label">👀 Look around</div>
+        <div class="q-text">Tap each thing you notice.</div>
+        <div class="q-hint">No right answers here. Just look. Try a couple.</div>
+        <div class="options" id="mcq-c4-first">
+          ${exploreOpt("The headline says 2 to 1", "A clean ratio. We'll keep that number in mind.", false)}
+          ${exploreOpt("The iPhone picture is way bigger", "Way bigger. The question is — how much bigger?", false)}
+          ${exploreOpt("Both pictures are squares", "Same shape. Smart spot.", false)}
+          ${exploreOpt("The picture and the number disagree", "Headline says 2x. Picture looks more.", true)}
+        </div>
+        <div class="lens-reaction hidden" id="reaction-c4-first"></div>
+      </div>
+      <div class="question phase2 hidden" id="phase2-c4-first">
+        <div class="q-label">Pick what to look at first</div>
+        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="options" id="commit-c4-first">
+          ${commitOpt("'2 to 1' headline", false)}
+          ${commitOpt("iPhone picture is bigger", false)}
+          ${commitOpt("Both shapes are squares", false)}
+          ${commitOpt("Picture and number disagree", true)}
+        </div>
+        <button class="check-btn" id="commit-btn-c4-first" disabled style="margin-top: 12px;">Follow this lead →</button>
+        <div class="feedback hidden" id="commit-fb-c4-first" style="margin-top: 12px; margin-bottom: 0;"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c4-first" disabled onclick="nextSub()">Continue →</button></div>
+    </div>`;
+
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">What is it saying?</div>
+      <div class="step-title">What does the headline claim?</div>
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · TECH</div>
+        <div class="headline">iPhone <span class="hot">OUTSELLS</span> Samsung 2 to 1!</div>
+        ${pictogram(1, 2)}
+      </div>
+      <div class="question">
+        <div class="options" id="mcq-c4-msg">
+          ${mcqOpt("A", "iPhone sells 2× as many as Samsung.", true)}
+          ${mcqOpt("B", "iPhone sells 4× as many as Samsung.", false)}
+          ${mcqOpt("C", "Samsung sells 2× as many as iPhone.", false)}
+          ${mcqOpt("D", "They sell about the same.", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c4-msg"><strong>Right.</strong> The numbers say 2 to 1. That's the claim. Now — does the picture say the same thing?</div>
+      <div class="nav-row end"><button class="btn" id="next-c4-msg" disabled onclick="nextSub()">Count the squares →</button></div>
+    </div>`;
+
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
+      <div class="step-label">Count the squares</div>
+      <div class="step-title">Drop a grid on the picture and count.</div>
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · TECH</div>
+        <div class="headline">iPhone <span class="hot">OUTSELLS</span> Samsung 2 to 1!</div>
+        ${pictogram(1, 2, { grid: true })}
+      </div>
+      <div class="question">
+        <div class="q-label">Samsung — how many squares?</div>
+        <div class="numeric-row">
+          <input type="number" class="numeric-input" id="num-sam" placeholder="?">
+          <button class="check-btn" id="check-sam">Check</button>
+        </div>
+        <div class="feedback hidden" style="margin-top:12px;margin-bottom:0;" id="fb-sam"></div>
+      </div>
+      <div class="question hidden" id="q-iph">
+        <div class="q-label">iPhone — how many squares?</div>
+        <div class="numeric-row">
+          <input type="number" class="numeric-input" id="num-iph" placeholder="?">
+          <button class="check-btn" id="check-iph">Check</button>
+        </div>
+        <div class="feedback hidden" style="margin-top:12px;margin-bottom:0;" id="fb-iph"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c4-grid" disabled onclick="nextSub()">Spot the mismatch →</button></div>
+    </div>`;
+
+  if (sub === 4) return `
+    <div class="frame">${progressDots(total, 4)}
+      <div class="step-label">Spot the mismatch</div>
+      <div class="step-title">Headline says 2-to-1. Picture is 4-to-1. Which is true?</div>
+      ${bubble(`Samsung = 4 squares. iPhone = 16 squares. That's 4× the area.`)}
+      <div class="question">
+        <div class="options" id="mcq-c4-mis">
+          ${mcqOpt("A", "The picture is right — iPhone really sells 4× more.", false)}
+          ${mcqOpt("B", "The data is right — 2× more. The picture is exaggerating.", true)}
+          ${mcqOpt("C", "Both are equally right.", false)}
+          ${mcqOpt("D", "Neither.", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c4-mis"><strong>Right.</strong> The number is the source of truth. The picture made 2× look like 4×.</div>
+      <div class="nav-row end"><button class="btn" id="next-c4-mis" disabled onclick="nextSub()">Why? →</button></div>
+    </div>`;
+
+  if (sub === 5) return `
+    <div class="frame">${progressDots(total, 5)}
+      <div class="step-label">Why does this happen?</div>
+      <div class="step-title">Why does the picture look 4× when the data says 2×?</div>
+      <div class="question">
+        <div class="q-text">Pick everything that's true.</div>
+        <div class="options" id="multi-c4-why">
+          ${multiOpt("iPhone picture is 2× as wide as Samsung's.", true)}
+          ${multiOpt("iPhone picture is 2× as tall as Samsung's.", true)}
+          ${multiOpt("The colors are different.", false)}
+          ${multiOpt("iPhone picture is 4× as wide.", false)}
+        </div>
+        <button class="check-btn" id="check-c4-why" disabled style="margin-top:12px;">Check answers</button>
+      </div>
+      <div class="feedback hidden" id="fb-c4-why"><strong>That's the trick.</strong> Both width and height doubled. 2 × 2 = 4. The area is 4×, even though the claim was 2×.</div>
+      <div class="nav-row end"><button class="btn" id="next-c4-why" disabled onclick="nextSub()">Fix the picture →</button></div>
+    </div>`;
+
+  if (sub === 6) return `
+    <div class="frame">${progressDots(total, 6)}
+      <div class="step-label">Fix the picture</div>
+      <div class="step-title">Shrink iPhone until its <strong>area</strong> is exactly 2× Samsung's.</div>
+      <div class="news-block">
+        <div class="byline">DAILY NEWS · TECH (FIXED)</div>
+        <div class="headline" id="c4-fix-head">iPhone is <span id="c4-fix-x">4.0</span>× the area</div>
+        <div id="c4-fix-picto">${pictogram(1, 2)}</div>
+      </div>
+      <div class="question">
+        <div class="slider-row">
+          <span class="slider-label">iPhone scale</span>
+          <input type="range" id="c4-slider" min="1.00" max="2.00" step="0.01" value="2.00">
+          <span class="slider-value" id="c4-slider-val">2.00×</span>
+        </div>
+      </div>
+      <div class="feedback hot" id="fb-c4-fix">Pull it down. Watch the area number drop. Stop at 2.0.</div>
+      <div class="nav-row end"><button class="btn" id="next-c4-fix" disabled onclick="nextSub()">Name the trick →</button></div>
+    </div>`;
+
+  if (sub === 7) return `
+    <div class="frame">${progressDots(total, 7)}
+      <div class="step-label">Name the trick</div>
+      <div class="step-title">You figured it out. Give it a name.</div>
+      <div class="question">
+        <div class="q-label">Name the trick</div>
+        <div class="q-text">When both <strong>width and height</strong> get scaled, the <strong>area</strong> gets way bigger. What do we call it?</div>
+        <div class="options" id="mcq-c4-name">
+          ${mcqOpt("A", "The Axis Trick", false)}
+          ${mcqOpt("B", "The Picture Trick", true)}
+          ${mcqOpt("C", "The Big Number Trick", false)}
+          ${mcqOpt("D", "The Color Trick", false)}
+        </div>
+      </div>
+      <div class="tool-card hidden" id="tool-picture">
+        <div class="tool-tag">🖼 NEW TOOL</div>
+        <h3>The Picture Trick</h3>
+        <p>When both width and height of a picture get scaled, the area goes up by way more. 2× becomes 4×. 3× becomes 9×.</p>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c4-name" disabled onclick="markAndGoto(4, 5)">Next chart →</button></div>
+    </div>`;
+
+  return '';
+}
+
+function mountChart4(sub) {
+  if (sub === 1) {
+    setupExplore("mcq-c4-first", "reaction-c4-first", "phase2-c4-first", 4);
+    setupCommit("commit-c4-first", "commit-btn-c4-first", "commit-fb-c4-first", "next-c4-first");
+  }
+  if (sub === 2) setupMCQ("mcq-c4-msg", "fb-c4-msg", "next-c4-msg");
+  if (sub === 3) {
+    const samNum = document.getElementById("num-sam");
+    const samCheck = document.getElementById("check-sam");
+    const samFb = document.getElementById("fb-sam");
+    const qIph = document.getElementById("q-iph");
+    const iphNum = document.getElementById("num-iph");
+    const iphCheck = document.getElementById("check-iph");
+    const iphFb = document.getElementById("fb-iph");
+    const next = document.getElementById("next-c4-grid");
+
+    const wireInput = (input, check, fb, correct, hintLow, hintHigh, onDone) => {
+      let wrongCount = 0;
+      let locked = false;
+      check.addEventListener("click", () => {
+        if (locked) return;
+        const v = parseInt(input.value);
+        if (v === correct) {
+          SFX.correct();
+          locked = true;
+          input.disabled = true; check.disabled = true;
+          fb.className = "feedback";
+          fb.style.marginTop = "12px"; fb.style.marginBottom = "0";
+          fb.innerHTML = `<strong>${correct} squares.</strong>`;
+          fb.classList.remove("hidden");
+          onDone();
+        } else {
+          SFX.wrong();
+          input.style.borderColor = "var(--coral)";
+          setTimeout(() => input.style.borderColor = "", 800);
+          wrongCount++;
+          if (wrongCount === 1) {
+            fb.className = "feedback hot";
+            fb.style.marginTop = "12px"; fb.style.marginBottom = "0";
+            if (Number.isNaN(v)) fb.innerHTML = "Type a number first.";
+            else if (v > correct) fb.innerHTML = hintHigh;
+            else fb.innerHTML = hintLow;
+            fb.classList.remove("hidden");
+          } else {
+            input.value = correct;
+            locked = true;
+            input.disabled = true; check.disabled = true;
+            fb.className = "feedback";
+            fb.innerHTML = `It's <strong>${correct} squares</strong>.`;
+            onDone();
+          }
+        }
+      });
+    };
+
+    wireInput(samNum, samCheck, samFb, 4,
+      "Smaller. It's a 2-by-2 square.",
+      "Smaller. It's a 2-by-2 square.",
+      () => qIph.classList.remove("hidden")
+    );
+    wireInput(iphNum, iphCheck, iphFb, 16,
+      "Bigger. iPhone is 4 wide, 4 tall.",
+      "Smaller. iPhone is 4 wide, 4 tall.",
+      () => { next.disabled = false; }
+    );
+  }
+  if (sub === 4) setupMCQ("mcq-c4-mis", "fb-c4-mis", "next-c4-mis");
+  if (sub === 5) setupMultiMCQ("multi-c4-why", "check-c4-why", "fb-c4-why", "next-c4-why");
+  if (sub === 6) {
+    const slider = document.getElementById("c4-slider");
+    const valEl = document.getElementById("c4-slider-val");
+    const headEl = document.getElementById("c4-fix-x");
+    const pictoWrap = document.getElementById("c4-fix-picto");
+    const fb = document.getElementById("fb-c4-fix");
+    const next = document.getElementById("next-c4-fix");
+    let atTarget = false;
+    const upd = () => {
+      const v = parseFloat(slider.value);
+      const area = (v * v).toFixed(2);
+      valEl.textContent = v.toFixed(2) + "×";
+      headEl.textContent = area;
+      pictoWrap.innerHTML = pictogram(1, v);
+      const inTarget = (v >= 1.39 && v <= 1.43);
+      if (inTarget && !atTarget) {
+        atTarget = true;
+        SFX.correct();
+        fb.className = "feedback";
+        fb.innerHTML = `<strong>Got it. Scale ≈ 1.41 (that's √2).</strong> To double the area, scale each side by √2. Not by 2.`;
+        next.disabled = false;
+      } else if (!inTarget && !atTarget) {
+        fb.className = "feedback hot";
+        fb.innerHTML = v > 1.43 ? `Area is <strong>${area}×</strong>. Keep shrinking.` : `Area is <strong>${area}×</strong>. A touch too small.`;
+      }
+    };
+    slider.addEventListener("input", upd);
+    upd();
+  }
+  if (sub === 7) setupMCQ("mcq-c4-name", null, "next-c4-name", () => {
+    toolsEarned.picture = true;
+    document.getElementById("tool-picture").classList.remove("hidden");
+    SFX.tool();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// CHART 5 — Rising YouTuber / Base Trick (8 sub-steps)
+// ═══════════════════════════════════════════════════════════
+function renderChart5(sub) {
+  const total = 8;
+
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Chart 5 of 6 · The Base Trick</div>
+      <div class="step-title">A new YouTuber is "going to dominate."</div>
+      ${bubble(`The headline says 500%. Look at the bars.`)}
+      <div class="news-block">
+        <div class="byline">CREATOR DAILY</div>
+        <div class="headline">NEW YOUTUBER UP <span class="hot">500%</span> — set to dominate!</div>
+        <div class="subhead">GameGuy42 leaves MrBeast in the dust this month.</div>
+        <svg class="chart" id="chart5-intro" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="nav-row end"><button class="btn" onclick="nextSub()">Look around →</button></div>
+    </div>`;
+
+  if (sub === 1) return `
+    <div class="frame">${progressDots(total, 1)}
+      <div class="step-label">Look around</div>
+      <div class="step-title">What do you spot?</div>
+      <div class="news-block">
+        <div class="byline">CREATOR DAILY</div>
+        <div class="headline">NEW YOUTUBER UP <span class="hot">500%</span></div>
+        <svg class="chart" id="chart5-first" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="question">
+        <div class="q-label">👀 Look around</div>
+        <div class="q-text">Tap each thing you notice.</div>
+        <div class="q-hint">No right answers here. Just look.</div>
+        <div class="options" id="mcq-c5-first">
+          ${exploreOpt("GameGuy42's bar towers over MrBeast's", "A 500-to-1 visual. Hard to miss.", false)}
+          ${exploreOpt("Headline calls GameGuy42 'set to dominate'", "Big future claim from one month.", false)}
+          ${exploreOpt("The chart shows percent growth — not subscribers", "Percent of what? That's the missing question.", true)}
+          ${exploreOpt("MrBeast is at 1%", "Tiny percent. Of a giant base.", false)}
+        </div>
+        <div class="lens-reaction hidden" id="reaction-c5-first"></div>
+      </div>
+      <div class="question phase2 hidden" id="phase2-c5-first">
+        <div class="q-label">Pick what to look at first</div>
+        <div class="q-text">Of what you noticed, which is worth investigating?</div>
+        <div class="options" id="commit-c5-first">
+          ${commitOpt("500-to-1 visual", false)}
+          ${commitOpt("'Set to dominate' claim", false)}
+          ${commitOpt("Chart shows % growth, not subs", true)}
+          ${commitOpt("MrBeast at 1%", false)}
+        </div>
+        <button class="check-btn" id="commit-btn-c5-first" disabled style="margin-top: 12px;">Follow this lead →</button>
+        <div class="feedback hidden" id="commit-fb-c5-first" style="margin-top: 12px; margin-bottom: 0;"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c5-first" disabled onclick="nextSub()">Continue →</button></div>
+    </div>`;
+
+  if (sub === 2) return `
+    <div class="frame">${progressDots(total, 2)}
+      <div class="step-label">What is it saying?</div>
+      <div class="step-title">What's the chart's message?</div>
+      <div class="news-block">
+        <div class="byline">CREATOR DAILY</div>
+        <div class="headline">NEW YOUTUBER UP <span class="hot">500%</span></div>
+        <svg class="chart" id="chart5-msg" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="question">
+        <div class="options" id="mcq-c5-msg">
+          ${mcqOpt("A", "GameGuy42 grew way more than MrBeast.", true)}
+          ${mcqOpt("B", "MrBeast grew way more than GameGuy42.", false)}
+          ${mcqOpt("C", "They both shrank.", false)}
+          ${mcqOpt("D", "They both grew the same.", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c5-msg"><strong>Right.</strong> The chart's pitch: GameGuy42 is the rising star. MrBeast is barely growing.</div>
+      <div class="nav-row end"><button class="btn" id="next-c5-msg" disabled onclick="nextSub()">First — what do you think? →</button></div>
+    </div>`;
+
+  if (sub === 3) return `
+    <div class="frame">${progressDots(total, 3)}
+      <div class="step-label">First — what do you think?</div>
+      <div class="step-title">Who really had the bigger month?</div>
+      ${bubble(`Just your gut. We'll come back to this.`)}
+      <div class="question">
+        <div class="q-text">Pick one.</div>
+        <div class="options" id="chip-c5-gut">
+          ${mcqOpt("A", "GameGuy42 — 500% is huge", false)}
+          ${mcqOpt("B", "MrBeast — 1% of a lot is still a lot", false)}
+          ${mcqOpt("C", "About the same", false)}
+          ${mcqOpt("D", "Not sure yet", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c5-gut"></div>
+      <div class="nav-row end"><button class="btn" id="next-c5-gut" disabled onclick="nextSub()">See the actual numbers →</button></div>
+    </div>`;
+
+  if (sub === 4) return `
+    <div class="frame">${progressDots(total, 4)}
+      <div class="step-label">Switch the view</div>
+      <div class="step-title">Tap to switch from <strong>% growth</strong> to <strong>subscribers added</strong>.</div>
+      <div class="news-block">
+        <div class="byline">CREATOR DAILY · ANOTHER VIEW</div>
+        <div class="headline" id="c5-switch-head" style="font-size: 18px; line-height: 1.2;">% growth this month</div>
+        <div class="row" style="display:flex;gap:8px;margin:10px 0;">
+          <button class="check-btn" id="c5-toggle-pct" style="flex:1;background:var(--ink);">% GROWTH</button>
+          <button class="check-btn" id="c5-toggle-abs" style="flex:1;background:var(--bg-2);color:var(--text);">SUBS ADDED</button>
+        </div>
+        <svg class="chart" id="chart5-switch" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
+      </div>
+      <div class="feedback hidden" id="fb-c5-switch"></div>
+      <div class="nav-row end"><button class="btn" id="next-c5-switch" disabled onclick="nextSub()">Compute the real gain →</button></div>
+    </div>`;
+
+  if (sub === 5) return `
+    <div class="frame">${progressDots(total, 5)}
+      <div class="step-label">Now do the math</div>
+      <div class="step-title">How many <em>actual</em> subscribers did each gain?</div>
+      <div class="question">
+        <div class="q-label">Part A — GameGuy42</div>
+        <div class="q-text">GameGuy42 went from <strong>2 subs</strong> to <strong>12 subs</strong>. New subs?</div>
+        <div class="numeric-row">
+          <input type="number" class="numeric-input" id="num-gg" placeholder="?">
+          <button class="check-btn" id="check-gg">Check</button>
+        </div>
+        <div class="feedback hidden" style="margin-top:12px;margin-bottom:0;" id="fb-gg"></div>
+      </div>
+      <div class="question hidden" id="q-mb">
+        <div class="q-label">Part B — MrBeast</div>
+        <div class="q-text">MrBeast went from <strong>300,000,000</strong> to <strong>303,000,000</strong>. New subs?</div>
+        <div class="numeric-row">
+          <input type="number" class="numeric-input" id="num-mb" placeholder="?">
+          <button class="check-btn" id="check-mb">Check</button>
+        </div>
+        <div class="feedback hidden" style="margin-top:12px;margin-bottom:0;" id="fb-mb"></div>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c5-math" disabled onclick="nextSub()">Update your call →</button></div>
+    </div>`;
+
+  if (sub === 6) {
+    const gut = window._c5Gut;
+    const gutLabel = ({ A: "GameGuy42", B: "MrBeast", C: "about the same", D: "not sure" })[gut] || "something";
+    return `
+    <div class="frame">${progressDots(total, 6)}
+      <div class="step-label">Update your call</div>
+      <div class="step-title">Earlier you picked: <strong>${gutLabel}</strong>.</div>
+      ${bubble(`Now you have the math: GameGuy42 added <strong>10 subs</strong>. MrBeast added <strong>3,000,000</strong>. Same question — who really had the bigger month?`)}
+      <div class="question">
+        <div class="options" id="mcq-c5-update">
+          ${mcqOpt("A", "GameGuy42 — 500% is huge", false)}
+          ${mcqOpt("B", "MrBeast — 3,000,000 new people", true)}
+          ${mcqOpt("C", "About the same", false)}
+        </div>
+      </div>
+      <div class="feedback hidden" id="fb-c5-update"></div>
+      <div class="nav-row end"><button class="btn" id="next-c5-update" disabled onclick="nextSub()">Name the trick →</button></div>
+    </div>`;
+  }
+
+  if (sub === 7) return `
+    <div class="frame">${progressDots(total, 7)}
+      <div class="step-label">Name the trick</div>
+      <div class="step-title">Big % of a tiny number is still tiny. Name it.</div>
+      <div class="question">
+        <div class="q-label">Name the trick</div>
+        <div class="q-text">This lie hides the <strong>starting number</strong>. What should we call it?</div>
+        <div class="options" id="mcq-c5-name">
+          ${mcqOpt("A", "The Big Number Trick", false)}
+          ${mcqOpt("B", "The Picture Trick", false)}
+          ${mcqOpt("C", "The Base Trick", true)}
+          ${mcqOpt("D", "The Color Trick", false)}
+        </div>
+      </div>
+      <div class="tool-card hidden" id="tool-base">
+        <div class="tool-tag">🧮 NEW TOOL</div>
+        <h3>The Base Trick</h3>
+        <p>A huge percentage from a tiny base means almost nothing. Always check the actual number.</p>
+      </div>
+      <div class="nav-row end"><button class="btn" id="next-c5-name" disabled onclick="markAndGoto(5, 6)">Final round →</button></div>
+    </div>`;
+
+  return '';
+}
+
+function mountChart5(sub) {
+  if (sub === 0) renderBars(document.getElementById("chart5-intro"), DATA.youtube.pct, 0, 600, { title: "% GROWTH THIS MONTH", barColor: "#E85D75", unit: "%" });
+  if (sub === 1) {
+    renderBars(document.getElementById("chart5-first"), DATA.youtube.pct, 0, 600, { title: "% GROWTH THIS MONTH", barColor: "#E85D75", unit: "%" });
+    setupExplore("mcq-c5-first", "reaction-c5-first", "phase2-c5-first", 4);
+    setupCommit("commit-c5-first", "commit-btn-c5-first", "commit-fb-c5-first", "next-c5-first");
+  }
+  if (sub === 2) {
+    renderBars(document.getElementById("chart5-msg"), DATA.youtube.pct, 0, 600, { title: "% GROWTH THIS MONTH", barColor: "#E85D75", unit: "%" });
+    setupMCQ("mcq-c5-msg", "fb-c5-msg", "next-c5-msg");
+  }
+  if (sub === 3) {
+    const opts = document.querySelectorAll("#chip-c5-gut .option");
+    const fb = document.getElementById("fb-c5-gut");
+    const next = document.getElementById("next-c5-gut");
+    opts.forEach(opt => {
+      opt.addEventListener("click", () => {
+        opts.forEach(o => o.classList.remove("selected"));
+        opt.classList.add("selected");
+        SFX.click();
+        // Store gut answer (A, B, C, D)
+        const text = opt.querySelector(".option-num").textContent;
+        window._c5Gut = text;
+        fb.classList.remove("hidden");
+        fb.className = "feedback";
+        const reactions = {
+          A: "<strong>OK — you picked GameGuy42.</strong> 500% does look huge. Hold that thought.",
+          B: "<strong>OK — you picked MrBeast.</strong> Going against the picture. Hold that thought.",
+          C: "<strong>OK — you picked about the same.</strong> Hold that thought.",
+          D: "<strong>OK — not sure.</strong> Fair. Let's see the numbers."
+        };
+        fb.innerHTML = reactions[text] || "Hold that thought.";
+        next.disabled = false;
+      });
+    });
+  }
+  if (sub === 4) {
+    const togglePct = document.getElementById("c5-toggle-pct");
+    const toggleAbs = document.getElementById("c5-toggle-abs");
+    const head = document.getElementById("c5-switch-head");
+    const fb = document.getElementById("fb-c5-switch");
+    const next = document.getElementById("next-c5-switch");
+    let switched = false;
+    const drawPct = () => renderBars(document.getElementById("chart5-switch"), DATA.youtube.pct, 0, 600, { title: "% GROWTH THIS MONTH", barColor: "#E85D75", unit: "%" });
+    const drawAbs = () => renderBars(document.getElementById("chart5-switch"), DATA.youtube.abs, 0, 3500000, { title: "NEW SUBSCRIBERS", barColor: "#2EB39E", unit: "" });
+    drawPct();
+    togglePct.addEventListener("click", () => {
+      togglePct.style.background = "var(--ink)"; togglePct.style.color = "white";
+      toggleAbs.style.background = "var(--bg-2)"; toggleAbs.style.color = "var(--text)";
+      head.textContent = "% growth this month";
+      drawPct();
+      SFX.click();
+    });
+    toggleAbs.addEventListener("click", () => {
+      toggleAbs.style.background = "var(--ink)"; toggleAbs.style.color = "white";
+      togglePct.style.background = "var(--bg-2)"; togglePct.style.color = "var(--text)";
+      head.textContent = "Subscribers added this month";
+      drawAbs();
+      SFX.click();
+      if (!switched) {
+        switched = true;
+        SFX.correct();
+        fb.className = "feedback";
+        fb.innerHTML = "<strong>Whoa.</strong> Same channels — totally different story. MrBeast's 1% is millions of new people.";
+        fb.classList.remove("hidden");
+        next.disabled = false;
+      }
+    });
+  }
+  if (sub === 5) {
+    const ggNum = document.getElementById("num-gg");
+    const ggCheck = document.getElementById("check-gg");
+    const ggFb = document.getElementById("fb-gg");
+    const qMb = document.getElementById("q-mb");
+    const mbNum = document.getElementById("num-mb");
+    const mbCheck = document.getElementById("check-mb");
+    const mbFb = document.getElementById("fb-mb");
+    const next = document.getElementById("next-c5-math");
+
+    const wireInput = (input, check, fb, correct, hintLow, hintHigh, onDone) => {
+      let wrongCount = 0;
+      let locked = false;
+      check.addEventListener("click", () => {
+        if (locked) return;
+        const v = parseInt(input.value);
+        if (v === correct) {
+          SFX.correct();
+          locked = true;
+          input.disabled = true; check.disabled = true;
+          fb.className = "feedback";
+          fb.style.marginTop = "12px"; fb.style.marginBottom = "0";
+          fb.innerHTML = correct >= 1000000 ? `<strong>${correct.toLocaleString()} new subs.</strong>` : `<strong>${correct} new subs.</strong>`;
+          fb.classList.remove("hidden");
+          onDone();
+        } else {
+          SFX.wrong();
+          input.style.borderColor = "var(--coral)";
+          setTimeout(() => input.style.borderColor = "", 800);
+          wrongCount++;
+          if (wrongCount === 1) {
+            fb.className = "feedback hot";
+            fb.style.marginTop = "12px"; fb.style.marginBottom = "0";
+            if (Number.isNaN(v)) fb.innerHTML = "Type a number first.";
+            else if (v > correct) fb.innerHTML = hintHigh;
+            else fb.innerHTML = hintLow;
+            fb.classList.remove("hidden");
+          } else {
+            input.value = correct;
+            locked = true;
+            input.disabled = true; check.disabled = true;
+            fb.className = "feedback";
+            fb.innerHTML = `It's <strong>${correct.toLocaleString()}</strong>.`;
+            onDone();
+          }
+        }
+      });
+    };
+
+    wireInput(ggNum, ggCheck, ggFb, 10,
+      "Bigger. 12 minus 2.",
+      "Smaller. 12 minus 2.",
+      () => qMb.classList.remove("hidden")
+    );
+    wireInput(mbNum, mbCheck, mbFb, 3000000,
+      "Bigger. 303,000,000 minus 300,000,000.",
+      "Smaller. 303,000,000 minus 300,000,000.",
+      () => { next.disabled = false; }
+    );
+  }
+  if (sub === 6) setupMCQ("mcq-c5-update", "fb-c5-update", "next-c5-update");
+  if (sub === 7) setupMCQ("mcq-c5-name", null, "next-c5-name", () => {
+    toolsEarned.base = true;
+    document.getElementById("tool-base").classList.remove("hidden");
+    SFX.tool();
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// NEWSROOM FINAL — 4 charts, publish/hold + name the trick (6 sub-steps)
+// ═══════════════════════════════════════════════════════════
+const NEWSROOM = [
+  { key: "A", byline: "CLIMATE WIRE", headline: 'US temperatures up <span class="hot">2.5°F</span> since 1900', subhead: '125 years of data, full y-axis from 0.', chart: "climate", correct: "publish", trick: null,
+    feedback: "<strong>Honest chart.</strong> Full time range, y-axis from 0, no tricks. Publish." },
+  { key: "B", byline: "CHICAGO POST", headline: 'Chicago crime <span class="hot">PLUMMETS!</span>', subhead: "Last 4 months — incidents falling sharply.", chart: "crime4", correct: "hold", trick: "time",
+    feedback: "<strong>Time Window trick.</strong> 4 months is too short. The annual view shows winter dip every year. Hold." },
+  { key: "C", byline: "BUSINESS DAILY", headline: 'US unemployment at a <span style="color:var(--mint-ink);">50-year low</span>', subhead: "1970–2024, y-axis 0–12%.", chart: "unemployment", correct: "publish", trick: null,
+    feedback: "<strong>Honest chart.</strong> Full 50-year view, y-axis from 0. Publish." },
+  { key: "D", byline: "EDUCATION TODAY", headline: 'Private schools <span class="hot">CRUSH</span> public schools', subhead: "Private 85% · Public 75% (real gap: 1.13×).", chart: "schools", correct: "hold", trick: "picture",
+    feedback: "<strong>Picture trick.</strong> Real gap is 1.13×. The picture makes it look 9×. Hold." }
+];
+
+function renderNewsroomChart(chartId) {
+  if (chartId === "schools") {
+    return `<div style="background:#FBF5E8;display:flex;justify-content:space-around;align-items:flex-end;padding:20px;min-height:180px;">
+      <div style="text-align:center;">
+        <div style="width:36px;height:36px;background:#F472C8;border:2px solid #1A1A1A;margin:0 auto;display:grid;place-items:center;font-size:20px;border-radius:4px;">🍎</div>
+        <div style="font-weight:900;font-size:13px;margin-top:6px;">PUBLIC<br>75%</div>
+      </div>
+      <div style="text-align:center;">
+        <div style="width:108px;height:108px;background:#7FCFEA;border:2px solid #1A1A1A;margin:0 auto;display:grid;place-items:center;font-size:54px;border-radius:6px;">🍎</div>
+        <div style="font-weight:900;font-size:13px;margin-top:6px;">PRIVATE<br>85%</div>
+      </div>
+    </div>`;
+  }
+  return `<svg class="chart" id="nr-chart-${chartId}" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>`;
+}
+
+function renderNewsroom(sub) {
+  const total = 6;
+
+  if (sub === 0) return `
+    <div class="frame">${progressDots(total, 0)}
+      <div class="step-label">Newsroom Final</div>
+      <div class="step-title">Last four. Some lie. Some don't.</div>
+      ${bubble(`Stamp <strong>Publish</strong> or <strong>Hold</strong> on each. If you Hold, name the trick.`)}
+      <div class="postit">
+        <div class="from">MAYA · EDITOR</div>
+        <p>You've got 4 tools now. Use them. 4 charts incoming.</p>
+      </div>
+      <div class="nav-row end"><button class="btn coral btn-big" onclick="nextSub()">Stamp the stack →</button></div>
+    </div>`;
+
+  if (sub >= 1 && sub <= 4) {
+    const c = NEWSROOM[sub - 1];
+    return `
+      <div class="frame">${progressDots(total, sub)}
+        <div class="step-label">Chart ${c.key} of D</div>
+        <div class="step-title">Publish or hold?</div>
+        <div class="news-block">
+          <div class="byline">${c.byline}</div>
+          <div class="headline">${c.headline}</div>
+          <div class="subhead">${c.subhead}</div>
+          ${renderNewsroomChart(c.chart)}
+        </div>
+        <div class="question" id="nr-verdict-q">
+          <div class="row" style="display:flex;gap:10px;">
+            <button class="check-btn" id="nr-publish" style="flex:1;background:var(--mint);">📰 PUBLISH</button>
+            <button class="check-btn" id="nr-hold" style="flex:1;background:var(--coral);">🛑 HOLD</button>
+          </div>
+        </div>
+        <div class="question hidden" id="nr-trick-q">
+          <div class="q-label">Name the trick</div>
+          <div class="options" id="mcq-nr-trick">
+            ${mcqOpt("A", "🔍 The Axis Trick", false)}
+            ${mcqOpt("B", "📅 The Time Window Trick", c.trick === "time")}
+            ${mcqOpt("C", "🔗 The Third Thing Trick", false)}
+            ${mcqOpt("D", "🖼 The Picture Trick", c.trick === "picture")}
+            ${mcqOpt("E", "🧮 The Base Trick", false)}
+          </div>
+        </div>
+        <div class="feedback hidden" id="nr-fb"></div>
+        <div class="nav-row end"><button class="btn" id="nr-next" disabled onclick="nextSub()">Next chart →</button></div>
+      </div>`;
+  }
+
+  if (sub === 5) {
+    const verdicts = window._nrVerdicts || {};
+    const correctCount = NEWSROOM.filter(c => (verdicts[c.key] || {}).correct).length;
+    let perChart = '';
+    NEWSROOM.forEach(c => {
+      const v = verdicts[c.key] || {};
+      const ok = v.correct;
+      perChart += `
+        <div class="news-block" style="border-left: 4px solid ${ok ? 'var(--mint)' : 'var(--coral)'}; padding: 12px; margin-bottom: 10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div class="byline">CHART ${c.key}</div>
+            <span style="background:${ok ? 'var(--mint)' : 'var(--coral)'};color:white;font-weight:900;font-size:10px;padding:3px 10px;letter-spacing:1px;">${ok ? '✓ RIGHT' : '✗ OFF'}</span>
+          </div>
+          <div style="font-size:14px;font-weight:700;margin:6px 0;">${c.headline}</div>
+          <div style="font-size:13px;color:var(--text-2);">${c.feedback}</div>
+        </div>`;
+    });
+    const headlineMsg = correctCount === 4 ? "Clean sweep!" : correctCount >= 3 ? "Strong work." : correctCount >= 2 ? "Solid." : "Tough round.";
+    return `
+      <div class="frame">${progressDots(total, 5)}
+        <div class="step-label">Verdict</div>
+        <div class="step-title">${correctCount} of 4. ${headlineMsg}</div>
+        ${bubble(correctCount >= 3 ? "Maya owes you coffee." : "These tricks fool plenty of grown-ups too. Walk through them again any time.")}
+        ${perChart}
+        <div class="nav-row end"><button class="btn coral btn-big" onclick="markAndGoto(6, 7)">Last case →</button></div>
+      </div>`;
+  }
+
+  return '';
+}
+
+function mountNewsroom(sub) {
+  if (sub >= 1 && sub <= 4) {
+    const c = NEWSROOM[sub - 1];
+    if (c.chart === "climate") {
+      const svg = document.getElementById("nr-chart-climate");
+      if (svg) {
+        // line-style chart for climate
+        const cT = 24, cB = 200, cL = 36, cR = 348;
+        const cH = cB - cT, cW = cR - cL;
+        const data = DATA.climate;
+        const yMin = 0, yMax = 5;
+        let html = '';
+        for (let i = 0; i <= 4; i++) {
+          const v = yMin + (yMax - yMin) * (i / 4);
+          const y = cB - (v - yMin) / (yMax - yMin) * cH;
+          html += `<line x1="${cL}" y1="${y}" x2="${cR}" y2="${y}" stroke="#E8DFC8" stroke-width="1" stroke-dasharray="3,4"/>`;
+          html += `<text x="${cL - 4}" y="${y + 3}" fill="#5E544D" font-size="12" text-anchor="end" font-family="SF Mono, ui-monospace, monospace" font-weight="800">${v}°</text>`;
+        }
+        html += `<line x1="${cL}" y1="${cT - 6}" x2="${cL}" y2="${cB}" stroke="#C9BE9F" stroke-width="1.5"/>`;
+        html += `<line x1="${cL}" y1="${cB}" x2="${cR}" y2="${cB}" stroke="#C9BE9F" stroke-width="1.5"/>`;
+        html += `<text x="${(cL + cR) / 2}" y="14" fill="#99908A" font-size="11" text-anchor="middle" letter-spacing="1.2" font-weight="900">US TEMP RISE °F SINCE 1900</text>`;
+        const xStep = cW / (data.length - 1);
+        const pts = data.map((d, i) => `${cL + i * xStep},${cB - (d.value - yMin) / (yMax - yMin) * cH}`).join(' ');
+        html += `<polyline points="${pts}" fill="none" stroke="#2EB39E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+        data.forEach((d, i) => {
+          const x = cL + i * xStep;
+          const y = cB - (d.value - yMin) / (yMax - yMin) * cH;
+          html += `<circle cx="${x}" cy="${y}" r="4" fill="#2EB39E" stroke="white" stroke-width="2"/>`;
+          html += `<text x="${x}" y="${cB + 17}" fill="#5E544D" font-size="12" text-anchor="middle" font-weight="700">${d.month}</text>`;
+        });
+        svg.innerHTML = html;
+      }
+    } else if (c.chart === "crime4") {
+      renderBars(document.getElementById("nr-chart-crime4"), DATA.crime4, 0, 130, { title: "CHICAGO CRIME · LAST 4 MONTHS", barColor: "#E85D75", unit: "" });
+    } else if (c.chart === "unemployment") {
+      const svg = document.getElementById("nr-chart-unemployment");
+      if (svg) {
+        const cT = 24, cB = 200, cL = 36, cR = 348;
+        const cH = cB - cT, cW = cR - cL;
+        const data = DATA.unemployment;
+        const yMin = 0, yMax = 12;
+        let html = '';
+        for (let i = 0; i <= 4; i++) {
+          const v = yMin + (yMax - yMin) * (i / 4);
+          const y = cB - (v - yMin) / (yMax - yMin) * cH;
+          html += `<line x1="${cL}" y1="${y}" x2="${cR}" y2="${y}" stroke="#E8DFC8" stroke-width="1" stroke-dasharray="3,4"/>`;
+          html += `<text x="${cL - 4}" y="${y + 3}" fill="#5E544D" font-size="12" text-anchor="end" font-family="SF Mono, ui-monospace, monospace" font-weight="800">${v}%</text>`;
+        }
+        html += `<line x1="${cL}" y1="${cT - 6}" x2="${cL}" y2="${cB}" stroke="#C9BE9F" stroke-width="1.5"/>`;
+        html += `<line x1="${cL}" y1="${cB}" x2="${cR}" y2="${cB}" stroke="#C9BE9F" stroke-width="1.5"/>`;
+        html += `<text x="${(cL + cR) / 2}" y="14" fill="#99908A" font-size="11" text-anchor="middle" letter-spacing="1.2" font-weight="900">US UNEMPLOYMENT %</text>`;
+        const xStep = cW / (data.length - 1);
+        const pts = data.map((d, i) => `${cL + i * xStep},${cB - (d.value - yMin) / (yMax - yMin) * cH}`).join(' ');
+        html += `<polyline points="${pts}" fill="none" stroke="#2EB39E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+        data.forEach((d, i) => {
+          const x = cL + i * xStep;
+          const y = cB - (d.value - yMin) / (yMax - yMin) * cH;
+          html += `<circle cx="${x}" cy="${y}" r="4" fill="#2EB39E" stroke="white" stroke-width="2"/>`;
+          html += `<text x="${x}" y="${cB + 17}" fill="#5E544D" font-size="12" text-anchor="middle" font-weight="700">${d.month}</text>`;
+        });
+        svg.innerHTML = html;
+      }
+    }
+
+    // Wire up verdict + trick selection
+    const publishBtn = document.getElementById("nr-publish");
+    const holdBtn = document.getElementById("nr-hold");
+    const trickQ = document.getElementById("nr-trick-q");
+    const fb = document.getElementById("nr-fb");
+    const next = document.getElementById("nr-next");
+    let verdict = null;
+
+    window._nrVerdicts = window._nrVerdicts || {};
+
+    publishBtn.addEventListener("click", () => {
+      if (verdict) return;
+      verdict = "publish";
+      publishBtn.style.opacity = "1"; holdBtn.style.opacity = "0.5";
+      publishBtn.disabled = true; holdBtn.disabled = true;
+      SFX.click();
+      const isCorrect = c.correct === "publish";
+      window._nrVerdicts[c.key] = { verdict: "publish", correct: isCorrect };
+      fb.classList.remove("hidden");
+      fb.className = isCorrect ? "feedback" : "feedback hot";
+      fb.innerHTML = isCorrect ? c.feedback : `<strong>Hold up.</strong> ${c.feedback}`;
+      if (isCorrect) SFX.correct(); else SFX.wrong();
+      next.disabled = false;
+    });
+
+    holdBtn.addEventListener("click", () => {
+      if (verdict) return;
+      verdict = "hold";
+      holdBtn.style.opacity = "1"; publishBtn.style.opacity = "0.5";
+      publishBtn.disabled = true; holdBtn.disabled = true;
+      SFX.click();
+      // Show trick selection
+      trickQ.classList.remove("hidden");
+      trickQ.scrollIntoView({ behavior: "smooth", block: "center" });
+
+      let trickPicked = false;
+      document.querySelectorAll("#mcq-nr-trick .option").forEach(opt => {
+        opt.addEventListener("click", () => {
+          if (trickPicked) return;
+          trickPicked = true;
+          document.querySelectorAll("#mcq-nr-trick .option").forEach(o => o.disabled = true);
+          const correctTrick = opt.dataset.correct === "true";
+          const correctVerdict = c.correct === "hold";
+          const fullCorrect = correctTrick && correctVerdict;
+          if (fullCorrect) {
+            opt.classList.add("correct");
+            SFX.correct();
+            fb.className = "feedback";
+            fb.innerHTML = c.feedback;
+          } else {
+            opt.classList.add("wrong");
+            SFX.wrong();
+            fb.className = "feedback hot";
+            fb.innerHTML = correctVerdict ? `<strong>Hold was right — but the trick is different.</strong> ${c.feedback}` : `<strong>Should have published.</strong> ${c.feedback}`;
+          }
+          fb.classList.remove("hidden");
+          window._nrVerdicts[c.key] = { verdict: "hold", correct: fullCorrect };
+          next.disabled = false;
+        });
+      });
+    });
+  }
+}
+
 function renderPlaceholder(idx) {
   const s = CHALLENGE.sections[idx];
   return `
@@ -2518,12 +3451,16 @@ function renderChart(idx) {
   if (s.id === "chart-1") return renderChart1(currentSubStep);
   if (s.id === "chart-2") return renderChart2(currentSubStep);
   if (s.id === "chart-3") return renderChart3(currentSubStep);
+  if (s.id === "chart-4") return renderChart4(currentSubStep);
+  if (s.id === "chart-5") return renderChart5(currentSubStep);
 }
 function mountChart(idx) {
   const s = CHALLENGE.sections[idx];
   if (s.id === "chart-1") mountChart1(currentSubStep);
   if (s.id === "chart-2") mountChart2(currentSubStep);
   if (s.id === "chart-3") mountChart3(currentSubStep);
+  if (s.id === "chart-4") mountChart4(currentSubStep);
+  if (s.id === "chart-5") mountChart5(currentSubStep);
 }
 
 function render() {
@@ -2532,12 +3469,14 @@ function render() {
   let html = '';
   if (s.kind === "intro") html = renderIntro();
   else if (s.kind === "chart") html = renderChart(currentSection);
+  else if (s.kind === "newsroom") html = renderNewsroom(currentSubStep);
   else if (s.kind === "placeholder") html = renderPlaceholder(currentSection);
   else if (s.kind === "finale") html = renderFinale(currentSubStep);
   else if (s.kind === "completion") html = renderCompletion();
   main.innerHTML = html;
 
   if (s.kind === "chart") mountChart(currentSection);
+  if (s.kind === "newsroom") mountNewsroom(currentSubStep);
   if (s.kind === "finale") mountFinale(currentSubStep);
 
   renderSidebar();
