@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nim · 1v1 strategy game</title>
+<style>
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #fafaf6; color: #161629; margin: 0; padding: 3rem 1rem; min-height: 100vh; }
+  .wrap { max-width: 700px; margin: 0 auto; }
+  .center { text-align: center; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.78rem; color: #5a5a6e; font-weight: 700; margin-bottom: 0.8rem; }
+  h1 { font-size: 2.4rem; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+  .desc { color: #5a5a6e; font-size: 1.05rem; max-width: 54ch; margin: 0 auto 2rem; line-height: 1.55; }
+
+  .panel { background: #fff; border: 1px solid #d8d8d0; border-radius: 16px; padding: 1.8rem 1.5rem; box-shadow: 0 6px 22px rgba(60, 45, 30, 0.06); }
+
+  .status-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.85rem 1.25rem; border-radius: 12px;
+    background: linear-gradient(135deg, #DCF0FA 0%, #EFE8FC 100%);
+    border: 1px solid rgba(92, 179, 224, 0.4);
+    margin-bottom: 1.4rem;
+    font-weight: 600;
+    color: #21617F;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .status-bar.your-turn { background: linear-gradient(135deg, #DFF5EF 0%, #D6F3E0 100%); border-color: rgba(46, 179, 158, 0.4); color: #1A6A5C; }
+  .status-bar.bot-turn { background: linear-gradient(135deg, #FDF3CA 0%, #FFE4C4 100%); border-color: rgba(244, 196, 48, 0.5); color: #8C6A0A; }
+  .status-bar.game-over { background: linear-gradient(135deg, #f5f5f0 0%, #ececec 100%); border-color: #d8d8d0; color: #5a5a6e; }
+  .turn-text { font-size: 1rem; font-weight: 700; }
+  .move-hint { font-size: 0.85rem; opacity: 0.8; font-weight: 500; }
+
+  .arena {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.4rem;
+  }
+  .pile {
+    background: #fafaf6;
+    border: 1.5px solid #e8e8e0;
+    border-radius: 14px;
+    padding: 2.3rem 0.7rem 1rem;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 0.45rem;
+    min-height: 350px;
+    position: relative;
+  }
+  .pile-label {
+    position: absolute;
+    top: 0.7rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.72rem;
+    color: #99908A;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 800;
+  }
+  .pile-empty {
+    color: #c0bbb5;
+    font-size: 0.82rem;
+    font-style: italic;
+    align-self: center;
+    margin: auto 0;
+  }
+  .stone {
+    width: 56px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 3px 7px rgba(0,0,0,0.18), inset 0 -3px 6px rgba(0,0,0,0.12), inset 0 3px 6px rgba(255,255,255,0.25);
+  }
+  .pile-a .stone { background: linear-gradient(150deg, #f17a8e 0%, #c84a60 100%); }
+  .pile-b .stone { background: linear-gradient(150deg, #f7d05a 0%, #c89a1a 100%); }
+  .pile-c .stone { background: linear-gradient(150deg, #7cc4eb 0%, #3d83a8 100%); }
+  .pile.active .stone:hover { transform: translateY(-3px); box-shadow: 0 6px 14px rgba(0,0,0,0.22), inset 0 -3px 6px rgba(0,0,0,0.12), inset 0 3px 6px rgba(255,255,255,0.25); }
+  .stone.preview { transform: translateY(-4px); box-shadow: 0 0 0 2.5px #2a5d8f, 0 7px 14px rgba(0,0,0,0.22), inset 0 -3px 6px rgba(0,0,0,0.12), inset 0 3px 6px rgba(255,255,255,0.25); }
+  .stone.bot-preview { transform: translateY(-4px); box-shadow: 0 0 0 2.5px #E85D75, 0 7px 14px rgba(232, 93, 117, 0.4), inset 0 -3px 6px rgba(0,0,0,0.12), inset 0 3px 6px rgba(255,255,255,0.25); animation: pulse 0.55s ease-in-out infinite alternate; }
+  @keyframes pulse {
+    to { transform: translateY(-7px); }
+  }
+  .pile:not(.active) .stone { cursor: default; }
+
+  .controls {
+    display: flex; justify-content: center; gap: 0.6rem;
+  }
+  button { font-family: inherit; padding: 0.75rem 1.5rem; border: none; border-radius: 999px; background: #2a5d8f; color: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: transform 0.12s, box-shadow 0.12s; }
+  button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(42, 93, 143, 0.25); }
+  button.secondary { background: #fff; color: #2a5d8f; border: 1.5px solid #2a5d8f; }
+
+  .result {
+    background: linear-gradient(135deg, #DFF5EF 0%, #D6F3E0 100%);
+    border: 1.5px solid #2EB39E; color: #1A6A5C;
+    padding: 1rem 1.4rem; border-radius: 12px; margin-top: 1.2rem;
+    font-weight: 600; display: none; text-align: center;
+    font-size: 1.02rem; line-height: 1.5;
+  }
+  .result.show { display: block; }
+  .result.lose { background: linear-gradient(135deg, #FDE7EB 0%, #FFE4C4 100%); border-color: #E85D75; color: #B72F47; }
+
+  .insight { background: #EFE8FC; border: 1px solid #8E6FD8; padding: 1.4rem; border-radius: 14px; margin-top: 1.5rem; }
+  .insight h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.14em; color: #5E44A0; margin: 0 0 0.5rem; font-weight: 700; }
+  .insight p { color: #161629; line-height: 1.55; margin: 0; font-size: 0.97rem; }
+
+  a.back { display: inline-block; margin-top: 2rem; color: #2a5d8f; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="center">
+    <div class="eyebrow">Numerical strategy game · Game theory</div>
+    <h1>Nim ♟️</h1>
+    <p class="desc">Three piles of stones. On your turn, take <strong>any number from one pile</strong>. Whoever takes the <strong>last</strong> stone wins. You play first — the computer plays optimally.</p>
+  </div>
+
+  <div class="panel">
+    <div class="status-bar your-turn" id="statusBar">
+      <span class="turn-text" id="turnText">Your turn</span>
+      <span class="move-hint" id="moveHint">Click a stone to take it (plus any stones above it in the same pile)</span>
+    </div>
+
+    <div class="arena" id="arena">
+      <div class="pile pile-a active" data-pile="0"><div class="pile-label">Pile A</div></div>
+      <div class="pile pile-b active" data-pile="1"><div class="pile-label">Pile B</div></div>
+      <div class="pile pile-c active" data-pile="2"><div class="pile-label">Pile C</div></div>
+    </div>
+
+    <div class="controls">
+      <button class="secondary" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <div class="insight">
+    <h3>The math idea</h3>
+    <p>There's a hidden rule that decides who wins. Take the <strong>XOR</strong> of all pile sizes — if it's zero on your turn, you'll lose against optimal play; if non-zero, you can force a win. This is the foundation of <em>combinatorial game theory</em> — and shows up in surprising places, from puzzle design to algorithm analysis.</p>
+  </div>
+
+  <div class="center">
+    <a class="back" href="../leadership-presentation.html">← Back to presentation</a>
+  </div>
+</div>
+
+<script>
+  const INITIAL = [3, 4, 5];
+  let piles = [...INITIAL];
+  let turn = 'player';
+  let gameOver = false;
+
+  const pileEls = document.querySelectorAll('.pile');
+  const statusBar = document.getElementById('statusBar');
+  const turnText = document.getElementById('turnText');
+  const moveHint = document.getElementById('moveHint');
+  const resultEl = document.getElementById('result');
+
+  function render() {
+    pileEls.forEach((pileEl, i) => {
+      pileEl.querySelectorAll('.stone').forEach(s => s.remove());
+      const existingEmpty = pileEl.querySelector('.pile-empty');
+      if (existingEmpty) existingEmpty.remove();
+
+      if (piles[i] === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'pile-empty';
+        empty.textContent = '— empty —';
+        pileEl.appendChild(empty);
+      } else {
+        for (let j = 0; j < piles[i]; j++) {
+          const stone = document.createElement('div');
+          stone.className = 'stone';
+          stone.dataset.pile = i;
+          stone.dataset.index = j;
+          pileEl.appendChild(stone);
+        }
+      }
+      pileEl.classList.toggle('active', turn === 'player' && !gameOver && piles[i] > 0);
+    });
+    updateStatus();
+  }
+
+  function updateStatus() {
+    statusBar.classList.remove('your-turn', 'bot-turn', 'game-over');
+    if (gameOver) {
+      statusBar.classList.add('game-over');
+      turnText.textContent = 'Game over';
+      moveHint.textContent = 'Reset to play again';
+    } else if (turn === 'player') {
+      statusBar.classList.add('your-turn');
+      turnText.textContent = 'Your turn';
+      moveHint.textContent = 'Click any stone — that stone + all stones above it in its pile will be taken';
+    } else {
+      statusBar.classList.add('bot-turn');
+      turnText.textContent = 'Computer is thinking…';
+      moveHint.textContent = '';
+    }
+  }
+
+  function showPreview(pile, fromIndex) {
+    clearPreview();
+    if (turn !== 'player' || gameOver) return;
+    pileEls[pile].querySelectorAll('.stone').forEach(s => {
+      if (parseInt(s.dataset.index) >= fromIndex) s.classList.add('preview');
+    });
+  }
+
+  function clearPreview() {
+    document.querySelectorAll('.stone.preview').forEach(s => s.classList.remove('preview'));
+  }
+
+  document.getElementById('arena').addEventListener('mouseover', e => {
+    const stone = e.target.closest('.stone');
+    if (!stone) return;
+    showPreview(parseInt(stone.dataset.pile), parseInt(stone.dataset.index));
+  });
+
+  document.getElementById('arena').addEventListener('mouseleave', clearPreview);
+
+  document.getElementById('arena').addEventListener('click', e => {
+    if (turn !== 'player' || gameOver) return;
+    const stone = e.target.closest('.stone');
+    if (!stone) return;
+    const pile = parseInt(stone.dataset.pile);
+    const fromIndex = parseInt(stone.dataset.index);
+    const take = piles[pile] - fromIndex;
+    playerMove(pile, take);
+  });
+
+  function playerMove(pile, take) {
+    clearPreview();
+    piles[pile] -= take;
+    render();
+    if (checkGameEnd('player')) return;
+    turn = 'bot';
+    updateStatus();
+    pileEls.forEach(p => p.classList.remove('active'));
+    setTimeout(botMove, 900);
+  }
+
+  function botMove() {
+    const xor = piles.reduce((a, b) => a ^ b, 0);
+    let move;
+    if (xor === 0) {
+      // Losing position — take 1 from any non-empty pile
+      const nonEmpty = piles.map((v, i) => v > 0 ? i : -1).filter(i => i >= 0);
+      const pile = nonEmpty[Math.floor(Math.random() * nonEmpty.length)];
+      move = { pile, take: 1 };
+    } else {
+      // Winning move: reduce pile so XOR becomes 0
+      for (let i = 0; i < piles.length; i++) {
+        const target = piles[i] ^ xor;
+        if (target < piles[i]) {
+          move = { pile: i, take: piles[i] - target };
+          break;
+        }
+      }
+    }
+
+    // Highlight the stones the bot is taking
+    const pileEl = pileEls[move.pile];
+    const stones = Array.from(pileEl.querySelectorAll('.stone'));
+    const taking = stones.slice(piles[move.pile] - move.take);
+    taking.forEach(s => s.classList.add('bot-preview'));
+
+    setTimeout(() => {
+      piles[move.pile] -= move.take;
+      render();
+      if (checkGameEnd('bot')) return;
+      turn = 'player';
+      updateStatus();
+    }, 850);
+  }
+
+  function checkGameEnd(lastMover) {
+    if (piles.every(p => p === 0)) {
+      gameOver = true;
+      resultEl.classList.remove('show', 'lose');
+      if (lastMover === 'player') {
+        resultEl.textContent = '🎉 You won! You took the last stone — and you figured out the winning rule.';
+        resultEl.classList.add('show');
+      } else {
+        resultEl.textContent = '😔 Computer wins this round. There\'s a hidden math pattern (it\'s XOR) — try again with a different opening move.';
+        resultEl.classList.add('show', 'lose');
+      }
+      updateStatus();
+      return true;
+    }
+    return false;
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    piles = [...INITIAL];
+    turn = 'player';
+    gameOver = false;
+    resultEl.classList.remove('show', 'lose');
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>
