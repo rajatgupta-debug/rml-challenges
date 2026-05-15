@@ -255,6 +255,17 @@
   .skill-chip:nth-child(4) { background: var(--sky-bg);    border-color: rgba(92, 179, 224, 0.40); }
   .skill-chip:nth-child(5) { background: var(--purple-bg); border-color: rgba(142, 111, 216, 0.35); }
 
+  /* Format-name highlights (marker-style) */
+  .hl-explore, .hl-puzzle, .hl-game {
+    padding: 0 0.18em;
+    border-radius: 4px;
+    font-weight: inherit;
+    white-space: nowrap;
+  }
+  .hl-explore { color: var(--accent);   background: linear-gradient(180deg, transparent 62%, rgba(42, 93, 143, 0.18) 62%); }
+  .hl-puzzle  { color: var(--accent-2); background: linear-gradient(180deg, transparent 62%, rgba(194, 94, 42, 0.20) 62%); }
+  .hl-game    { color: var(--accent-3); background: linear-gradient(180deg, transparent 62%, rgba(74, 122, 74, 0.20) 62%); }
+
   /* Why-parents-care slide */
   .parents-slide .two-up {
     display: grid;
@@ -776,7 +787,7 @@
     <div class="formats-grid">
       <div class="format-card">
         <div class="format-icon explorations">🔬</div>
-        <h3>Critical Thinking Explorations</h3>
+        <h3>Critical Thinking <span class="hl-explore">Explorations</span></h3>
         <p class="desc">Short, interactive cases where kids pick up math as a lens and look at the world they actually live in.</p>
         <div class="meta-row">
           <span class="pill">15–30 min</span>
@@ -785,7 +796,7 @@
       </div>
       <div class="format-card">
         <div class="format-icon puzzles">🧠</div>
-        <h3>Logical Thinking Puzzles</h3>
+        <h3>Logical Thinking <span class="hl-puzzle">Puzzles</span></h3>
         <p class="desc">Bite-sized self-contained problems built on classical math principles. Reasoning, patience, deep thinking.</p>
         <div class="meta-row">
           <span class="pill">5–10 min</span>
@@ -794,7 +805,7 @@
       </div>
       <div class="format-card">
         <div class="format-icon games">♟️</div>
-        <h3>Strategy Games</h3>
+        <h3>Strategy <span class="hl-game">Games</span></h3>
         <p class="desc">Mathematical games — math decides who wins, not luck or reflexes. Strategy, planning, smart moves.</p>
         <div class="meta-row">
           <span class="pill">Short rounds</span>
@@ -808,7 +819,7 @@
   <section class="slide explorations-slide">
     <div class="eyebrow">Format 1 of 3</div>
     <div class="explorations-header">
-      <h2>Critical Thinking Explorations</h2>
+      <h2>Critical Thinking <span class="hl-explore">Explorations</span></h2>
       <p class="tag-line">Short, interactive cases where kids pick up math as a lens and look at the world they actually live in. Not practice. Not courses.</p>
       <div class="mode-row">
         <div class="mode-pills">
@@ -896,7 +907,7 @@
   <section class="slide visual-cards-slide">
     <div class="eyebrow">Format 2 of 3</div>
     <div class="format-header">
-      <h2 style="color: var(--accent-2);">Logical Thinking Puzzles</h2>
+      <h2>Logical Thinking <span class="hl-puzzle">Puzzles</span></h2>
       <p class="format-sub">Bite-sized self-contained problems built on classical math principles. 5–10 min. Solo, often visual.</p>
     </div>
     <div class="sub-card-grid grid-4">
@@ -943,7 +954,7 @@
   <section class="slide visual-cards-slide">
     <div class="eyebrow">Format 3 of 3</div>
     <div class="format-header">
-      <h2 style="color: var(--accent-3);">Strategy Games</h2>
+      <h2>Strategy <span class="hl-game">Games</span></h2>
       <p class="format-sub">Math you play, not study. Real opponents, short rounds, math decides who wins — not luck or reflexes.</p>
     </div>
     <div class="sub-card-grid grid-5">
@@ -996,17 +1007,17 @@
     <h2>One owner per format. Two clubbed buckets for section-level work.</h2>
     <div class="team-grid">
       <div class="team-card">
-        <div class="role">Critical Thinking Explorations</div>
+        <div class="role">Critical Thinking <span class="hl-explore">Explorations</span></div>
         <h3>Rajat <span class="subtle" style="font-weight:400; font-size:0.95rem;">· with Karan, Neha</span></h3>
         <p class="scope">Narrative multi-step experiences across 5 modes.</p>
       </div>
       <div class="team-card">
-        <div class="role">Logical Thinking Puzzles</div>
+        <div class="role">Logical Thinking <span class="hl-puzzle">Puzzles</span></div>
         <h3>Subodh <span class="subtle" style="font-weight:400; font-size:0.95rem;">· with Neha</span></h3>
         <p class="scope">Self-contained problems · 4 sub-types.</p>
       </div>
       <div class="team-card">
-        <div class="role">Strategy Games</div>
+        <div class="role">Strategy <span class="hl-game">Games</span></div>
         <h3>Samarth <span class="subtle" style="font-weight:400; font-size:0.95rem;">· with Karan, Subodh</span></h3>
         <p class="scope">Mathematical games · 5 sub-types.</p>
       </div>
