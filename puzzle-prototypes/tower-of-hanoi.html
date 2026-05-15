@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tower of Hanoi · Move puzzle</title>
+<style>
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #fafaf6; color: #161629; margin: 0; padding: 3rem 1rem; min-height: 100vh; }
+  .wrap { max-width: 620px; margin: 0 auto; text-align: center; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.78rem; color: #5a5a6e; font-weight: 700; margin-bottom: 0.8rem; }
+  h1 { font-size: 2.4rem; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+  .desc { color: #5a5a6e; font-size: 1.05rem; max-width: 50ch; margin: 0 auto 2rem; line-height: 1.55; }
+  .panel { background: #fff; border: 1px solid #d8d8d0; border-radius: 16px; padding: 1.8rem; box-shadow: 0 6px 22px rgba(60, 45, 30, 0.06); }
+  .pegs { display: flex; justify-content: space-around; align-items: flex-end; height: 240px; padding: 0 0.5rem 50px; position: relative; }
+  .peg { width: 30%; height: 100%; display: flex; flex-direction: column-reverse; align-items: center; position: relative; cursor: pointer; border-radius: 12px; padding: 0 0 12px; transition: background 0.15s; }
+  .peg:hover { background: rgba(244, 196, 48, 0.1); }
+  .peg.selected { background: rgba(244, 196, 48, 0.25); box-shadow: 0 0 0 2px #F4C430; }
+  .peg::after { content: ''; position: absolute; bottom: 6px; left: 8%; right: 8%; height: 8px; background: #161629; border-radius: 4px; }
+  .peg::before { content: ''; position: absolute; bottom: 14px; left: 50%; width: 6px; height: 200px; background: #161629; transform: translateX(-50%); border-radius: 3px; }
+  .peg-label { position: absolute; bottom: -32px; left: 0; right: 0; text-align: center; font-size: 0.78rem; font-weight: 700; color: #5a5a6e; text-transform: uppercase; letter-spacing: 0.12em; }
+  .disk { height: 30px; border-radius: 8px; margin-bottom: 3px; z-index: 2; box-shadow: 0 2px 6px rgba(0,0,0,0.15); position: relative; }
+  .disk-1 { width: 60px; background: linear-gradient(135deg, #E85D75, #c84a60); }
+  .disk-2 { width: 100px; background: linear-gradient(135deg, #F4C430, #d4a420); }
+  .disk-3 { width: 140px; background: linear-gradient(135deg, #5CB3E0, #4a96bf); }
+  .stats { font-size: 0.95rem; color: #5a5a6e; margin: 1.4rem 0 0.5rem; font-weight: 500; }
+  button { font-family: inherit; padding: 0.75rem 1.5rem; border: none; border-radius: 999px; background: #fff; color: #2a5d8f; border: 1.5px solid #2a5d8f; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin: 0.5rem 0.25rem 0; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(42, 93, 143, 0.15); }
+  .result { background: #DFF5EF; border: 1px solid #2EB39E; color: #1A6A5C; padding: 0.9rem 1.3rem; border-radius: 12px; margin-top: 1.2rem; font-weight: 600; display: none; }
+  .result.show { display: block; }
+  .insight { background: #FDE7EB; border: 1px solid #E85D75; padding: 1.4rem; border-radius: 14px; margin-top: 2rem; text-align: left; }
+  .insight h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.14em; color: #B72F47; margin: 0 0 0.5rem; font-weight: 700; }
+  .insight p { color: #161629; line-height: 1.55; margin: 0; font-size: 0.98rem; }
+  a.back { display: inline-block; margin-top: 2rem; color: #2a5d8f; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Move puzzle · Plan the sequence</div>
+  <h1>Tower of Hanoi 🗼</h1>
+  <p class="desc">Move all 3 disks from <strong>peg A</strong> to <strong>peg C</strong>. One disk at a time. <strong>Never put a bigger disk on a smaller one.</strong></p>
+
+  <div class="panel">
+    <div class="pegs" id="pegs">
+      <div class="peg" data-peg="0"><div class="peg-label">Peg A</div></div>
+      <div class="peg" data-peg="1"><div class="peg-label">Peg B</div></div>
+      <div class="peg" data-peg="2"><div class="peg-label">Peg C</div></div>
+    </div>
+    <div class="stats" id="stats">Moves: 0 · Minimum possible: 7</div>
+    <button id="resetBtn">Reset</button>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <div class="insight">
+    <h3>The math idea</h3>
+    <p>For 3 disks the minimum is 7 moves. For 4 disks, 15. For n disks, 2ⁿ − 1 — exponential growth hidden inside a simple recursive rule.</p>
+  </div>
+
+  <a class="back" href="../leadership-presentation.html">← Back to presentation</a>
+</div>
+
+<script>
+  // pegs[i] is bottom-to-top stack. Disk size = number (1 smallest, 3 largest).
+  let pegs = [[3, 2, 1], [], []];
+  let selected = null;
+  let moves = 0;
+
+  const pegEls = document.querySelectorAll('.peg');
+  const statsEl = document.getElementById('stats');
+  const resultEl = document.getElementById('result');
+
+  function render() {
+    pegEls.forEach((pegEl, i) => {
+      pegEl.querySelectorAll('.disk').forEach(d => d.remove());
+      pegs[i].forEach(size => {
+        const disk = document.createElement('div');
+        disk.className = `disk disk-${size}`;
+        pegEl.insertBefore(disk, pegEl.querySelector('.peg-label'));
+      });
+      pegEl.classList.toggle('selected', selected === i);
+    });
+    statsEl.textContent = `Moves: ${moves} · Minimum possible: 7`;
+
+    if (pegs[2].length === 3) {
+      resultEl.classList.add('show');
+      resultEl.textContent = moves === 7
+        ? `🎉 Solved in ${moves} moves — the minimum possible. Perfect!`
+        : `🎉 Solved in ${moves} moves. The minimum is 7 — try again to match it.`;
+    } else {
+      resultEl.classList.remove('show');
+    }
+  }
+
+  pegEls.forEach((pegEl, i) => {
+    pegEl.addEventListener('click', () => {
+      if (selected === null) {
+        if (pegs[i].length > 0) selected = i;
+      } else if (selected === i) {
+        selected = null;
+      } else {
+        const fromTop = pegs[selected][pegs[selected].length - 1];
+        const toTop = pegs[i].length ? pegs[i][pegs[i].length - 1] : Infinity;
+        if (fromTop < toTop) {
+          pegs[i].push(pegs[selected].pop());
+          moves++;
+        }
+        selected = null;
+      }
+      render();
+    });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    pegs = [[3, 2, 1], [], []];
+    selected = null;
+    moves = 0;
+    render();
+  });
+
+  render();
+</script>
+</body>
+</html>

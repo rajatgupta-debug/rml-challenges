@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Future Math — Leadership Overview</title>
+<style>
+  :root {
+    --bg: #fafaf6;
+    --ink: #161629;
+    --muted: #5a5a6e;
+    --line: #d8d8d0;
+    --accent: #2a5d8f;
+    --accent-2: #c25e2a;
+    --accent-3: #4a7a4a;
+    --card: #ffffff;
+
+    /* index-v2 card themes */
+    --coral: #E85D75;       --coral-bg: #FDE7EB;       --coral-ink: #B72F47;
+    --mint: #2EB39E;        --mint-bg: #DFF5EF;        --mint-ink: #1A6A5C;
+    --yellow: #F4C430;      --yellow-bg: #FDF3CA;      --yellow-ink: #8C6A0A;
+    --sky: #5CB3E0;         --sky-bg: #DCF0FA;         --sky-ink: #21617F;
+    --purple: #8E6FD8;      --purple-bg: #EFE8FC;      --purple-ink: #5E44A0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    font-feature-settings: "ss01", "cv11";
+    overflow: hidden;
+  }
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute;
+    inset: 0;
+    padding: 6vh 8vw;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    animation: fadeIn 0.35s ease;
+  }
+  .slide.active { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 1.6rem;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 5.4vw, 4.2rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.2rem;
+  }
+  h2 {
+    font-size: clamp(1.8rem, 3.6vw, 2.8rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.5rem;
+  }
+  h3 {
+    font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.5rem;
+  }
+  p, li {
+    font-size: clamp(1rem, 1.4vw, 1.25rem);
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  p.lead {
+    font-size: clamp(1.2rem, 1.9vw, 1.6rem);
+    color: var(--ink);
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+  .subtle { color: var(--muted); }
+  .pill {
+    display: inline-block;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.85rem;
+    color: var(--muted);
+    background: var(--card);
+  }
+
+  /* Title slide */
+  .title-slide {
+    justify-content: center;
+    align-items: flex-start;
+    overflow: hidden;
+  }
+  .title-slide::before {
+    content: '';
+    position: absolute;
+    top: -140px;
+    right: -140px;
+    width: 460px;
+    height: 460px;
+    background: radial-gradient(circle, rgba(244, 196, 48, 0.22), transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .title-slide::after {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    left: -120px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(92, 179, 224, 0.16), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .title-slide > * { position: relative; z-index: 1; }
+  .title-slide .super {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+  .title-slide h1 {
+    font-size: clamp(3.4rem, 8vw, 6rem);
+  }
+  .title-slide .working-name-caption {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-top: 0.7rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+    font-style: italic;
+    flex-wrap: wrap;
+  }
+  .title-slide .working-name-caption .wn-badge {
+    font-size: 0.68rem;
+    font-style: normal;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    padding: 0.28rem 0.75rem;
+    background: rgba(244, 196, 48, 0.22);
+    color: #8C6A0A;
+    border-radius: 999px;
+  }
+  .title-slide .tagline {
+    font-size: clamp(1.2rem, 1.9vw, 1.65rem);
+    color: var(--muted);
+    max-width: 50ch;
+    margin-top: 1rem;
+    line-height: 1.4;
+  }
+  .title-slide .meta {
+    margin-top: 3rem;
+    font-size: 0.95rem;
+    color: var(--muted);
+  }
+
+  /* Section description slide */
+  .section-slide { overflow: hidden; }
+  .section-slide::before {
+    content: '';
+    position: absolute;
+    top: -140px;
+    left: -140px;
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(46, 179, 158, 0.18), transparent 62%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .section-slide::after {
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    right: -120px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(142, 111, 216, 0.14), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .section-slide > * { position: relative; z-index: 1; }
+  .section-slide h2 {
+    font-size: clamp(1.8rem, 3.3vw, 2.6rem);
+    margin-bottom: 1.4rem;
+  }
+  .section-slide .lead {
+    max-width: 62ch;
+    margin-bottom: 0.4rem;
+  }
+  .section-slide .skill-row {
+    margin-top: 2.2rem;
+    gap: 0.7rem;
+  }
+
+  /* Quote slide */
+  .quote-slide { align-items: center; text-align: center; justify-content: center; }
+  .quote-slide .q {
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    max-width: 22ch;
+    color: var(--ink);
+  }
+  .quote-slide .who {
+    margin-top: 1.8rem;
+    font-size: 1rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+  }
+
+  /* Generic skill chip (used on hero/title slide) */
+  .skill-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-bottom: 1.6rem;
+  }
+  .skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.65rem 1.25rem;
+    background: var(--card);
+    border: 1.5px solid var(--line);
+    border-radius: 999px;
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--ink);
+    box-shadow: 0 3px 10px rgba(60, 45, 30, 0.06);
+  }
+  .skill-chip .emoji {
+    font-size: 1.2rem;
+    line-height: 1;
+  }
+  .skill-chip:nth-child(1) { background: var(--coral-bg);  border-color: rgba(232, 93, 117, 0.35); }
+  .skill-chip:nth-child(2) { background: var(--yellow-bg); border-color: rgba(244, 196, 48, 0.45); }
+  .skill-chip:nth-child(3) { background: var(--mint-bg);   border-color: rgba(46, 179, 158, 0.35); }
+  .skill-chip:nth-child(4) { background: var(--sky-bg);    border-color: rgba(92, 179, 224, 0.40); }
+  .skill-chip:nth-child(5) { background: var(--purple-bg); border-color: rgba(142, 111, 216, 0.35); }
+
+  /* Why-parents-care slide */
+  .parents-slide .two-up {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 2.5rem;
+    margin-top: 1.5rem;
+  }
+  .research-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.8rem;
+  }
+  .research-card h3 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .research-card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+  .research-card li {
+    font-size: 0.98rem;
+    line-height: 1.5;
+    color: var(--ink);
+    display: flex;
+    gap: 0.65rem;
+    align-items: flex-start;
+  }
+  .research-card li .bullet-emoji {
+    font-size: 1.2rem;
+    line-height: 1.3;
+    flex-shrink: 0;
+  }
+  .quote-card {
+    background: linear-gradient(135deg, #FDF3CA 0%, #FDE7EB 100%);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .quote-card .qmark {
+    font-size: 3rem;
+    line-height: 1;
+    color: var(--accent);
+    font-weight: 800;
+    margin-bottom: 0.4rem;
+  }
+  .quote-card p {
+    font-size: clamp(1rem, 1.35vw, 1.2rem);
+    line-height: 1.5;
+    color: var(--ink);
+    font-weight: 500;
+    font-style: italic;
+  }
+  .quote-card .attr {
+    margin-top: 1.2rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: normal;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  /* Format overview grid */
+  .formats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .format-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 1.8rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .format-card .format-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.9rem;
+    margin-bottom: 0.3rem;
+  }
+  .format-card .format-icon.explorations { background: rgba(42, 93, 143, 0.13); }
+  .format-card .format-icon.puzzles { background: rgba(194, 94, 42, 0.13); }
+  .format-card .format-icon.games { background: rgba(74, 122, 74, 0.13); }
+  .format-card h3 { font-size: 1.3rem; line-height: 1.2; }
+  .format-card .desc { color: var(--muted); font-size: 0.98rem; line-height: 1.45; }
+  .format-card .meta-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+    margin-top: auto;
+    padding-top: 0.8rem;
+  }
+  .format-card .meta-row .pill { font-size: 0.78rem; padding: 0.25rem 0.7rem; }
+
+  /* === Explorations: index-v2-style case cards === */
+  .explorations-slide {
+    padding-top: 8vh;
+    padding-bottom: 4vh;
+    justify-content: flex-start;
+  }
+  .explorations-header {
+    margin-bottom: 1.8rem;
+  }
+  .explorations-header h2 {
+    font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+    margin-bottom: 0.7rem;
+  }
+  .explorations-header .tag-line {
+    color: var(--muted);
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    line-height: 1.5;
+    max-width: 75ch;
+    margin-bottom: 1.2rem;
+  }
+  .mode-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .mode-pills {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+  .mode-pills .mode {
+    padding: 0.32rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .mode-pills .mode.lies   { background: var(--coral-bg); color: var(--coral-ink); }
+  .mode-pills .mode.wonder { background: var(--yellow-bg); color: var(--yellow-ink); }
+  .mode-pills .mode.explore{ background: var(--sky-bg); color: var(--sky-ink); }
+  .mode-pills .mode.choices{ background: var(--mint-bg); color: var(--mint-ink); }
+  .mode-pills .mode.build  { background: var(--purple-bg); color: var(--purple-ink); }
+  .see-all-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 700;
+    padding: 0.45rem 0.95rem;
+    border: 1.5px solid var(--accent);
+    border-radius: 999px;
+    transition: background 0.15s ease, color 0.15s ease;
+    white-space: nowrap;
+  }
+  .see-all-link:hover {
+    background: var(--accent);
+    color: white;
+  }
+
+  .case-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.1rem;
+    margin-top: 1.4rem;
+  }
+  .case-card {
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    box-shadow: 0 4px 18px rgba(60, 45, 30, 0.06);
+  }
+  .case-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(60, 45, 30, 0.14);
+  }
+  .case-top {
+    position: relative;
+    height: 110px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden;
+  }
+  .case-card.theme-coral  .case-top { background: linear-gradient(135deg, #FDE7EB 0%, #FFE4C4 100%); }
+  .case-card.theme-mint   .case-top { background: linear-gradient(135deg, #DFF5EF 0%, #D6F3E0 100%); }
+  .case-card.theme-yellow .case-top { background: linear-gradient(135deg, #FDF3CA 0%, #FFE4C4 100%); }
+  .case-card.theme-sky    .case-top { background: linear-gradient(135deg, #DCF0FA 0%, #EFE8FC 100%); }
+  .case-watermark {
+    position: absolute;
+    right: -12px;
+    bottom: -16px;
+    font-size: 5.2rem;
+    opacity: 0.22;
+    line-height: 1;
+  }
+  .case-meta-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1;
+  }
+  .case-badge {
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+    color: var(--ink);
+  }
+  .status-badge {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    padding: 0.22rem 0.55rem;
+    border-radius: 999px;
+  }
+  .status-badge.status-live {
+    background: #2EB39E;
+    color: white;
+  }
+  .case-icon {
+    font-size: 2rem;
+    z-index: 1;
+  }
+  .case-body {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+  }
+  .case-body h3 {
+    font-size: 1.05rem;
+    line-height: 1.2;
+    margin-bottom: 0;
+  }
+  .case-mode {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-weight: 700;
+    color: var(--muted);
+  }
+  .case-hook {
+    font-size: 0.86rem;
+    color: var(--muted);
+    line-height: 1.4;
+    flex: 1;
+  }
+  .case-cta {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-top: 0.3rem;
+  }
+
+  /* === Sub-type cards (Puzzles + Games) === */
+  .visual-cards-slide {
+    padding-top: 8vh;
+    padding-bottom: 4vh;
+    justify-content: flex-start;
+  }
+  .visual-cards-slide .format-header {
+    margin-bottom: 1.5rem;
+  }
+  .visual-cards-slide .format-header h2 { margin-bottom: 0.5rem; }
+  .visual-cards-slide .format-sub {
+    color: var(--muted);
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    line-height: 1.4;
+    max-width: 70ch;
+  }
+  .sub-card-grid {
+    display: grid;
+    gap: 1.3rem;
+    margin-top: 1.8rem;
+  }
+  .sub-card-grid.grid-4 { grid-template-columns: repeat(4, 1fr); }
+  .sub-card-grid.grid-5 { grid-template-columns: repeat(5, 1fr); }
+  .sub-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 6px 22px rgba(60, 45, 30, 0.08);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .sub-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 32px rgba(60, 45, 30, 0.14);
+  }
+  .sub-card .sub-top {
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .sub-card.theme-coral .sub-top  { background: linear-gradient(135deg, #FDE7EB 0%, #FFE4C4 100%); }
+  .sub-card.theme-mint .sub-top   { background: linear-gradient(135deg, #DFF5EF 0%, #D6F3E0 100%); }
+  .sub-card.theme-yellow .sub-top { background: linear-gradient(135deg, #FDF3CA 0%, #FFE4C4 100%); }
+  .sub-card.theme-sky .sub-top    { background: linear-gradient(135deg, #DCF0FA 0%, #EFE8FC 100%); }
+  .sub-card.theme-purple .sub-top { background: linear-gradient(135deg, #EFE8FC 0%, #DCF0FA 100%); }
+  .sub-card .sub-icon {
+    font-size: 3.8rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 6px rgba(60, 45, 30, 0.12));
+  }
+  .sub-card .sub-body {
+    padding: 1.3rem 1.4rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+  .sub-card h3 {
+    font-size: 1.2rem;
+    line-height: 1.2;
+    margin-bottom: 0.1rem;
+  }
+  .sub-card .sub-ex {
+    font-size: 1rem;
+    color: var(--ink);
+    line-height: 1.4;
+    font-weight: 500;
+  }
+  .sub-card .sub-tag {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: auto;
+    padding-top: 0.6rem;
+  }
+  .sub-card .try-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-top: 0.7rem;
+    padding: 0.4rem 0.85rem;
+    background: var(--accent);
+    color: white;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    align-self: flex-start;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .sub-card .try-link:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(42, 93, 143, 0.25);
+  }
+
+  /* Team grid */
+  .team-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  .team-card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.3rem 1.4rem;
+  }
+  .team-card .role { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--muted); margin-bottom: 0.4rem; }
+  .team-card h3 { font-size: 1.25rem; margin-bottom: 0.3rem; }
+  .team-card .scope { color: var(--muted); font-size: 0.95rem; line-height: 1.4; }
+
+  /* List slide */
+  .list-slide ul {
+    list-style: none;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+  .list-slide li {
+    padding: 0.85rem 1rem;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-size: 1.05rem;
+  }
+  .list-slide li::before {
+    content: "→ ";
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* HUD */
+  .hud {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 2rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    z-index: 10;
+  }
+  .hud .counter { font-variant-numeric: tabular-nums; letter-spacing: 0.05em; }
+  .hud .hint { font-size: 0.72rem; opacity: 0.6; }
+  .nav-dots {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 2rem;
+    display: flex;
+    gap: 6px;
+    z-index: 10;
+  }
+  .nav-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .nav-dot.active { background: var(--accent); }
+  .brand {
+    position: fixed;
+    top: 1.5rem;
+    left: 2rem;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    z-index: 10;
+  }
+</style>
+</head>
+<body>
+
+<div class="brand">Cuemath · Future Math</div>
+
+<div class="deck" id="deck">
+
+  <!-- Slide 1: Title -->
+  <section class="slide title-slide">
+    <div class="super">Cuemath Learning Platform · Section Overview</div>
+    <h1>Future Math</h1>
+    <div class="working-name-caption">
+      <span class="wn-badge">Working name</span>
+      <span>also considering: Recreational Math · Enrichment Math · Thinking Math</span>
+    </div>
+    <p class="tagline">Math that prepares your child for the real world — building judgment, reasoning, and strategic thinking they'll actually use in life.</p>
+    <div class="meta">Karan Singla · May 2026 · Leadership Review</div>
+  </section>
+
+  <!-- Slide 2: Section description -->
+  <section class="slide section-slide">
+    <div class="eyebrow">The section</div>
+    <h2>Math kids carry beyond the classroom.</h2>
+    <p class="lead subtle">Future Math is the section dedicated to the durable thinking skills kids actually use in the real world — spotting misleading information, reasoning through choices when answers aren't clean, finding strategy in the moves they make, and understanding the world around them.</p>
+    <div class="skill-row">
+      <span class="skill-chip"><span class="emoji">🎯</span>Judgment</span>
+      <span class="skill-chip"><span class="emoji">🧐</span>Reasoning</span>
+      <span class="skill-chip"><span class="emoji">🧭</span>Strategic thinking</span>
+      <span class="skill-chip"><span class="emoji">🔎</span>Sense-making</span>
+      <span class="skill-chip"><span class="emoji">💭</span>Abstract thinking</span>
+    </div>
+  </section>
+
+  <!-- Slide 3: Parents are asking for this -->
+  <section class="slide parents-slide">
+    <div class="eyebrow">Why this matters</div>
+    <h2>Parents themselves are asking for this.</h2>
+    <div class="two-up">
+      <div class="research-card">
+        <h3>The evidence</h3>
+        <ul>
+          <li><span class="bullet-emoji">👨‍👩‍👧</span><strong>Parent voice</strong> — surveys (Pew, Common Sense Media) show "thinking for themselves" and "problem-solving" outrank content recall in what parents want from schools.</li>
+          <li><span class="bullet-emoji">📊</span><strong>Skills reports agree</strong> — WEF Future of Jobs and OECD 21st-Century Skills rank analytical thinking, critical thinking, and problem-solving as the top durable skills.</li>
+        </ul>
+      </div>
+      <div class="quote-card">
+        <div class="qmark">"</div>
+        <p>In my own conversations with parents — what they care about isn't another A+. It's whether their child can think clearly, see through nonsense, and make smart decisions when nobody hands them the answer.</p>
+        <div class="attr">— Personal conversations · 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Three formats overview -->
+  <section class="slide">
+    <div class="eyebrow">What's inside</div>
+    <h2>Three formats. One section.</h2>
+    <p class="lead subtle">Each format owns a distinct skill cluster.</p>
+    <div class="formats-grid">
+      <div class="format-card">
+        <div class="format-icon explorations">🔬</div>
+        <h3>Critical Thinking Explorations</h3>
+        <p class="desc">Short, interactive cases where kids pick up math as a lens and look at the world they actually live in.</p>
+        <div class="meta-row">
+          <span class="pill">15–30 min</span>
+          <span class="pill">Solo · narrative</span>
+        </div>
+      </div>
+      <div class="format-card">
+        <div class="format-icon puzzles">🧠</div>
+        <h3>Logical Thinking Puzzles</h3>
+        <p class="desc">Bite-sized self-contained problems built on classical math principles. Reasoning, patience, deep thinking.</p>
+        <div class="meta-row">
+          <span class="pill">5–10 min</span>
+          <span class="pill">Solo · visual</span>
+        </div>
+      </div>
+      <div class="format-card">
+        <div class="format-icon games">♟️</div>
+        <h3>Strategy Games</h3>
+        <p class="desc">Mathematical games — math decides who wins, not luck or reflexes. Strategy, planning, smart moves.</p>
+        <div class="meta-row">
+          <span class="pill">Short rounds</span>
+          <span class="pill">1v1 live · vs bot</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 5: Critical Thinking Explorations (cleaned + index-v2 link) -->
+  <section class="slide explorations-slide">
+    <div class="eyebrow">Format 1 of 3</div>
+    <div class="explorations-header">
+      <h2>Critical Thinking Explorations</h2>
+      <p class="tag-line">Short, interactive cases where kids pick up math as a lens and look at the world they actually live in. Not practice. Not courses.</p>
+      <div class="mode-row">
+        <div class="mode-pills">
+          <span class="mode lies">Lies</span>
+          <span class="mode wonder">Wonder</span>
+          <span class="mode explore">Explore</span>
+          <span class="mode choices">Choices</span>
+          <span class="mode build">Build</span>
+        </div>
+        <a class="see-all-link" href="https://rml-challenges.vercel.app/index-v2.html" target="_blank" rel="noopener">View all cases →</a>
+      </div>
+    </div>
+    <div class="case-grid">
+      <a class="case-card theme-yellow" href="https://rml-challenges.vercel.app/build-the-honeycomb.html" target="_blank" rel="noopener">
+        <div class="case-top">
+          <div class="case-watermark">🐝</div>
+          <div class="case-meta-top">
+            <div class="case-badge">CASE 010</div>
+            <div class="status-badge status-live">LIVE</div>
+          </div>
+          <div class="case-icon">🍯</div>
+        </div>
+        <div class="case-body">
+          <div class="case-mode">Wonder</div>
+          <h3>Build the Honeycomb</h3>
+          <p class="case-hook">Bees build their honeycomb from wax — and wax is hard to make. Help Buzz find the shape that uses the LEAST wax for the same honey.</p>
+          <div class="case-cta">Open case →</div>
+        </div>
+      </a>
+
+      <a class="case-card theme-sky" href="https://gps-eight-iota.vercel.app/gps-trilateration.html" target="_blank" rel="noopener">
+        <div class="case-top">
+          <div class="case-watermark">🛰️</div>
+          <div class="case-meta-top">
+            <div class="case-badge">CASE 015</div>
+            <div class="status-badge status-live">LIVE</div>
+          </div>
+          <div class="case-icon">📡</div>
+        </div>
+        <div class="case-body">
+          <div class="case-mode">Wonder</div>
+          <h3>GPS: How Does It Know?</h3>
+          <p class="case-hook">Your phone always knows where you are. The trick? Math — and four invisible satellites doing geometry in the sky.</p>
+          <div class="case-cta">Open case →</div>
+        </div>
+      </a>
+
+      <a class="case-card theme-mint" href="https://rml-challenges.vercel.app/sanity-check-sleep.html" target="_blank" rel="noopener">
+        <div class="case-top">
+          <div class="case-watermark">😴</div>
+          <div class="case-meta-top">
+            <div class="case-badge">CASE 029</div>
+            <div class="status-badge status-live">LIVE</div>
+          </div>
+          <div class="case-icon">🛌</div>
+        </div>
+        <div class="case-body">
+          <div class="case-mode">Lies</div>
+          <h3>Sanity Check: Sleep</h3>
+          <p class="case-hook">"Americans sleep 1,500 hours every year." Sounds about right? Big numbers in headlines aren't always real. Find out.</p>
+          <div class="case-cta">Open case →</div>
+        </div>
+      </a>
+
+      <a class="case-card theme-coral" href="https://rml-challenges.vercel.app/fake-chart-detective.html" target="_blank" rel="noopener">
+        <div class="case-top">
+          <div class="case-watermark">📊</div>
+          <div class="case-meta-top">
+            <div class="case-badge">CASE 001</div>
+            <div class="status-badge status-live">LIVE</div>
+          </div>
+          <div class="case-icon">🔍</div>
+        </div>
+        <div class="case-body">
+          <div class="case-mode">Lies</div>
+          <h3>Fake Chart Detective</h3>
+          <p class="case-hook">Charts can tell the truth — or bend it. Spot the liars before they fool everyone else.</p>
+          <div class="case-cta">Open case →</div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Slide 6: Logical Thinking Puzzles (visual cards) -->
+  <section class="slide visual-cards-slide">
+    <div class="eyebrow">Format 2 of 3</div>
+    <div class="format-header">
+      <h2 style="color: var(--accent-2);">Logical Thinking Puzzles</h2>
+      <p class="format-sub">Bite-sized self-contained problems built on classical math principles. 5–10 min. Solo, often visual.</p>
+    </div>
+    <div class="sub-card-grid grid-4">
+      <div class="sub-card theme-yellow">
+        <div class="sub-top"><div class="sub-icon">💡</div></div>
+        <div class="sub-body">
+          <h3>Math-idea puzzles</h3>
+          <p class="sub-ex">The Sock Drawer · 100 Doors · Mutilated Checkerboard</p>
+          <div class="sub-tag">Pigeonhole · parity · invariants · counting</div>
+          <a class="try-link" href="./puzzle-prototypes/sock-drawer.html" target="_blank" rel="noopener">Try The Sock Drawer →</a>
+        </div>
+      </div>
+      <div class="sub-card theme-mint">
+        <div class="sub-top"><div class="sub-icon">🔢</div></div>
+        <div class="sub-body">
+          <h3>Grid puzzles (math)</h3>
+          <p class="sub-ex">KenKen · Kakuro · Skyscrapers</p>
+          <div class="sub-tag">Math is in the rules</div>
+          <a class="try-link" href="./puzzle-prototypes/mini-kenken.html" target="_blank" rel="noopener">Try Mini KenKen →</a>
+        </div>
+      </div>
+      <div class="sub-card theme-sky">
+        <div class="sub-top"><div class="sub-icon">🧩</div></div>
+        <div class="sub-body">
+          <h3>Grid puzzles (logic)</h3>
+          <p class="sub-ex">Sudoku · Star Battles · Logic grids</p>
+          <div class="sub-tag">Pure deduction</div>
+          <a class="try-link" href="./puzzle-prototypes/mini-sudoku.html" target="_blank" rel="noopener">Try Mini Sudoku →</a>
+        </div>
+      </div>
+      <div class="sub-card theme-coral">
+        <div class="sub-top"><div class="sub-icon">🗼</div></div>
+        <div class="sub-body">
+          <h3>Move puzzles</h3>
+          <p class="sub-ex">Tower of Hanoi · Lights Out · 15-Puzzle · Water Jugs</p>
+          <div class="sub-tag">Plan a sequence to reach the goal</div>
+          <a class="try-link" href="./puzzle-prototypes/tower-of-hanoi.html" target="_blank" rel="noopener">Try Tower of Hanoi →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 7: Strategy Games (visual cards) -->
+  <section class="slide visual-cards-slide">
+    <div class="eyebrow">Format 3 of 3</div>
+    <div class="format-header">
+      <h2 style="color: var(--accent-3);">Strategy Games</h2>
+      <p class="format-sub">Math you play, not study. Real opponents, short rounds, math decides who wins — not luck or reflexes.</p>
+    </div>
+    <div class="sub-card-grid grid-5">
+      <div class="sub-card theme-purple">
+        <div class="sub-top"><div class="sub-icon">♟️</div></div>
+        <div class="sub-body">
+          <h3>Strategy games</h3>
+          <p class="sub-ex">Nim · Chomp · Sprouts · 21 Game</p>
+          <div class="sub-tag">Find the winning rule</div>
+        </div>
+      </div>
+      <div class="sub-card theme-mint">
+        <div class="sub-top"><div class="sub-icon">🟧</div></div>
+        <div class="sub-body">
+          <h3>Territory games</h3>
+          <p class="sub-ex">Hex · Connect Four · Dots & Boxes</p>
+          <div class="sub-tag">Spatial planning, threats</div>
+        </div>
+      </div>
+      <div class="sub-card theme-sky">
+        <div class="sub-top"><div class="sub-icon">🔷</div></div>
+        <div class="sub-body">
+          <h3>Geometry games</h3>
+          <p class="sub-ex">Reflect It · Rotate It · Symmetry Match</p>
+          <div class="sub-tag">Transformation thinking</div>
+        </div>
+      </div>
+      <div class="sub-card theme-yellow">
+        <div class="sub-top"><div class="sub-icon">⚡</div></div>
+        <div class="sub-body">
+          <h3>Quick math games</h3>
+          <p class="sub-ex">24 Game · Make 10 · Krypto · Prime Climb</p>
+          <div class="sub-tag">Fast pattern recognition</div>
+        </div>
+      </div>
+      <div class="sub-card theme-coral">
+        <div class="sub-top"><div class="sub-icon">🎲</div></div>
+        <div class="sub-body">
+          <h3>Probability games</h3>
+          <p class="sub-ex">Pig · Greed · Can't Stop · Yacht</p>
+          <div class="sub-tag">Decisions under risk</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 8: Team -->
+  <section class="slide">
+    <div class="eyebrow">The team</div>
+    <h2>One owner per format. Two clubbed buckets for section-level work.</h2>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="role">Critical Thinking Explorations</div>
+        <h3>Rajat <span class="subtle" style="font-weight:400; font-size:0.95rem;">· with Karan, Neha</span></h3>
+        <p class="scope">Narrative multi-step experiences across 5 modes.</p>
+      </div>
+      <div class="team-card">
+        <div class="role">Logical Thinking Puzzles</div>
+        <h3>Subodh <span class="subtle" style="font-weight:400; font-size:0.95rem;">· with Neha</span></h3>
+        <p class="scope">Self-contained problems · 4 sub-types.</p>
+      </div>
+      <div class="team-card">
+        <div class="role">Strategy Games</div>
+        <h3>Samarth <span class="subtle" style="font-weight:400; font-size:0.95rem;">· with Karan, Subodh</span></h3>
+        <p class="scope">Mathematical games · 5 sub-types.</p>
+      </div>
+      <div class="team-card">
+        <div class="role">Section lead</div>
+        <h3>Karan</h3>
+        <p class="scope">Overall section direction, POV, cross-section integration.</p>
+      </div>
+      <div class="team-card">
+        <div class="role">Section-level · Kid + parent experience</div>
+        <h3>Neha <span class="subtle" style="font-weight:400; font-size:0.95rem;">+ Samarth</span></h3>
+        <p class="scope">Reports · Landing page · Learning plan · Streaks · Badges · Onboarding</p>
+      </div>
+      <div class="team-card">
+        <div class="role">Section-level · Systems infra</div>
+        <h3>Samarth <span class="subtle" style="font-weight:400; font-size:0.95rem;">+ Neha</span></h3>
+        <p class="scope">Automations · Analytics · Design/tech alignment · Tagging · Recommendations</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 9: Open questions -->
+  <section class="slide list-slide">
+    <div class="eyebrow">What we're figuring out</div>
+    <h2>Open questions for this leadership conversation.</h2>
+    <ul>
+      <li>Final section name — locking between Future Math · Recreational Math · Enrichment Math · Thinking Math · Mathematical Thinking</li>
+      <li>Access tier policy — what's free vs paid across the section</li>
+      <li>Cross-surfacing — does a kid's School Math topic surface a related Exploration / Puzzle / Game?</li>
+      <li>Eng + design support model for this section</li>
+    </ul>
+  </section>
+
+  <!-- Slide 10: Close -->
+  <section class="slide quote-slide">
+    <div class="q" style="font-size: clamp(2.4rem, 5vw, 4rem);">Math that prepares them for life.</div>
+    <div class="who">Judgment · Reasoning · Strategic Thinking</div>
+  </section>
+
+</div>
+
+<div class="hud">
+  <span class="hint">← → to navigate</span>
+  <span class="counter" id="counter">1 / 10</span>
+</div>
+
+<div class="nav-dots" id="dots"></div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const counter = document.getElementById('counter');
+  const dotsContainer = document.getElementById('dots');
+  let current = 0;
+
+  slides.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(d);
+  });
+  const dots = document.querySelectorAll('.nav-dot');
+
+  function update() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === current));
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = `${current + 1} / ${slides.length}`;
+  }
+
+  function goTo(i) {
+    current = Math.max(0, Math.min(slides.length - 1, i));
+    update();
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault();
+      goTo(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      e.preventDefault();
+      goTo(current - 1);
+    } else if (e.key === 'Home') {
+      goTo(0);
+    } else if (e.key === 'End') {
+      goTo(slides.length - 1);
+    }
+  });
+
+  // Click empty areas: right half advances, left half goes back.
+  // Skip clicks on cards/links so they open instead of navigating.
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('a') || e.target.closest('.nav-dot') || e.target.closest('.hud')) return;
+    if (e.clientX > window.innerWidth / 2) goTo(current + 1);
+    else goTo(current - 1);
+  });
+
+  update();
+</script>
+
+</body>
+</html>

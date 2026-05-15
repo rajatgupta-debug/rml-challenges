@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mini Sudoku · Logic puzzle</title>
+<style>
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #fafaf6; color: #161629; margin: 0; padding: 3rem 1rem; min-height: 100vh; }
+  .wrap { max-width: 620px; margin: 0 auto; text-align: center; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.78rem; color: #5a5a6e; font-weight: 700; margin-bottom: 0.8rem; }
+  h1 { font-size: 2.4rem; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+  .desc { color: #5a5a6e; font-size: 1.05rem; max-width: 50ch; margin: 0 auto 2rem; line-height: 1.55; }
+  .panel { background: #fff; border: 1px solid #d8d8d0; border-radius: 16px; padding: 2rem 1.5rem; box-shadow: 0 6px 22px rgba(60, 45, 30, 0.06); display: flex; flex-direction: column; align-items: center; }
+  .sudoku { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; background: #161629; padding: 6px; border-radius: 12px; margin-bottom: 1.4rem; }
+  .box { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; }
+  .cell { width: 70px; height: 70px; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.9rem; font-weight: 700; }
+  .cell.given { background: #f5f5f0; color: #5a5a6e; }
+  .cell input { width: 100%; height: 100%; border: none; background: transparent; text-align: center; font-size: 1.9rem; font-weight: 700; font-family: inherit; outline: none; color: #2a5d8f; padding: 0; }
+  .cell.correct { background: #DFF5EF; }
+  .cell.correct input { color: #1A6A5C; }
+  .cell.wrong { background: #FDE7EB; }
+  .cell.wrong input { color: #B72F47; }
+  button { font-family: inherit; padding: 0.85rem 1.7rem; border: none; border-radius: 999px; background: #2a5d8f; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; margin: 0.25rem; transition: transform 0.12s ease, box-shadow 0.12s ease; }
+  button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(42, 93, 143, 0.25); }
+  button.secondary { background: #fff; color: #2a5d8f; border: 1.5px solid #2a5d8f; }
+  .result { padding: 0.9rem 1.3rem; border-radius: 12px; margin-top: 1.2rem; font-weight: 600; display: none; }
+  .result.show { display: block; }
+  .result.success { background: #DFF5EF; border: 1px solid #2EB39E; color: #1A6A5C; }
+  .result.error { background: #FDE7EB; border: 1px solid #E85D75; color: #B72F47; }
+  .insight { background: #DCF0FA; border: 1px solid #5CB3E0; padding: 1.4rem; border-radius: 14px; margin-top: 2rem; text-align: left; }
+  .insight h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.14em; color: #21617F; margin: 0 0 0.5rem; font-weight: 700; }
+  .insight p { color: #161629; line-height: 1.55; margin: 0; font-size: 0.98rem; }
+  a.back { display: inline-block; margin-top: 2rem; color: #2a5d8f; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Grid puzzle · Pure logic</div>
+  <h1>Mini Sudoku 🧩</h1>
+  <p class="desc">Place the numbers <strong>1–4</strong> so each row, each column, and each 2×2 box contains every number exactly once. No math — just logic.</p>
+
+  <div class="panel">
+    <div class="sudoku" id="sudoku"></div>
+    <div>
+      <button id="checkBtn">Check</button>
+      <button class="secondary" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <div class="result" id="result"></div>
+
+  <div class="insight">
+    <h3>The math idea</h3>
+    <p>Pure deduction. Every empty cell has one valid answer if you reason carefully. No arithmetic — just constraints meeting each other.</p>
+  </div>
+
+  <a class="back" href="../leadership-presentation.html">← Back to presentation</a>
+</div>
+
+<script>
+  // 0 means empty
+  const puzzle = [
+    [1, 2, 0, 4],
+    [0, 4, 1, 0],
+    [0, 1, 4, 0],
+    [4, 0, 2, 1],
+  ];
+  const solution = [
+    [1, 2, 3, 4],
+    [3, 4, 1, 2],
+    [2, 1, 4, 3],
+    [4, 3, 2, 1],
+  ];
+
+  const sudokuEl = document.getElementById('sudoku');
+  const inputs = {};
+
+  // Build 4 boxes (2x2 of 2x2)
+  // Box order: top-left, top-right, bottom-left, bottom-right
+  const boxes = [
+    [[0,0],[0,1],[1,0],[1,1]],
+    [[0,2],[0,3],[1,2],[1,3]],
+    [[2,0],[2,1],[3,0],[3,1]],
+    [[2,2],[2,3],[3,2],[3,3]],
+  ];
+
+  boxes.forEach(box => {
+    const boxEl = document.createElement('div');
+    boxEl.className = 'box';
+    box.forEach(([r, c]) => {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      if (puzzle[r][c] !== 0) {
+        cell.classList.add('given');
+        cell.textContent = puzzle[r][c];
+      } else {
+        const inp = document.createElement('input');
+        inp.type = 'text';
+        inp.maxLength = 1;
+        inp.inputMode = 'numeric';
+        inp.addEventListener('input', e => {
+          const v = e.target.value.replace(/[^1-4]/g, '');
+          e.target.value = v;
+        });
+        cell.appendChild(inp);
+        inputs[`${r}-${c}`] = { cell, input: inp };
+      }
+      boxEl.appendChild(cell);
+    });
+    sudokuEl.appendChild(boxEl);
+  });
+
+  const result = document.getElementById('result');
+
+  document.getElementById('checkBtn').addEventListener('click', () => {
+    let all = true;
+    Object.entries(inputs).forEach(([key, { cell, input }]) => {
+      const [r, c] = key.split('-').map(Number);
+      cell.classList.remove('correct', 'wrong');
+      const val = parseInt(input.value);
+      if (val === solution[r][c]) cell.classList.add('correct');
+      else { cell.classList.add('wrong'); all = false; }
+    });
+    result.classList.remove('show', 'success', 'error');
+    if (all) {
+      result.textContent = '🎉 Solved! Every row, column, and box has 1–4 exactly once.';
+      result.classList.add('show', 'success');
+    } else {
+      result.textContent = 'Not quite yet. Check rows, columns, and 2×2 boxes for duplicates.';
+      result.classList.add('show', 'error');
+    }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    Object.values(inputs).forEach(({ cell, input }) => {
+      input.value = '';
+      cell.classList.remove('correct', 'wrong');
+    });
+    result.classList.remove('show', 'success', 'error');
+  });
+</script>
+</body>
+</html>

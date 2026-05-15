@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Sock Drawer · Math-idea puzzle</title>
+<style>
+  body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #fafaf6; color: #161629; margin: 0; padding: 3rem 1rem; min-height: 100vh; }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  .center { text-align: center; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.78rem; color: #5a5a6e; font-weight: 700; margin-bottom: 0.8rem; }
+  h1 { font-size: 2.4rem; margin: 0 0 0.6rem; letter-spacing: -0.02em; }
+  .desc { color: #5a5a6e; font-size: 1.05rem; max-width: 50ch; margin: 0 auto 2rem; line-height: 1.55; }
+
+  .panel { background: #fff; border: 1px solid #d8d8d0; border-radius: 16px; padding: 1.8rem; box-shadow: 0 6px 22px rgba(60, 45, 30, 0.06); margin-bottom: 1.2rem; }
+  .panel-label { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.16em; color: #5a5a6e; font-weight: 700; margin-bottom: 0.8rem; }
+
+  .question { font-size: 1.15rem; line-height: 1.5; margin-bottom: 1.3rem; font-weight: 500; }
+  .question strong { font-weight: 700; }
+
+  .choices { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; }
+  .choice-btn {
+    font-family: inherit; flex: 1; min-width: 80px; padding: 1rem 1.2rem;
+    border: 2px solid #d8d8d0; background: #fff; border-radius: 14px;
+    font-size: 1.3rem; font-weight: 700; color: #161629; cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  }
+  .choice-btn:hover { transform: translateY(-2px); border-color: #2a5d8f; }
+  .choice-btn.correct { background: #DFF5EF; border-color: #2EB39E; color: #1A6A5C; }
+  .choice-btn.wrong { background: #FDE7EB; border-color: #E85D75; color: #B72F47; animation: shake 0.32s ease; }
+  .choice-btn.faded { opacity: 0.35; pointer-events: none; }
+  .choice-btn.faded.wrong-locked { background: #FDE7EB; border-color: #E85D75; color: #B72F47; opacity: 0.5; }
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); }
+  }
+
+  .nudge { background: #FDF3CA; border: 1px solid #F4C430; padding: 0.9rem 1.15rem; border-radius: 12px; margin-top: 1rem; color: #8C6A0A; font-weight: 500; font-size: 0.98rem; display: none; line-height: 1.4; }
+  .nudge.show { display: block; }
+
+  .hidden { display: none; }
+  .reveal-anim { animation: fadeIn 0.45s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .reasoning-choices { display: flex; flex-direction: column; gap: 0.55rem; }
+  .reason-btn {
+    font-family: inherit; padding: 0.95rem 1.1rem; border: 2px solid #d8d8d0;
+    background: #fff; border-radius: 12px; font-size: 0.98rem; font-weight: 500;
+    color: #161629; cursor: pointer; text-align: left; line-height: 1.4;
+    transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+  .reason-btn:hover { transform: translateY(-2px); border-color: #2a5d8f; }
+  .reason-btn.correct { background: #DFF5EF; border-color: #2EB39E; }
+  .reason-btn.partial { background: #FDF3CA; border-color: #F4C430; }
+  .reason-btn.wrong { background: #FDE7EB; border-color: #E85D75; }
+  .reason-btn.faded { opacity: 0.4; pointer-events: none; }
+  .reason-feedback { background: #fafaf6; border-radius: 10px; padding: 0.9rem 1.1rem; margin-top: 1rem; font-size: 0.96rem; line-height: 1.5; color: #161629; display: none; }
+  .reason-feedback.show { display: block; }
+
+  .walkthrough-intro { font-size: 1rem; color: #5a5a6e; margin-bottom: 1rem; line-height: 1.5; }
+  .step-row { display: flex; gap: 0.9rem; align-items: center; padding: 0.85rem 1rem; background: #fafaf6; border-radius: 10px; margin-bottom: 0.55rem; }
+  .step-row.highlight { background: #DFF5EF; border: 1.5px solid #2EB39E; }
+  .step-num { font-weight: 800; color: #5a5a6e; min-width: 2.6rem; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .step-row.highlight .step-num { color: #1A6A5C; }
+  .step-socks { display: flex; gap: 0.35rem; }
+  .step-sock { width: 32px; height: 44px; border-radius: 6px 6px 16px 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+  .step-result { font-size: 0.95rem; color: #5a5a6e; flex: 1; }
+  .step-row.highlight .step-result { color: #1A6A5C; font-weight: 600; }
+
+  .sock-red { background: linear-gradient(135deg, #E85D75, #c84a60); }
+  .sock-blue { background: linear-gradient(135deg, #5CB3E0, #4a96bf); }
+  .sock-green { background: linear-gradient(135deg, #6FC87E, #58a467); }
+
+  .insight { background: #FDF3CA; border: 1px solid #F4C430; padding: 1.4rem; border-radius: 14px; margin-bottom: 1.2rem; }
+  .insight h3 { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.14em; color: #8C6A0A; margin: 0 0 0.5rem; font-weight: 700; }
+  .insight p { color: #161629; line-height: 1.55; margin: 0; font-size: 0.98rem; }
+
+  .sandbox-intro { font-size: 0.95rem; color: #5a5a6e; line-height: 1.5; margin-bottom: 1.2rem; }
+  .grabbed { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: center; align-items: center; min-height: 80px; padding: 1rem; background: #fafaf6; border-radius: 12px; margin-bottom: 1rem; }
+  .sock { width: 40px; height: 56px; border-radius: 8px 8px 22px 22px; box-shadow: 0 3px 8px rgba(0,0,0,0.08); }
+  .empty { color: #99908A; font-size: 0.92rem; font-style: italic; }
+  .stats { font-size: 0.95rem; color: #5a5a6e; margin-bottom: 1rem; text-align: center; font-weight: 500; }
+  .sandbox-actions { text-align: center; }
+  button.primary { font-family: inherit; padding: 0.7rem 1.4rem; border: none; border-radius: 999px; background: #2a5d8f; color: white; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin: 0.25rem; transition: transform 0.12s; }
+  button.primary:hover { transform: translateY(-1px); }
+  button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  button.secondary { font-family: inherit; padding: 0.7rem 1.4rem; border-radius: 999px; background: #fff; color: #2a5d8f; border: 1.5px solid #2a5d8f; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin: 0.25rem; transition: transform 0.12s; }
+  .result { background: #DFF5EF; border: 1px solid #2EB39E; color: #1A6A5C; padding: 0.85rem 1.2rem; border-radius: 12px; margin-top: 1rem; font-weight: 600; display: none; font-size: 0.95rem; text-align: center; }
+  .result.show { display: block; }
+
+  a.back { display: inline-block; margin-top: 2rem; color: #2a5d8f; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="center">
+    <div class="eyebrow">Math-idea puzzle · Pigeonhole</div>
+    <h1>The Sock Drawer 🧦</h1>
+    <p class="desc">A drawer has socks in <strong>3 colors</strong> — red, blue, green — all mixed up in the dark. You can't see them.</p>
+  </div>
+
+  <!-- Stage 1: Question -->
+  <div class="panel" id="stage-question">
+    <div class="panel-label">Step 1 · Your answer</div>
+    <p class="question">How many socks do you need to grab to be <strong>100% sure</strong> you have a matching pair?</p>
+    <div class="choices" id="choices">
+      <button class="choice-btn" data-answer="2">2</button>
+      <button class="choice-btn" data-answer="3">3</button>
+      <button class="choice-btn" data-answer="4">4</button>
+      <button class="choice-btn" data-answer="5">5</button>
+    </div>
+    <div class="nudge" id="nudge"></div>
+  </div>
+
+  <!-- Stage 2: Reasoning -->
+  <div class="panel hidden" id="stage-reasoning">
+    <div class="panel-label">Step 2 · Your reasoning</div>
+    <p class="question">Right — 4 socks. But <strong>why</strong>? Pick the reason that matches your thinking:</p>
+    <div class="reasoning-choices" id="reasons">
+      <button class="reason-btn" data-reason="correct">Even on the unluckiest streak — one red, one blue, one green — the 4th sock <em>must</em> match one of the first three.</button>
+      <button class="reason-btn" data-reason="partial">4 is one more than 3 colors, and that feels safe.</button>
+      <button class="reason-btn" data-reason="wrong">Most of the time you find a pair fast, so 4 is plenty.</button>
+    </div>
+    <div class="reason-feedback" id="reasonFeedback"></div>
+  </div>
+
+  <!-- Stage 3: Visual walkthrough + math idea -->
+  <div class="hidden" id="stage-reveal">
+    <div class="panel">
+      <div class="panel-label">Step 3 · The worst-case walkthrough</div>
+      <p class="walkthrough-intro">Imagine the unluckiest possible streak. Every sock you pull is a brand-new color:</p>
+      <div class="step-row">
+        <span class="step-num">1st</span>
+        <div class="step-socks"><div class="step-sock sock-red"></div></div>
+        <span class="step-result">red — no pair yet</span>
+      </div>
+      <div class="step-row">
+        <span class="step-num">2nd</span>
+        <div class="step-socks"><div class="step-sock sock-red"></div><div class="step-sock sock-blue"></div></div>
+        <span class="step-result">blue — still no pair</span>
+      </div>
+      <div class="step-row">
+        <span class="step-num">3rd</span>
+        <div class="step-socks"><div class="step-sock sock-red"></div><div class="step-sock sock-blue"></div><div class="step-sock sock-green"></div></div>
+        <span class="step-result">green — you've now seen <em>all 3</em> colors</span>
+      </div>
+      <div class="step-row highlight">
+        <span class="step-num">4th</span>
+        <div class="step-socks"><div class="step-sock sock-red"></div><div class="step-sock sock-blue"></div><div class="step-sock sock-green"></div><div class="step-sock" style="background: repeating-linear-gradient(45deg, #E85D75, #E85D75 5px, #5CB3E0 5px, #5CB3E0 10px, #6FC87E 10px, #6FC87E 15px);"></div></div>
+        <span class="step-result">Whatever color it is, you <em>already have one</em>. Guaranteed pair.</span>
+      </div>
+    </div>
+
+    <div class="insight">
+      <h3>The math idea — pigeonhole principle</h3>
+      <p>If you have more items than "slots", some slot must hold at least two. With 3 color-slots, 4 socks forces a pair — no matter how unlucky. The same idea proves: in any group of 13 people, two must share a birthday month.</p>
+    </div>
+
+    <!-- Stage 4: Optional sandbox -->
+    <div class="panel">
+      <div class="panel-label">Step 4 · Try it yourself (optional)</div>
+      <p class="sandbox-intro">Run the experiment. Most of the time you'll get lucky and find a pair on the 2nd or 3rd sock. But the worst case is always 4 — never more, no matter how many times you try.</p>
+      <div class="grabbed" id="grabbed"><span class="empty">— drawer is shut. grab your first sock —</span></div>
+      <div class="stats" id="stats">Grabbed: 0</div>
+      <div class="sandbox-actions">
+        <button class="primary" id="grabBtn">Grab a sock</button>
+        <button class="secondary" id="resetBtn">Reset</button>
+      </div>
+      <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <div class="center">
+    <a class="back" href="../leadership-presentation.html">← Back to presentation</a>
+  </div>
+</div>
+
+<script>
+  // === Stage 1: Question ===
+  const choices = document.getElementById('choices');
+  const nudge = document.getElementById('nudge');
+  const stageReasoning = document.getElementById('stage-reasoning');
+
+  const wrongNudges = {
+    2: "Could 2 socks be 2 different colors? Yes — then no pair. So 2 isn't enough to be <em>sure</em>.",
+    3: "Could you grab one red, one blue, one green in a row? Yes — 3 socks, no pair. So 3 isn't enough either.",
+    5: "5 always works — but is there a smaller number that's <em>also</em> always enough? Think about the worst-case streak.",
+  };
+
+  choices.addEventListener('click', e => {
+    const btn = e.target.closest('.choice-btn');
+    if (!btn || btn.classList.contains('faded')) return;
+    const ans = parseInt(btn.dataset.answer);
+    if (ans === 4) {
+      btn.classList.add('correct');
+      choices.querySelectorAll('.choice-btn').forEach(b => {
+        if (b !== btn) b.classList.add('faded');
+      });
+      nudge.classList.remove('show');
+      setTimeout(() => {
+        stageReasoning.classList.remove('hidden');
+        stageReasoning.classList.add('reveal-anim');
+        stageReasoning.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 350);
+    } else {
+      btn.classList.add('wrong');
+      nudge.innerHTML = wrongNudges[ans];
+      nudge.classList.add('show');
+      setTimeout(() => {
+        btn.classList.remove('wrong');
+        btn.classList.add('faded', 'wrong-locked');
+      }, 800);
+    }
+  });
+
+  // === Stage 2: Reasoning ===
+  const reasons = document.getElementById('reasons');
+  const reasonFeedback = document.getElementById('reasonFeedback');
+  const stageReveal = document.getElementById('stage-reveal');
+
+  const reasonResponses = {
+    correct: "✅ Exactly. The worst case dictates the answer — 3 different colors, then the 4th must repeat.",
+    partial: "Close — and the intuition holds. But here's the precise reasoning:",
+    wrong: "Not quite — we need <em>certainty</em>, not 'most of the time'. The puzzle is about the worst possible case.",
+  };
+
+  reasons.addEventListener('click', e => {
+    const btn = e.target.closest('.reason-btn');
+    if (!btn || btn.classList.contains('faded')) return;
+    const kind = btn.dataset.reason;
+    btn.classList.add(kind);
+    reasons.querySelectorAll('.reason-btn').forEach(b => {
+      if (b !== btn) b.classList.add('faded');
+    });
+    reasonFeedback.innerHTML = reasonResponses[kind];
+    reasonFeedback.classList.add('show');
+    setTimeout(() => {
+      stageReveal.classList.remove('hidden');
+      stageReveal.classList.add('reveal-anim');
+      stageReveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 600);
+  });
+
+  // === Stage 4: Sandbox ===
+  const colors = ['red', 'blue', 'green'];
+  let grabbed = [];
+  const grabbedEl = document.getElementById('grabbed');
+  const statsEl = document.getElementById('stats');
+  const resultEl = document.getElementById('result');
+  const grabBtn = document.getElementById('grabBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  function renderSandbox() {
+    if (grabbed.length === 0) {
+      grabbedEl.innerHTML = '<span class="empty">— drawer is shut. grab your first sock —</span>';
+    } else {
+      grabbedEl.innerHTML = grabbed.map(c => `<div class="sock sock-${c}"></div>`).join('');
+    }
+    statsEl.textContent = `Grabbed: ${grabbed.length}`;
+    const counts = {};
+    grabbed.forEach(c => counts[c] = (counts[c] || 0) + 1);
+    const matched = Object.entries(counts).find(([_, n]) => n >= 2);
+    if (matched) {
+      resultEl.textContent = `Pair of ${matched[0]} after ${grabbed.length} socks. ${grabbed.length === 4 ? 'The worst case!' : ''}`;
+      resultEl.classList.add('show');
+      grabBtn.disabled = true;
+    } else {
+      resultEl.classList.remove('show');
+      grabBtn.disabled = false;
+    }
+  }
+
+  grabBtn.addEventListener('click', () => {
+    grabbed.push(colors[Math.floor(Math.random() * colors.length)]);
+    renderSandbox();
+  });
+  resetBtn.addEventListener('click', () => {
+    grabbed = [];
+    renderSandbox();
+  });
+  renderSandbox();
+</script>
+</body>
+</html>
