@@ -266,6 +266,213 @@
   .skill-chip:nth-child(4) { background: var(--sky-bg);    border-color: rgba(92, 179, 224, 0.40); }
   .skill-chip:nth-child(5) { background: var(--purple-bg); border-color: rgba(142, 111, 216, 0.35); }
 
+  /* === App context slide === */
+  .app-context-slide {
+    padding-top: 5vh;
+    padding-bottom: 4vh;
+    justify-content: flex-start;
+  }
+  .app-context-slide h2 { margin-bottom: 0.5rem; }
+  .app-context-slide .lead { margin-bottom: 1.2rem; }
+
+  .app-frame {
+    display: grid;
+    grid-template-columns: 118px 1fr;
+    background: #f8f7f1;
+    border: 1.5px solid #d8d8d0;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 36px rgba(60, 45, 30, 0.12);
+    flex: 1;
+    min-height: 0;
+    position: relative;
+  }
+  .app-nav {
+    background: #ffffff;
+    border-right: 1px solid #e8e8e0;
+    padding: 1.2rem 0.5rem 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+  }
+  .app-brand-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2px solid #c0bbb5;
+    margin-bottom: 0.3rem;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    font-size: 0.6rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #99908A;
+    gap: 0.32rem;
+    line-height: 1.18;
+  }
+  .nav-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: #ddddd6;
+  }
+  .nav-item.active { color: #5E44A0; font-weight: 900; }
+  .nav-item.active .nav-icon {
+    background: linear-gradient(135deg, #8E6FD8 0%, #E85D75 100%);
+    box-shadow: 0 0 0 3px rgba(142, 111, 216, 0.28), 0 6px 14px rgba(142, 111, 216, 0.35);
+  }
+  .nav-here-tag {
+    position: absolute;
+    left: 130px;
+    background: #161629;
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+  .nav-here-tag::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px; height: 10px;
+    background: #161629;
+  }
+  .nav-spacer { flex: 1; }
+  .nav-bottom-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #f0eee6;
+    border: 1.5px solid #d8d8d0;
+  }
+  .nav-bottom-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: #5CB3E0;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.78rem;
+  }
+
+  .app-content {
+    padding: 1.4rem 1.7rem 4.6rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .content-header { margin-bottom: 0.1rem; }
+  .content-eyebrow {
+    font-size: 0.66rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #99908A;
+    margin-bottom: 0.3rem;
+  }
+  .content-eyebrow strong { color: #5E44A0; }
+  .content-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #161629;
+    margin: 0;
+  }
+  .content-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.45rem;
+  }
+  .content-section-title {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: #161629;
+  }
+  .content-section-tag {
+    font-size: 0.62rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #99908A;
+  }
+  .mini-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.65rem;
+  }
+  .mini-card {
+    background: #fff;
+    border: 1px solid #e8e8e0;
+    border-radius: 10px;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    min-width: 0;
+  }
+  .mini-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    flex-shrink: 0;
+  }
+  .mini-icon.blue   { background: var(--sky-bg); }
+  .mini-icon.purple { background: var(--purple-bg); }
+  .mini-icon.coral  { background: var(--coral-bg); }
+  .mini-icon.yellow { background: var(--yellow-bg); }
+  .mini-icon.mint   { background: var(--mint-bg); }
+  .mini-title {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #161629;
+    line-height: 1.25;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .access-strip {
+    position: absolute;
+    bottom: 1.2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.97);
+    border: 1px solid #d8d8d0;
+    border-radius: 999px;
+    padding: 0.35rem 0.4rem;
+    display: flex;
+    gap: 0.15rem;
+    align-items: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  }
+  .access-option {
+    padding: 0.4rem 0.95rem;
+    color: #99908A;
+    border-radius: 999px;
+    font-size: 0.64rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .access-option.active {
+    background: #161629;
+    color: white;
+  }
+
   /* Format-name highlights (marker-style) */
   .hl-explore, .hl-puzzle, .hl-game {
     padding: 0 0.18em;
@@ -770,7 +977,85 @@
     </div>
   </section>
 
-  <!-- Slide 3: Parents are asking for this -->
+  <!-- Slide 3: Where it lives in the Cuemath app -->
+  <section class="slide app-context-slide">
+    <div class="eyebrow">Where it lives</div>
+    <h2>Inside the Cuemath app.</h2>
+    <p class="lead subtle">Three sections share one platform. <strong style="color: var(--ink);">Enrichment Math</strong> is the section I lead.</p>
+
+    <div class="app-frame">
+      <div class="app-nav">
+        <div class="app-brand-dot"></div>
+        <div class="nav-item">
+          <div class="nav-icon"></div>
+          <div>School<br>Math</div>
+        </div>
+        <div class="nav-item">
+          <div class="nav-icon"></div>
+          <div>Competition<br>Math</div>
+        </div>
+        <div class="nav-item active">
+          <div class="nav-icon"></div>
+          <div>Enrichment<br>Math</div>
+        </div>
+        <div class="nav-spacer"></div>
+        <div class="nav-bottom-icon"></div>
+        <div class="nav-bottom-avatar">K</div>
+      </div>
+
+      <div class="app-content">
+        <div class="content-header">
+          <div class="content-eyebrow"><strong>ENRICHMENT MATH</strong> · Math that prepares them for life.</div>
+          <h3 class="content-title">Today's Mix</h3>
+        </div>
+
+        <div class="content-section">
+          <div class="content-section-head">
+            <span class="content-section-title">Explorations</span>
+            <span class="content-section-tag">Solo · 15–30 min</span>
+          </div>
+          <div class="mini-cards">
+            <div class="mini-card"><div class="mini-icon yellow">🐝</div><div class="mini-title">Build the Honeycomb</div></div>
+            <div class="mini-card"><div class="mini-icon blue">🛰️</div><div class="mini-title">How GPS Knows Where You Are</div></div>
+            <div class="mini-card"><div class="mini-icon coral">📊</div><div class="mini-title">Fake Chart Detective</div></div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <div class="content-section-head">
+            <span class="content-section-title">Puzzles</span>
+            <span class="content-section-tag">Solo · 5–10 min</span>
+          </div>
+          <div class="mini-cards">
+            <div class="mini-card"><div class="mini-icon yellow">🧦</div><div class="mini-title">The Sock Drawer</div></div>
+            <div class="mini-card"><div class="mini-icon mint">🔢</div><div class="mini-title">Mini KenKen</div></div>
+            <div class="mini-card"><div class="mini-icon coral">🗼</div><div class="mini-title">Tower of Hanoi</div></div>
+          </div>
+        </div>
+
+        <div class="content-section">
+          <div class="content-section-head">
+            <span class="content-section-title">Games</span>
+            <span class="content-section-tag">1v1 · Live</span>
+          </div>
+          <div class="mini-cards">
+            <div class="mini-card"><div class="mini-icon purple">♟️</div><div class="mini-title">Nim 16</div></div>
+            <div class="mini-card"><div class="mini-icon mint">🟧</div><div class="mini-title">Connect Four</div></div>
+            <div class="mini-card"><div class="mini-icon blue">🔄</div><div class="mini-title">Reflect It</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="access-strip">
+        <span class="access-option">Free</span>
+        <span class="access-option">Self-learning</span>
+        <span class="access-option">Tutoring</span>
+        <span class="access-option active">Off</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 4: Parents are asking for this -->
   <section class="slide parents-slide">
     <div class="eyebrow">Why this matters</div>
     <h2>Parents themselves are asking for this.</h2>
@@ -1073,7 +1358,7 @@
 
 <div class="hud">
   <span class="hint">← → to navigate</span>
-  <span class="counter" id="counter">1 / 10</span>
+  <span class="counter" id="counter">1 / 11</span>
 </div>
 
 <div class="nav-dots" id="dots"></div>
