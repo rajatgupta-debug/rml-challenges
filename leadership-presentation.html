@@ -409,40 +409,44 @@
   .mini-cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.65rem;
+    gap: 0.7rem;
   }
   .mini-card {
     background: #fff;
     border: 1px solid #e8e8e0;
-    border-radius: 10px;
-    padding: 0.6rem 0.8rem;
+    border-radius: 12px;
+    overflow: hidden;
     display: flex;
-    align-items: center;
-    gap: 0.65rem;
+    flex-direction: column;
+    box-shadow: 0 3px 10px rgba(60, 45, 30, 0.06);
     min-width: 0;
   }
-  .mini-icon {
-    width: 32px; height: 32px;
-    border-radius: 8px;
+  .mini-thumb {
+    height: 74px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.05rem;
-    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
   }
-  .mini-icon.blue   { background: var(--sky-bg); }
-  .mini-icon.purple { background: var(--purple-bg); }
-  .mini-icon.coral  { background: var(--coral-bg); }
-  .mini-icon.yellow { background: var(--yellow-bg); }
-  .mini-icon.mint   { background: var(--mint-bg); }
+  .mini-thumb.blue   { background: linear-gradient(135deg, #DCF0FA 0%, #EFE8FC 100%); }
+  .mini-thumb.purple { background: linear-gradient(135deg, #EFE8FC 0%, #DCF0FA 100%); }
+  .mini-thumb.coral  { background: linear-gradient(135deg, #FDE7EB 0%, #FFE4C4 100%); }
+  .mini-thumb.yellow { background: linear-gradient(135deg, #FDF3CA 0%, #FFE4C4 100%); }
+  .mini-thumb.mint   { background: linear-gradient(135deg, #DFF5EF 0%, #D6F3E0 100%); }
+  .mini-emoji {
+    font-size: 2.5rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.14));
+  }
+  .mini-body {
+    padding: 0.65rem 0.9rem 0.8rem;
+  }
   .mini-title {
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: 0.88rem;
+    font-weight: 700;
     color: #161629;
     line-height: 1.25;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .access-strip {
@@ -1015,9 +1019,18 @@
             <span class="content-section-tag">Solo · 15–30 min</span>
           </div>
           <div class="mini-cards">
-            <div class="mini-card"><div class="mini-icon yellow">🐝</div><div class="mini-title">Build the Honeycomb</div></div>
-            <div class="mini-card"><div class="mini-icon blue">🛰️</div><div class="mini-title">How GPS Knows Where You Are</div></div>
-            <div class="mini-card"><div class="mini-icon coral">📊</div><div class="mini-title">Fake Chart Detective</div></div>
+            <div class="mini-card">
+              <div class="mini-thumb yellow"><span class="mini-emoji">🐝</span></div>
+              <div class="mini-body"><div class="mini-title">Build the Honeycomb</div></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-thumb blue"><span class="mini-emoji">🛰️</span></div>
+              <div class="mini-body"><div class="mini-title">How GPS Knows Where You Are</div></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-thumb coral"><span class="mini-emoji">📊</span></div>
+              <div class="mini-body"><div class="mini-title">Fake Chart Detective</div></div>
+            </div>
           </div>
         </div>
 
@@ -1027,9 +1040,18 @@
             <span class="content-section-tag">Solo · 5–10 min</span>
           </div>
           <div class="mini-cards">
-            <div class="mini-card"><div class="mini-icon yellow">🧦</div><div class="mini-title">The Sock Drawer</div></div>
-            <div class="mini-card"><div class="mini-icon mint">🔢</div><div class="mini-title">Mini KenKen</div></div>
-            <div class="mini-card"><div class="mini-icon coral">🗼</div><div class="mini-title">Tower of Hanoi</div></div>
+            <div class="mini-card">
+              <div class="mini-thumb yellow"><span class="mini-emoji">🧦</span></div>
+              <div class="mini-body"><div class="mini-title">The Sock Drawer</div></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-thumb mint"><span class="mini-emoji">🔢</span></div>
+              <div class="mini-body"><div class="mini-title">Mini KenKen</div></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-thumb coral"><span class="mini-emoji">🗼</span></div>
+              <div class="mini-body"><div class="mini-title">Tower of Hanoi</div></div>
+            </div>
           </div>
         </div>
 
@@ -1039,9 +1061,18 @@
             <span class="content-section-tag">1v1 · Live</span>
           </div>
           <div class="mini-cards">
-            <div class="mini-card"><div class="mini-icon purple">♟️</div><div class="mini-title">Nim 16</div></div>
-            <div class="mini-card"><div class="mini-icon mint">🟧</div><div class="mini-title">Connect Four</div></div>
-            <div class="mini-card"><div class="mini-icon blue">🔄</div><div class="mini-title">Reflect It</div></div>
+            <div class="mini-card">
+              <div class="mini-thumb purple"><span class="mini-emoji">♟️</span></div>
+              <div class="mini-body"><div class="mini-title">Nim 16</div></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-thumb mint"><span class="mini-emoji">🟧</span></div>
+              <div class="mini-body"><div class="mini-title">Connect Four</div></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-thumb blue"><span class="mini-emoji">🔄</span></div>
+              <div class="mini-body"><div class="mini-title">Reflect It</div></div>
+            </div>
           </div>
         </div>
       </div>
