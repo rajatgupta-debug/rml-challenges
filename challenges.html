@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenges — Real Math League</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #FBF5E8;
+    --bg-2: #F5EDD8;
+    --card: #FFFFFF;
+    --border: #E8DFC8;
+    --border-strong: #C9BE9F;
+    --shadow: 0 6px 24px rgba(60, 45, 30, 0.08);
+    --shadow-lift: 0 18px 52px rgba(60, 45, 30, 0.18);
+    --text: #2B2320;
+    --text-2: #5E544D;
+    --text-3: #99908A;
+
+    --mint: #2EB39E;
+    --mint-bg: #DFF5EF;
+    --mint-ink: #1A6A5C;
+    --coral: #E85D75;
+    --coral-bg: #FDE7EB;
+    --coral-ink: #B72F47;
+    --orange: #F99B4E;
+    --orange-bg: #FDECDB;
+    --orange-ink: #B26120;
+    --yellow: #F4C430;
+    --yellow-bg: #FDF3CA;
+    --yellow-ink: #8C6A0A;
+    --purple: #8E6FD8;
+    --purple-bg: #EFE8FC;
+    --purple-ink: #5E44A0;
+    --peach: #FF8E72;
+    --peach-bg: #FFE0D4;
+    --peach-ink: #B2543B;
+    --sky: #5CB3E0;
+    --sky-bg: #DCF0FA;
+    --sky-ink: #21617F;
+    --green: #6FC87E;
+    --green-bg: #DFF5E1;
+    --green-ink: #2F7A3F;
+    --teal: #3FA8A8;
+    --teal-bg: #D6EFEE;
+    --teal-ink: #1D6B6B;
+  }
+
+  body {
+    font-family: "Nunito", "SF Pro Rounded", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 44px 20px 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: 600;
+  }
+
+  .wrap { max-width: 920px; width: 100%; }
+
+  /* ── Top strip ─────────────────────────────── */
+  .top-strip {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    font-weight: 900;
+    color: var(--text-3);
+    text-transform: uppercase;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--coral-ink);
+  }
+  .brand-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 0 0 4px rgba(232,93,117,0.18);
+  }
+  .today-date {
+    color: var(--text-2);
+  }
+
+  /* ── Header ─────────────────────────────── */
+  .header {
+    text-align: center;
+    margin-bottom: 38px;
+  }
+  .eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 2.5px;
+    color: var(--coral-ink);
+    background: var(--coral-bg);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--text);
+    margin-bottom: 10px;
+    letter-spacing: -1.8px;
+    line-height: 1.05;
+  }
+  .tagline {
+    font-size: 17px;
+    color: var(--text-2);
+    font-weight: 700;
+    max-width: 540px;
+    margin: 0 auto;
+    line-height: 1.4;
+  }
+
+  /* ── Challenge card (big, horizontal) ─────────────────────────────── */
+  .stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 36px;
+  }
+
+  .big-card {
+    position: relative;
+    background: var(--card);
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    border-left: 6px solid transparent;
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.25s cubic-bezier(.2,.9,.3,1);
+  }
+  .big-card.live { cursor: pointer; }
+  .big-card.live:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lift);
+  }
+  .big-card.soon { cursor: default; }
+
+  .big-card.lies    { border-left-color: var(--coral); }
+  .big-card.wonder  { border-left-color: var(--purple); }
+  .big-card.explore { border-left-color: var(--sky); }
+  .big-card.choices { border-left-color: var(--mint); }
+  .big-card.build   { border-left-color: var(--orange); }
+
+  .card-art {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+  }
+  .big-card.lies    .card-art { background: linear-gradient(135deg, #FDE7EB 0%, #FFE4C4 100%); }
+  .big-card.wonder  .card-art { background: linear-gradient(135deg, #EFE8FC 0%, #DCF0FA 100%); }
+  .big-card.explore .card-art { background: linear-gradient(135deg, #DCF0FA 0%, #D6EFEE 100%); }
+  .big-card.choices .card-art { background: linear-gradient(135deg, #DFF5EF 0%, #DFF5E1 100%); }
+  .big-card.build   .card-art { background: linear-gradient(135deg, #FDECDB 0%, #FDF3CA 100%); }
+
+  .card-art::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 85% 20%, rgba(255,255,255,0.85) 0, rgba(255,255,255,0.85) 6px, transparent 7px),
+      radial-gradient(circle at 90% 75%, rgba(255,255,255,0.6) 0, rgba(255,255,255,0.6) 3px, transparent 4px),
+      radial-gradient(circle at 14% 78%, rgba(255,255,255,0.5) 0, rgba(255,255,255,0.5) 4px, transparent 5px);
+    pointer-events: none;
+  }
+  .card-art-watermark {
+    position: absolute;
+    right: -12px;
+    bottom: -12px;
+    font-size: 120px;
+    line-height: 1;
+    opacity: 0.14;
+    transform: rotate(-10deg);
+    pointer-events: none;
+  }
+  .card-icon {
+    font-size: 72px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 12px rgba(60, 45, 30, 0.22));
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 2;
+  }
+  .big-card.live:hover .card-icon { transform: scale(1.1) rotate(-5deg); }
+
+  .card-body {
+    padding: 24px 28px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .card-row-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .mode-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    font-weight: 900;
+    padding: 5px 10px;
+    border-radius: 6px;
+    text-transform: uppercase;
+  }
+  .mode-label .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  .big-card.lies    .mode-label { background: var(--coral-bg);  color: var(--coral-ink); }
+  .big-card.lies    .mode-label .dot { background: var(--coral); }
+  .big-card.wonder  .mode-label { background: var(--purple-bg); color: var(--purple-ink); }
+  .big-card.wonder  .mode-label .dot { background: var(--purple); }
+  .big-card.explore .mode-label { background: var(--sky-bg); color: var(--sky-ink); }
+  .big-card.explore .mode-label .dot { background: var(--sky); }
+  .big-card.choices .mode-label { background: var(--mint-bg); color: var(--mint-ink); }
+  .big-card.choices .mode-label .dot { background: var(--mint); }
+  .big-card.build   .mode-label { background: var(--orange-bg); color: var(--orange-ink); }
+  .big-card.build   .mode-label .dot { background: var(--orange); }
+
+  .case-tag {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    font-weight: 900;
+    color: var(--text-3);
+  }
+  .status-badge {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    font-weight: 900;
+    padding: 4px 9px;
+    border-radius: 6px;
+    margin-left: auto;
+    text-transform: uppercase;
+  }
+  .status-live {
+    background: var(--coral);
+    color: white;
+    box-shadow: 0 2px 6px rgba(232,93,117,0.4);
+    animation: pulse-live 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse-live {
+    0%, 100% { box-shadow: 0 2px 6px rgba(232,93,117,0.4); }
+    50% { box-shadow: 0 2px 14px rgba(232,93,117,0.8); }
+  }
+  .status-soon {
+    background: var(--bg-2);
+    color: var(--text-2);
+  }
+
+  .card-body h2 {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -0.7px;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .hook {
+    font-size: 15px;
+    color: var(--text-2);
+    line-height: 1.5;
+    font-weight: 600;
+  }
+  .card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .meta {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .pill {
+    font-size: 11px;
+    color: var(--text-2);
+    font-weight: 800;
+    background: var(--bg-2);
+    padding: 5px 10px;
+    border-radius: 10px;
+    letter-spacing: 0.2px;
+  }
+  .cta {
+    padding: 11px 20px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .big-card.live .cta {
+    background: var(--coral);
+    color: white;
+    box-shadow: 0 4px 12px rgba(232,93,117,0.3);
+  }
+  .big-card.live:hover .cta {
+    background: #d84866;
+    box-shadow: 0 6px 18px rgba(232,93,117,0.45);
+  }
+  .big-card.soon .cta {
+    background: transparent;
+    color: var(--text-3);
+    border: 1.5px dashed var(--border-strong);
+    font-weight: 700;
+  }
+
+  /* ── Done-today state ─────────────────────────────── */
+  .big-card.done { opacity: 0.92; }
+  .big-card.done .status-badge {
+    background: var(--green);
+    color: white;
+    box-shadow: 0 2px 6px rgba(111,200,126,0.35);
+    animation: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .big-card.done .cta {
+    background: white;
+    color: var(--text-2);
+    border: 1.5px solid var(--border-strong);
+    box-shadow: none;
+    animation: none;
+  }
+  .big-card.done:hover .cta {
+    background: var(--bg-2);
+    color: var(--text);
+    box-shadow: none;
+  }
+  .big-card.done .card-art::after {
+    content: "✓";
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--green);
+    color: white;
+    font-weight: 900;
+    font-size: 16px;
+    border-radius: 50%;
+    box-shadow: 0 3px 10px rgba(111,200,126,0.4);
+    z-index: 3;
+  }
+
+  /* ── See more ─────────────────────────────── */
+  .see-more-row {
+    display: flex;
+    justify-content: center;
+    margin-top: 4px;
+  }
+  .see-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 24px;
+    background: white;
+    border: 1.5px solid var(--border-strong);
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 900;
+    color: var(--text);
+    text-decoration: none;
+    letter-spacing: 0.2px;
+    box-shadow: var(--shadow);
+    transition: all 0.2s;
+  }
+  .see-more:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lift);
+    border-color: var(--coral);
+    color: var(--coral-ink);
+  }
+  .see-more-count {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    color: var(--text-3);
+    background: var(--bg-2);
+    padding: 3px 8px;
+    border-radius: 6px;
+  }
+
+  /* ── Footer ─────────────────────────────── */
+  .footer {
+    margin-top: 56px;
+    text-align: center;
+    color: var(--text-3);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    line-height: 1.6;
+  }
+
+  /* ── Mobile ─────────────────────────────── */
+  @media (max-width: 720px) {
+    h1 { font-size: 36px; }
+    .tagline { font-size: 15px; }
+    .big-card {
+      grid-template-columns: 1fr;
+    }
+    .card-art {
+      min-height: 140px;
+    }
+    .card-icon { font-size: 58px; }
+    .card-body h2 { font-size: 22px; }
+    .card-body { padding: 20px 22px; }
+    body { padding: 32px 16px 60px; }
+    .streak-strip { gap: 14px; padding: 12px 16px; }
+    .streak-num { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ═══ Top strip ═══ -->
+    <div class="top-strip">
+      <div class="brand"><span class="brand-dot"></span>RML · CHALLENGES</div>
+      <div class="today-date" id="week-label">WEEK OF MON APR 21</div>
+    </div>
+
+    <!-- ═══ Header ═══ -->
+    <div class="header">
+      <div class="eyebrow">THIS WEEK'S CASES</div>
+      <h1>This week's cases.</h1>
+      <div class="tagline">At least one. Ideally all three. New set Monday.</div>
+    </div>
+
+    <!-- ═══ Three stacked cards ═══ -->
+    <div class="stack">
+
+      <!-- ─── CASE 1 · LIES (LIVE) ─── -->
+      <a href="./fake-chart-detective.html" class="big-card live lies" id="card-fcd">
+        <div class="card-art">
+          <div class="card-art-watermark">📊</div>
+          <div class="card-icon">🔍</div>
+        </div>
+        <div class="card-body">
+          <div class="card-row-top">
+            <div class="mode-label"><span class="dot"></span>LIES</div>
+            <div class="case-tag">CASE 001</div>
+            <div class="status-badge status-live">LIVE</div>
+          </div>
+          <h2>Fake Chart Detective</h2>
+          <div class="hook">Charts can tell the truth — or bend it. Spot the liars before they fool everyone else.</div>
+          <div class="card-bottom">
+            <div class="meta">
+              <span class="pill">📚 Grade 6–8</span>
+              <span class="pill">⏱ ~18 min</span>
+              <span class="pill">⚡ 50 XP</span>
+            </div>
+            <div class="cta" data-cta-default="Start case →" data-cta-done="Replay ↻">Start case →</div>
+          </div>
+        </div>
+      </a>
+
+      <!-- ─── CASE 2 · WONDER ─── -->
+      <div class="big-card soon wonder">
+        <div class="card-art">
+          <div class="card-art-watermark">🎂</div>
+          <div class="card-icon">🎈</div>
+        </div>
+        <div class="card-body">
+          <div class="card-row-top">
+            <div class="mode-label"><span class="dot"></span>WONDER</div>
+            <div class="case-tag">CASE 011</div>
+            <div class="status-badge status-soon">Coming soon</div>
+          </div>
+          <h2>The Birthday Paradox</h2>
+          <div class="hook">In a room of 23 people, there's a 50/50 chance two share a birthday. Sound impossible? The math says otherwise — and it breaks your gut every time.</div>
+          <div class="card-bottom">
+            <div class="meta">
+              <span class="pill">📚 Grade 7–9</span>
+              <span class="pill">⏱ ~15 min</span>
+              <span class="pill">⚡ 50 XP</span>
+            </div>
+            <div class="cta">In development</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── CASE 3 · CHOICES ─── -->
+      <div class="big-card soon choices">
+        <div class="card-art">
+          <div class="card-art-watermark">📅</div>
+          <div class="card-icon">💸</div>
+        </div>
+        <div class="card-body">
+          <div class="card-row-top">
+            <div class="mode-label"><span class="dot"></span>CHOICES</div>
+            <div class="case-tag">CASE 018</div>
+            <div class="status-badge status-soon">Coming soon</div>
+          </div>
+          <h2>The Subscription Trap</h2>
+          <div class="hook">$4.99 a month sounds tiny. Your family has 14 of them. What's the 10-year total? ("Per month" is a disguise.)</div>
+          <div class="card-bottom">
+            <div class="meta">
+              <span class="pill">📚 Grade 6–8</span>
+              <span class="pill">⏱ ~15 min</span>
+              <span class="pill">⚡ 50 XP</span>
+            </div>
+            <div class="cta">In development</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ See more ═══ -->
+    <div class="see-more-row">
+      <a href="./index-v2.html" class="see-more">
+        See more challenges
+        <span class="see-more-count">26 CASES</span>
+        →
+      </a>
+    </div>
+
+    <!-- ═══ Footer ═══ -->
+    <div class="footer">
+      RML · Real Math League · A Cuemath project
+      <br>New cases every Monday · Across five modes: Lies · Wonder · Explore · Choices · Build
+    </div>
+
+  </div>
+
+<script>
+  // Compute the current week's Monday (local time).
+  const now = new Date();
+  const weekStart = new Date(now);
+  const dayOfWeek = (weekStart.getDay() + 6) % 7; // 0 = Mon, 6 = Sun
+  weekStart.setDate(weekStart.getDate() - dayOfWeek);
+  weekStart.setHours(0, 0, 0, 0);
+
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('week-label').textContent =
+    `WEEK OF MON ${months[weekStart.getMonth()]} ${weekStart.getDate()}`;
+
+  // "Done this week" state — applied when a case is completed within the current week.
+  // Tripped by real completion (localStorage), or ?preview=done for mockup preview.
+  const weekKey = `rml-done-weekof-${weekStart.getFullYear()}-${weekStart.getMonth()+1}-${weekStart.getDate()}-fcd`;
+  const isPreviewDone = new URLSearchParams(location.search).get('preview') === 'done';
+  const isDone = isPreviewDone || localStorage.getItem(weekKey) === '1';
+
+  if (isDone) {
+    const card = document.getElementById('card-fcd');
+    card.classList.add('done');
+    const badge = card.querySelector('.status-badge');
+    badge.classList.remove('status-live');
+    badge.textContent = '✓ DONE THIS WEEK';
+    const cta = card.querySelector('.cta');
+    cta.textContent = cta.dataset.ctaDone;
+  }
+</script>
+</body>
+</html>
