@@ -268,12 +268,16 @@
 
   /* === App context slide === */
   .app-context-slide {
-    padding-top: 8vh;
-    padding-bottom: 4vh;
+    padding-top: 6vh;
+    padding-bottom: 3vh;
     justify-content: flex-start;
   }
-  .app-context-slide h2 { margin-bottom: 0.5rem; }
-  .app-context-slide .lead { margin-bottom: 1.5rem; max-width: 60ch; }
+  .app-context-slide .eyebrow { margin-bottom: 1.1rem; }
+  .app-context-slide h2 {
+    font-size: clamp(1.7rem, 3.2vw, 2.4rem);
+    margin-bottom: 0.4rem;
+  }
+  .app-context-slide .lead { margin-bottom: 1rem; max-width: 60ch; font-size: clamp(1rem, 1.4vw, 1.2rem); }
 
   .app-frame {
     display: grid;
@@ -365,24 +369,25 @@
   }
 
   .app-content {
-    padding: 1.4rem 1.7rem 1.5rem;
+    padding: 1.1rem 1.5rem 1rem;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.55rem;
+    min-height: 0;
   }
-  .content-header { margin-bottom: 0.1rem; }
+  .content-header { margin-bottom: 0; }
   .content-eyebrow {
-    font-size: 0.66rem;
+    font-size: 0.62rem;
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.14em;
     color: #99908A;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.25rem;
   }
   .content-eyebrow strong { color: #5E44A0; }
   .content-title {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: 700;
     letter-spacing: -0.01em;
     color: #161629;
@@ -392,7 +397,7 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.35rem;
   }
   .content-section-title {
     font-size: 1.02rem;
@@ -422,7 +427,7 @@
     min-width: 0;
   }
   .mini-thumb {
-    height: 105px;
+    height: 78px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -435,19 +440,22 @@
   .mini-thumb.yellow { background: linear-gradient(135deg, #FDF3CA 0%, #FFE4C4 100%); }
   .mini-thumb.mint   { background: linear-gradient(135deg, #DFF5EF 0%, #D6F3E0 100%); }
   .mini-emoji {
-    font-size: 2.8rem;
+    font-size: 2.3rem;
     line-height: 1;
-    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));
   }
   .mini-body {
-    padding: 0.6rem 0.9rem 0.75rem;
+    padding: 0.5rem 0.85rem 0.6rem;
   }
   .mini-title {
-    font-size: 0.86rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #161629;
     line-height: 1.25;
   }
+  .strip-wrap { padding-top: 0.4rem; }
+  .access-strip { padding: 0.3rem 0.35rem; }
+  .access-option { padding: 0.35rem 0.85rem; font-size: 0.62rem; }
 
   .strip-wrap {
     margin-top: auto;
