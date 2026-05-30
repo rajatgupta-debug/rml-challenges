@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interaction Toolkit — Live Examples</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F5F3EE;
+    color: #1A1A1A;
+    padding: 40px 20px;
+  }
+
+  :root {
+    --ink: #1A1A1A;
+    --cream: #FFFDF8;
+    --yellow: #FFD54F;
+    --yellow-deep: #F0C030;
+    --green: #E8F5E0;
+    --green-dark: #4CAF50;
+    --red-soft: #FBE3E0;
+    --red-text: #8B2F26;
+    --blue-soft: #E0EDFA;
+    --bg: #F5F3EE;
+    --muted: #999;
+  }
+
+  .page-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+
+  .section {
+    max-width: 420px;
+    margin: 0 auto 48px;
+  }
+
+  .section-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .section-source {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  .demo-phone {
+    width: 100%;
+    max-width: 360px;
+    margin: 0 auto;
+    background: var(--cream);
+    border-radius: 24px;
+    border: 3px solid var(--ink);
+    overflow: hidden;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+  }
+
+  .demo-bar {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    border-bottom: 2px solid var(--ink);
+    gap: 6px;
+  }
+
+  .demo-bar .db-back {
+    width: 28px; height: 28px;
+    border-radius: 7px; border: 2px solid var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; background: var(--cream);
+  }
+
+  .demo-bar .db-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px; font-weight: 600;
+    flex: 1; text-align: center;
+  }
+
+  .demo-bar .db-pill {
+    height: 22px; padding: 0 8px;
+    border-radius: 11px; border: 2px solid var(--ink);
+    font-size: 10px; font-weight: 600;
+    display: flex; align-items: center;
+    background: #FFF7E0;
+  }
+
+  .demo-content {
+    padding: 20px 16px;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .demo-question {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .demo-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+
+  .demo-cta {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+    border: 2px solid var(--ink);
+    background: var(--yellow);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 0 var(--ink);
+    margin-top: auto;
+    transition: all 0.15s;
+  }
+
+  .demo-cta:hover { background: var(--yellow-deep); }
+  .demo-cta:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+  .demo-cta:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .demo-feedback {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-top: 8px;
+    font-weight: 500;
+    display: none;
+  }
+
+  .demo-feedback.show { display: block; }
+  .demo-feedback.wrong { background: var(--red-soft); color: var(--red-text); }
+  .demo-feedback.right { background: var(--green); color: #2E7D32; }
+
+  /* Reset button */
+  .reset-btn {
+    display: block;
+    margin: 8px auto 0;
+    padding: 4px 14px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  .reset-btn:hover { border-color: var(--ink); color: var(--ink); }
+
+  .spec-divider {
+    max-width: 420px;
+    margin: 0 auto 48px;
+    border: none;
+    border-top: 2px dashed #ddd;
+  }
+
+  /* ─── 1. CHIP SELECT ─── */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0; }
+
+  .chip {
+    padding: 9px 16px;
+    border-radius: 10px;
+    border: 2px solid var(--ink);
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    background: var(--cream);
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .chip:hover:not(.dimmed):not(.locked) { transform: translateY(-1px); }
+  .chip.selected { background: var(--yellow); box-shadow: 0 3px 0 var(--ink); transform: translateY(-2px); }
+  .chip.dimmed { opacity: 0.35; border-color: #ccc; cursor: default; pointer-events: none; }
+  .chip.locked { background: var(--yellow); cursor: default; position: relative; }
+
+  .chip.locked::after {
+    content: '✓'; position: absolute; top: -5px; right: -5px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--green-dark); color: white;
+    font-size: 9px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink);
+  }
+
+  .chip.wrong-shake {
+    background: var(--red-soft);
+    animation: chipShake 0.4s ease-in-out;
+  }
+
+  @keyframes chipShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  /* ─── 2. SLIDER ─── */
+  .slider-container { margin: 16px 0; }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+
+  .slider-track {
+    position: relative;
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #E0E0DC;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+  }
+
+  .slider-fill {
+    position: absolute;
+    top: -2px; left: -2px;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    pointer-events: none;
+    transition: width 0.05s;
+  }
+
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    border: 2.5px solid var(--ink);
+    background: var(--cream);
+    box-shadow: 0 2px 0 var(--ink);
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    z-index: 2;
+    transition: transform 0.05s;
+  }
+
+  .slider-thumb:active { cursor: grabbing; transform: translate(-50%, -50%) scale(1.1); }
+
+  .slider-value {
+    text-align: center;
+    font-family: 'Sora', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-top: 12px;
+  }
+
+  .slider-unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+
+  /* ─── 3. DRAG & DROP ─── */
+  .dnd-zones {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .dnd-zone {
+    flex: 1;
+    min-height: 100px;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    padding: 8px;
+    text-align: center;
+    transition: all 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dnd-zone.over { border-color: var(--ink); background: #FFF7E0; }
+
+  .dnd-zone-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .dnd-items {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  .dnd-item {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: grab;
+    user-select: none;
+    transition: all 0.15s;
+    touch-action: none;
+  }
+
+  .dnd-item:active { cursor: grabbing; opacity: 0.7; }
+  .dnd-item.placed { background: var(--green); }
+
+  /* ─── 4. TAP ON IMAGE ─── */
+  .tap-image {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: 14px;
+    border: 2px solid var(--ink);
+    background: linear-gradient(135deg, #E3F0FF, #FFF3E0);
+    margin: 12px 0;
+    overflow: hidden;
+    cursor: crosshair;
+  }
+
+  .tap-target {
+    position: absolute;
+    width: 50px; height: 50px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .tap-target:hover { transform: scale(1.1); }
+
+  .tap-target.found {
+    background: rgba(76, 175, 80, 0.2);
+    border: 2px solid var(--green-dark);
+  }
+
+  .tap-target.found::after {
+    content: '✓'; position: absolute; top: -4px; right: -4px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--green-dark); color: white;
+    font-size: 9px; display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--ink);
+  }
+
+  .tap-counter {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ─── 5. POUR / FILL ─── */
+  .pour-area {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 16px 0;
+  }
+
+  .glass {
+    position: relative;
+    border: 2.5px solid var(--ink);
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .glass-fill {
+    background: #90CAF9;
+    transition: height 1s cubic-bezier(.4,0,.2,1);
+    width: 100%;
+  }
+
+  .glass-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 6px;
+  }
+
+  .glass-reading {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-top: 2px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .glass-reading.show { opacity: 1; }
+
+  .pour-btn {
+    padding: 8px 20px;
+    border-radius: 10px;
+    border: 2px solid var(--ink);
+    background: var(--yellow);
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 2px 0 var(--ink);
+    margin: 12px auto 0;
+    display: block;
+    transition: all 0.15s;
+  }
+
+  .pour-btn:hover { background: var(--yellow-deep); }
+  .pour-btn:active { transform: translateY(2px); box-shadow: 0 0 0 var(--ink); }
+  .pour-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ─── 6. NUMBER INPUT ─── */
+  .num-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 16px 0;
+    justify-content: center;
+  }
+
+  .num-input {
+    width: 120px;
+    height: 48px;
+    border: 2.5px solid var(--ink);
+    border-radius: 12px;
+    text-align: center;
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .num-input:focus { border-color: var(--yellow-deep); box-shadow: 0 0 0 3px rgba(255,213,79,0.3); }
+
+  .num-unit {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  /* ─── 7. COMPARE CARDS ─── */
+  .compare-row {
+    display: flex;
+    gap: 12px;
+    margin: 12px 0;
+  }
+
+  .compare-card {
+    flex: 1;
+    border: 2.5px solid var(--ink);
+    border-radius: 14px;
+    padding: 14px;
+    background: var(--cream);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    user-select: none;
+  }
+
+  .compare-card:hover { transform: translateY(-2px); box-shadow: 0 4px 0 var(--ink); }
+
+  .compare-card.picked {
+    background: var(--yellow);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 0 var(--ink);
+  }
+
+  .compare-card.not-picked {
+    opacity: 0.4;
+    transform: none;
+    box-shadow: none;
+    cursor: default;
+    pointer-events: none;
+  }
+
+  .cc-emoji { font-size: 32px; margin-bottom: 6px; }
+  .cc-title { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .cc-detail { font-size: 11px; color: #555; line-height: 1.4; }
+
+  /* ─── 8. TOGGLE ─── */
+  .toggle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 12px 0;
+  }
+
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: var(--cream);
+  }
+
+  .toggle-label { font-size: 13px; font-weight: 500; }
+
+  .toggle-switch {
+    width: 48px; height: 26px;
+    border-radius: 13px;
+    border: 2px solid var(--ink);
+    background: #E0E0DC;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .toggle-switch.on { background: var(--green-dark); }
+
+  .toggle-knob {
+    position: absolute;
+    top: 2px; left: 2px;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    transition: left 0.2s;
+  }
+
+  .toggle-switch.on .toggle-knob { left: 24px; }
+
+  /* ─── 9. SORTING ─── */
+  .sort-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+  }
+
+  .sort-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    background: var(--cream);
+    cursor: grab;
+    user-select: none;
+    transition: all 0.15s;
+    touch-action: none;
+  }
+
+  .sort-item:active { cursor: grabbing; background: #FFF7E0; }
+
+  .sort-handle {
+    font-size: 14px;
+    color: #ccc;
+    flex-shrink: 0;
+  }
+
+  .sort-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1.5px solid #ccc;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .sort-text { font-size: 13px; font-weight: 500; }
+
+  .sort-item.correct { border-color: var(--green-dark); background: var(--green); }
+  .sort-item.correct .sort-num { background: var(--green-dark); color: white; border-color: var(--green-dark); }
+
+  .sort-item.dragging { opacity: 0.5; }
+
+  /* ─── 10. DRAWING ─── */
+  .draw-canvas-wrap {
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 12px 0;
+    position: relative;
+    background: white;
+  }
+
+  .draw-canvas {
+    width: 100%;
+    height: 180px;
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  .draw-tools {
+    display: flex;
+    gap: 6px;
+    padding: 8px 12px;
+    border-top: 2px solid var(--ink);
+    background: var(--bg);
+  }
+
+  .draw-color {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .draw-color:hover { transform: scale(1.15); }
+  .draw-color.active { box-shadow: 0 0 0 3px rgba(0,0,0,0.15); transform: scale(1.15); }
+
+  .draw-clear {
+    margin-left: auto;
+    padding: 3px 10px;
+    border: 1.5px solid #ccc;
+    border-radius: 6px;
+    background: white;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+  }
+
+  /* Audio context for sounds */
+  .sound-demo {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+
+  .sound-btn {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1.5px solid var(--ink);
+    background: var(--cream);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.1s;
+  }
+
+  .sound-btn:active { transform: scale(0.95); background: var(--yellow); }
+</style>
+</head>
+<body>
+
+<div class="page-title">Interaction Toolkit</div>
+<div class="page-subtitle">Live interactive examples. Try each one — this is how they feel to a kid.</div>
+
+<!-- ═══════════ 1. CHIP SELECT ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 1</div>
+  <div class="section-title">Chip Select (Two-Phase)</div>
+  <div class="section-source">Used in: Cup Trick, Doubling Allowance, Volume Con</div>
+  <div class="section-desc">Kid picks from multiple options. Two phases: select (can change mind) → confirm (locks answer). Try clicking a chip, then "Lock my answer".</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">The Cup Trick</div>
+      <div class="db-pill">2 of 8</div>
+    </div>
+    <div class="demo-content" id="chip-demo">
+      <div class="demo-question">Which glass holds more?</div>
+      <div class="demo-hint">Tap to pick, then lock your answer.</div>
+      <div class="chips" id="chip-group">
+        <div class="chip" data-val="a" onclick="chipSelect(this)">Glass A</div>
+        <div class="chip" data-val="b" onclick="chipSelect(this)">Glass B</div>
+        <div class="chip" data-val="same" onclick="chipSelect(this)">Both same</div>
+      </div>
+      <div class="demo-feedback" id="chip-fb"></div>
+      <div style="flex:1;"></div>
+      <div class="demo-cta" id="chip-cta" disabled onclick="chipConfirm()">Lock my answer ✓</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="chipReset()">Reset demo</button>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 2. SLIDER ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 2</div>
+  <div class="section-title">Slider</div>
+  <div class="section-source">Used in: Shrinkflation, Feed Is A Choice</div>
+  <div class="section-desc">Kid drags to estimate a value. Great for gut-check predictions. Try dragging the handle.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Shrinkflation Scam</div>
+      <div class="db-pill">3 of 9</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">How many ml do you think fits?</div>
+      <div class="demo-hint">Drag the slider to make your guess.</div>
+      <div class="slider-container" id="slider-demo">
+        <div class="slider-labels"><span>100 ml</span><span>500 ml</span></div>
+        <div class="slider-track" id="slider-track">
+          <div class="slider-fill" id="slider-fill"></div>
+          <div class="slider-thumb" id="slider-thumb"></div>
+        </div>
+      </div>
+      <div class="slider-value"><span id="slider-val">300</span> <span class="slider-unit">ml</span></div>
+      <div style="flex:1;"></div>
+      <div class="demo-cta" onclick="sliderConfirm()">Lock my guess →</div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 3. POUR / FILL ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 3</div>
+  <div class="section-title">Pour / Fill Simulation</div>
+  <div class="section-source">Used in: Cup Trick, Volume Con</div>
+  <div class="section-desc">Kid triggers a pour and watches liquid fill. The visual result reveals the math. Try pressing "Pour".</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">The Cup Trick</div>
+      <div class="db-pill">3 of 8</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">Let's pour and see!</div>
+      <div class="demo-hint">Which glass actually holds more water?</div>
+      <div class="pour-area">
+        <div style="text-align: center;">
+          <div class="glass" style="width: 50px; height: 100px;">
+            <div class="glass-fill" id="glass-a-fill" style="height: 0%;"></div>
+          </div>
+          <div class="glass-label">Glass A</div>
+          <div class="glass-reading" id="glass-a-reading">320 ml</div>
+        </div>
+        <div style="text-align: center;">
+          <div class="glass" style="width: 80px; height: 60px;">
+            <div class="glass-fill" id="glass-b-fill" style="height: 0%;"></div>
+          </div>
+          <div class="glass-label">Glass B</div>
+          <div class="glass-reading" id="glass-b-reading">350 ml</div>
+        </div>
+      </div>
+      <button class="pour-btn" id="pour-btn" onclick="pourWater()">Pour water 💧</button>
+      <div class="demo-feedback right" id="pour-fb" style="margin-top: 12px; text-align: center;">The short, wide glass holds more!</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="pourReset()">Reset demo</button>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 4. TAP ON IMAGE ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 4</div>
+  <div class="section-title">Tap on Image</div>
+  <div class="section-source">Used in: Fake Chart Detective, Map That Lies</div>
+  <div class="section-desc">Kid taps specific areas to find or identify things. Try tapping the hidden objects.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Find the Shapes</div>
+      <div class="db-pill">4 of 7</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">Find all 3 hidden triangles!</div>
+      <div class="demo-hint">Tap the shapes you can spot.</div>
+      <div class="tap-image" id="tap-area">
+        <div class="tap-target" id="tap1" style="top: 20px; left: 30px;" onclick="tapFound(this)">🔺</div>
+        <div class="tap-target" id="tap2" style="top: 110px; left: 200px;" onclick="tapFound(this)">🔺</div>
+        <div class="tap-target" id="tap3" style="top: 60px; left: 120px;" onclick="tapFound(this)">🔺</div>
+        <div style="position:absolute; top:30px; right:20px; font-size:28px; opacity:0.3;">⭐</div>
+        <div style="position:absolute; bottom:20px; left:50px; font-size:28px; opacity:0.3;">🟦</div>
+        <div style="position:absolute; bottom:30px; right:60px; font-size:24px; opacity:0.3;">⬟</div>
+      </div>
+      <div class="tap-counter" id="tap-counter">Found: 0 / 3</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="tapReset()">Reset demo</button>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 5. COMPARE CARDS ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 5</div>
+  <div class="section-title">Compare Cards</div>
+  <div class="section-source">Used in: Doubling Allowance, Smart Shopper</div>
+  <div class="section-desc">Kid picks between two options presented as cards. Tap one to choose.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Doubling Allowance</div>
+      <div class="db-pill">1 of 10</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">Which deal would you pick?</div>
+      <div class="demo-hint">Tap the deal that sounds better to you.</div>
+      <div class="compare-row" id="compare-group">
+        <div class="compare-card" onclick="comparePick(this, 0)">
+          <div class="cc-emoji">💵</div>
+          <div class="cc-title">Deal A</div>
+          <div class="cc-detail">$100 every day for 30 days</div>
+        </div>
+        <div class="compare-card" onclick="comparePick(this, 1)">
+          <div class="cc-emoji">🪙</div>
+          <div class="cc-title">Deal B</div>
+          <div class="cc-detail">1 penny, doubled each day for 30 days</div>
+        </div>
+      </div>
+      <div class="demo-feedback" id="compare-fb"></div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="compareReset()">Reset demo</button>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 6. NUMBER INPUT ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 6</div>
+  <div class="section-title">Number Input</div>
+  <div class="section-source">Used in: Sanity Check Sleep, Birthday Paradox</div>
+  <div class="section-desc">Kid types a number to make a prediction. Simple and direct.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Birthday Paradox</div>
+      <div class="db-pill">2 of 8</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">How many people needed for a 50% chance of shared birthday?</div>
+      <div class="demo-hint">Type your best guess.</div>
+      <div class="num-input-wrap">
+        <input type="number" class="num-input" id="num-input" placeholder="?" min="1" max="365">
+        <div class="num-unit">people</div>
+      </div>
+      <div class="demo-feedback" id="num-fb"></div>
+      <div style="flex:1;"></div>
+      <div class="demo-cta" onclick="numCheck()">Check my guess →</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="numReset()">Reset demo</button>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 7. TOGGLE ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 7</div>
+  <div class="section-title">Toggle</div>
+  <div class="section-source">Used in: Feed Is A Choice</div>
+  <div class="section-desc">On/off switches for controlling variables. Kid sees how each toggle affects the result.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Feed Is A Choice</div>
+      <div class="db-pill">5 of 9</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">Control the algorithm</div>
+      <div class="demo-hint">Toggle each factor on/off. Watch the feed change.</div>
+      <div class="toggle-list">
+        <div class="toggle-row">
+          <div class="toggle-label">Watch time</div>
+          <div class="toggle-switch on" onclick="toggleFlip(this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">Likes</div>
+          <div class="toggle-switch" onclick="toggleFlip(this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">Shares</div>
+          <div class="toggle-switch on" onclick="toggleFlip(this)"><div class="toggle-knob"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-label">Recency</div>
+          <div class="toggle-switch" onclick="toggleFlip(this)"><div class="toggle-knob"></div></div>
+        </div>
+      </div>
+      <div id="toggle-result" style="text-align: center; font-size: 12px; color: var(--muted); margin-top: 8px;">Algorithm weight: 60%</div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 8. SORTING ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 8</div>
+  <div class="section-title">Sorting / Ordering</div>
+  <div class="section-source">Planned for: new explorations</div>
+  <div class="section-desc">Kid drags items into the correct order. Grab any item and drag it to a new position.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Sequence It</div>
+      <div class="db-pill">3 of 6</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">Order smallest to largest</div>
+      <div class="demo-hint">Use arrows to reorder the items.</div>
+      <div class="sort-list" id="sort-list">
+        <div class="sort-item" data-correct="2" draggable="true">
+          <div class="sort-handle">⬍</div>
+          <div class="sort-num">1</div>
+          <div class="sort-text">🏀 Basketball</div>
+        </div>
+        <div class="sort-item" data-correct="0" draggable="true">
+          <div class="sort-handle">⬍</div>
+          <div class="sort-num">2</div>
+          <div class="sort-text">🏓 Ping pong</div>
+        </div>
+        <div class="sort-item" data-correct="3" draggable="true">
+          <div class="sort-handle">⬍</div>
+          <div class="sort-num">3</div>
+          <div class="sort-text">🏋️ Bowling ball</div>
+        </div>
+        <div class="sort-item" data-correct="1" draggable="true">
+          <div class="sort-handle">⬍</div>
+          <div class="sort-num">4</div>
+          <div class="sort-text">⚾ Baseball</div>
+        </div>
+      </div>
+      <div style="flex:1;"></div>
+      <div class="demo-cta" onclick="sortCheck()">Check order ✓</div>
+    </div>
+  </div>
+  <button class="reset-btn" onclick="sortReset()">Reset demo</button>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 9. DRAWING ═══════════ -->
+<div class="section">
+  <div class="section-num">Interaction 9</div>
+  <div class="section-title">Drawing / Tracing</div>
+  <div class="section-source">Planned for: Band 1 explorations (Two Paths Home, etc.)</div>
+  <div class="section-desc">Kid draws or traces a path with their finger. Great for spatial reasoning. Try drawing below.</div>
+
+  <div class="demo-phone">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Two Paths Home</div>
+      <div class="db-pill">4 of 6</div>
+    </div>
+    <div class="demo-content">
+      <div class="demo-question">Draw the shortest path!</div>
+      <div class="demo-hint">Use your finger or mouse to trace a route.</div>
+      <div class="draw-canvas-wrap">
+        <canvas class="draw-canvas" id="draw-canvas"></canvas>
+        <div class="draw-tools">
+          <div class="draw-color active" style="background: #1A1A1A;" onclick="drawColor(this, '#1A1A1A')"></div>
+          <div class="draw-color" style="background: #FF5722;" onclick="drawColor(this, '#FF5722')"></div>
+          <div class="draw-color" style="background: #2196F3;" onclick="drawColor(this, '#2196F3')"></div>
+          <div class="draw-color" style="background: #4CAF50;" onclick="drawColor(this, '#4CAF50')"></div>
+          <button class="draw-clear" onclick="drawClear()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ═══════════ 10. SOUND EFFECTS ═══════════ -->
+<div class="section">
+  <div class="section-num">Bonus</div>
+  <div class="section-title">Sound Effects Bucket</div>
+  <div class="section-desc">All sounds are synthesized via Web Audio — no audio files needed. Tap each to hear.</div>
+
+  <div class="demo-phone">
+    <div class="demo-content" style="min-height: 200px;">
+      <div class="demo-question">Try each sound</div>
+      <div class="demo-hint">These play during interactions across all explorations.</div>
+      <div class="sound-demo">
+        <div class="sound-btn" onclick="sfx('tap')">🔘 tap</div>
+        <div class="sound-btn" onclick="sfx('select')">👆 select</div>
+        <div class="sound-btn" onclick="sfx('right')">✅ right</div>
+        <div class="sound-btn" onclick="sfx('oops')">💫 oops</div>
+        <div class="sound-btn" onclick="sfx('reveal')">✨ reveal</div>
+        <div class="sound-btn" onclick="sfx('tool')">🔧 tool</div>
+        <div class="sound-btn" onclick="sfx('coin')">🪙 coin</div>
+        <div class="sound-btn" onclick="sfx('celebrate')">🎉 celebrate</div>
+        <div class="sound-btn" onclick="sfx('pop')">💥 pop</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── Audio ───
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
+  return audioCtx;
+}
+function tone(freq, dur, type = 'sine', gain = 0.06) {
+  const ctx = getAudio(); if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.value = gain; g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + dur);
+}
+function sfx(kind) {
+  switch(kind) {
+    case 'tap': tone(620, 0.07, 'triangle', 0.04); break;
+    case 'right': tone(720, 0.10, 'triangle', 0.06); setTimeout(() => tone(960, 0.12, 'triangle', 0.05), 80); break;
+    case 'oops': tone(400, 0.12, 'sine', 0.05); setTimeout(() => tone(350, 0.15, 'sine', 0.04), 60); break;
+    case 'select': tone(540, 0.08, 'sine', 0.05); break;
+    case 'reveal': tone(660, 0.10, 'sine', 0.06); setTimeout(() => tone(880, 0.10, 'sine', 0.06), 100); setTimeout(() => tone(1100, 0.14, 'sine', 0.05), 200); break;
+    case 'tool': [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 0.18, 'triangle', 0.06), i * 110)); break;
+    case 'coin': tone(1200, 0.05, 'sine', 0.04); setTimeout(() => tone(1600, 0.08, 'sine', 0.03), 40); break;
+    case 'celebrate': [523, 659, 784, 880, 1047, 1319].forEach((f, i) => setTimeout(() => tone(f, 0.2, 'triangle', 0.05), i * 100)); break;
+    case 'pop': tone(800, 0.06, 'sine', 0.05); break;
+  }
+}
+
+// ─── 1. Chip Select ───
+let chipLocked = false;
+function chipSelect(el) {
+  if (chipLocked) return;
+  sfx('select');
+  document.querySelectorAll('#chip-group .chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('chip-cta').disabled = false;
+}
+function chipConfirm() {
+  if (chipLocked) return;
+  chipLocked = true;
+  sfx('tap');
+  const selected = document.querySelector('#chip-group .chip.selected');
+  const correct = selected && selected.dataset.val === 'b';
+  document.querySelectorAll('#chip-group .chip').forEach(c => {
+    if (c.classList.contains('selected')) { c.classList.remove('selected'); c.classList.add('locked'); }
+    else { c.classList.add('dimmed'); }
+  });
+  const fb = document.getElementById('chip-fb');
+  if (correct) {
+    fb.className = 'demo-feedback right show';
+    fb.textContent = '✓ Let\'s see if you\'re right!';
+    sfx('right');
+  } else {
+    fb.className = 'demo-feedback wrong show';
+    fb.textContent = 'Interesting choice — let\'s find out!';
+  }
+  document.getElementById('chip-cta').textContent = 'Pour to check →';
+}
+function chipReset() {
+  chipLocked = false;
+  document.querySelectorAll('#chip-group .chip').forEach(c => { c.className = 'chip'; });
+  document.getElementById('chip-fb').className = 'demo-feedback';
+  document.getElementById('chip-cta').disabled = true;
+  document.getElementById('chip-cta').textContent = 'Lock my answer ✓';
+}
+
+// ─── 2. Slider ───
+(function() {
+  const track = document.getElementById('slider-track');
+  const thumb = document.getElementById('slider-thumb');
+  const fill = document.getElementById('slider-fill');
+  const valEl = document.getElementById('slider-val');
+  let dragging = false;
+
+  function updateSlider(pct) {
+    pct = Math.max(0, Math.min(1, pct));
+    thumb.style.left = (pct * 100) + '%';
+    fill.style.width = (pct * 100) + '%';
+    const val = Math.round(100 + pct * 400);
+    valEl.textContent = val;
+  }
+
+  function getPos(e) {
+    const r = track.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    return x / r.width;
+  }
+
+  thumb.addEventListener('mousedown', () => { dragging = true; });
+  thumb.addEventListener('touchstart', () => { dragging = true; }, { passive: true });
+  document.addEventListener('mousemove', (e) => { if (dragging) updateSlider(getPos(e)); });
+  document.addEventListener('touchmove', (e) => { if (dragging) updateSlider(getPos(e)); }, { passive: true });
+  document.addEventListener('mouseup', () => { dragging = false; });
+  document.addEventListener('touchend', () => { dragging = false; });
+  track.addEventListener('click', (e) => { updateSlider(getPos(e)); sfx('tap'); });
+
+  updateSlider(0.5);
+})();
+
+function sliderConfirm() {
+  sfx('reveal');
+  const val = parseInt(document.getElementById('slider-val').textContent);
+  alert('You guessed ' + val + ' ml! The actual answer is 330 ml.');
+}
+
+// ─── 3. Pour ───
+function pourWater() {
+  sfx('select');
+  document.getElementById('glass-a-fill').style.height = '75%';
+  document.getElementById('glass-b-fill').style.height = '90%';
+  document.getElementById('pour-btn').disabled = true;
+  setTimeout(() => {
+    document.getElementById('glass-a-reading').classList.add('show');
+    document.getElementById('glass-b-reading').classList.add('show');
+    document.getElementById('pour-fb').classList.add('show');
+    sfx('reveal');
+  }, 1200);
+}
+function pourReset() {
+  document.getElementById('glass-a-fill').style.height = '0%';
+  document.getElementById('glass-b-fill').style.height = '0%';
+  document.getElementById('glass-a-reading').classList.remove('show');
+  document.getElementById('glass-b-reading').classList.remove('show');
+  document.getElementById('pour-fb').classList.remove('show');
+  document.getElementById('pour-btn').disabled = false;
+}
+
+// ─── 4. Tap on Image ───
+let tapCount = 0;
+function tapFound(el) {
+  if (el.classList.contains('found')) return;
+  el.classList.add('found');
+  tapCount++;
+  sfx('coin');
+  document.getElementById('tap-counter').textContent = 'Found: ' + tapCount + ' / 3';
+  if (tapCount === 3) {
+    document.getElementById('tap-counter').textContent = '✓ All found!';
+    sfx('celebrate');
+  }
+}
+function tapReset() {
+  tapCount = 0;
+  document.querySelectorAll('.tap-target').forEach(t => t.classList.remove('found'));
+  document.getElementById('tap-counter').textContent = 'Found: 0 / 3';
+}
+
+// ─── 5. Compare Cards ───
+function comparePick(el, idx) {
+  sfx('select');
+  const cards = document.querySelectorAll('#compare-group .compare-card');
+  cards.forEach((c, i) => {
+    if (i === idx) c.classList.add('picked');
+    else { c.classList.add('not-picked'); }
+  });
+  const fb = document.getElementById('compare-fb');
+  fb.className = 'demo-feedback show ' + (idx === 1 ? 'right' : 'wrong');
+  fb.textContent = idx === 1 ? '✓ Interesting — let\'s see if the penny wins!' : 'Most people pick Deal A — but is it really better?';
+}
+function compareReset() {
+  document.querySelectorAll('#compare-group .compare-card').forEach(c => { c.className = 'compare-card'; });
+  document.getElementById('compare-fb').className = 'demo-feedback';
+}
+
+// ─── 6. Number Input ───
+function numCheck() {
+  const val = parseInt(document.getElementById('num-input').value);
+  const fb = document.getElementById('num-fb');
+  if (!val || val < 1) { fb.className = 'demo-feedback wrong show'; fb.textContent = 'Type a number first!'; return; }
+  sfx('tap');
+  if (val === 23) {
+    fb.className = 'demo-feedback right show';
+    fb.textContent = '✓ Exactly! Only 23 people needed. Surprising, right?';
+    sfx('right');
+  } else if (val >= 20 && val <= 26) {
+    fb.className = 'demo-feedback right show';
+    fb.textContent = '✓ So close! The answer is 23. Most people guess way higher!';
+    sfx('right');
+  } else {
+    fb.className = 'demo-feedback wrong show';
+    fb.textContent = val > 23 ? 'Lower than you think! The answer is just 23.' : 'Higher! The answer is 23 — surprisingly low.';
+    sfx('oops');
+  }
+}
+function numReset() {
+  document.getElementById('num-input').value = '';
+  document.getElementById('num-fb').className = 'demo-feedback';
+}
+
+// ─── 7. Toggle ───
+function toggleFlip(el) {
+  el.classList.toggle('on');
+  sfx('tap');
+  const on = document.querySelectorAll('.toggle-switch.on').length;
+  const pct = on * 30;
+  document.getElementById('toggle-result').textContent = 'Algorithm weight: ' + pct + '%';
+}
+
+// ─── 8. Sort (drag & drop) ───
+(function() {
+  const list = document.getElementById('sort-list');
+  let dragItem = null;
+  let placeholder = null;
+  let startY = 0;
+  let startRect = null;
+
+  function createPlaceholder() {
+    const ph = document.createElement('div');
+    ph.className = 'sort-item';
+    ph.style.border = '2px dashed #ccc';
+    ph.style.background = '#FFF7E0';
+    ph.style.opacity = '0.5';
+    ph.style.height = '42px';
+    ph.id = 'sort-placeholder';
+    return ph;
+  }
+
+  function getClosestItem(y) {
+    const items = [...list.querySelectorAll('.sort-item:not(#sort-placeholder):not(.sort-dragging)')];
+    let closest = null;
+    let closestDist = Infinity;
+    items.forEach(item => {
+      const rect = item.getBoundingClientRect();
+      const mid = rect.top + rect.height / 2;
+      const dist = y - mid;
+      if (dist < closestDist && dist > 0) {
+        closestDist = dist;
+        closest = item;
+      }
+    });
+    return closest;
+  }
+
+  function onStart(e) {
+    const item = e.target.closest('.sort-item');
+    if (!item || item.classList.contains('correct')) return;
+    e.preventDefault();
+    sfx('tap');
+    dragItem = item;
+    startRect = item.getBoundingClientRect();
+    startY = (e.touches ? e.touches[0].clientY : e.clientY);
+
+    placeholder = createPlaceholder();
+    item.parentNode.insertBefore(placeholder, item);
+
+    item.classList.add('sort-dragging');
+    item.style.position = 'fixed';
+    item.style.width = startRect.width + 'px';
+    item.style.left = startRect.left + 'px';
+    item.style.top = startRect.top + 'px';
+    item.style.zIndex = '100';
+    item.style.boxShadow = '0 6px 20px rgba(0,0,0,0.15)';
+    item.style.transform = 'scale(1.03)';
+  }
+
+  function onMove(e) {
+    if (!dragItem) return;
+    e.preventDefault();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const dy = clientY - startY;
+    dragItem.style.top = (startRect.top + dy) + 'px';
+
+    const closest = getClosestItem(clientY);
+    if (closest) {
+      list.insertBefore(placeholder, closest.nextSibling);
+    } else {
+      const first = list.querySelector('.sort-item:not(#sort-placeholder):not(.sort-dragging)');
+      if (first) list.insertBefore(placeholder, first);
+    }
+  }
+
+  function onEnd() {
+    if (!dragItem) return;
+    dragItem.classList.remove('sort-dragging');
+    dragItem.style.position = '';
+    dragItem.style.width = '';
+    dragItem.style.left = '';
+    dragItem.style.top = '';
+    dragItem.style.zIndex = '';
+    dragItem.style.boxShadow = '';
+    dragItem.style.transform = '';
+
+    if (placeholder && placeholder.parentNode) {
+      placeholder.parentNode.insertBefore(dragItem, placeholder);
+      placeholder.remove();
+    }
+
+    dragItem = null;
+    placeholder = null;
+
+    updateSortNums();
+    sfx('select');
+  }
+
+  list.addEventListener('mousedown', onStart);
+  list.addEventListener('touchstart', onStart, { passive: false });
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('touchmove', onMove, { passive: false });
+  document.addEventListener('mouseup', onEnd);
+  document.addEventListener('touchend', onEnd);
+})();
+
+function updateSortNums() {
+  [...document.getElementById('sort-list').children].forEach((el, i) => {
+    const num = el.querySelector('.sort-num');
+    if (num) num.textContent = i + 1;
+  });
+}
+
+function sortCheck() {
+  const items = [...document.getElementById('sort-list').children];
+  const order = items.map(i => parseInt(i.dataset.correct));
+  const correct = order.every((v, i) => v === i);
+  if (correct) {
+    sfx('celebrate');
+    items.forEach(i => i.classList.add('correct'));
+  } else {
+    sfx('oops');
+    items.forEach(i => {
+      i.classList.add('wrong-shake');
+      setTimeout(() => i.classList.remove('wrong-shake'), 500);
+    });
+  }
+}
+
+function sortReset() {
+  const list = document.getElementById('sort-list');
+  const items = [...list.children];
+  for (let i = items.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    list.appendChild(items[j]);
+  }
+  [...list.children].forEach((el, i) => {
+    el.querySelector('.sort-num').textContent = i + 1;
+    el.classList.remove('correct');
+  });
+}
+
+// ─── 9. Drawing ───
+(function() {
+  const canvas = document.getElementById('draw-canvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
+  let currentColor = '#1A1A1A';
+
+  function resize() {
+    const r = canvas.getBoundingClientRect();
+    canvas.width = r.width * 2;
+    canvas.height = r.height * 2;
+    ctx.scale(2, 2);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+    return { x, y };
+  }
+
+  canvas.addEventListener('mousedown', (e) => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+  canvas.addEventListener('touchstart', (e) => { drawing = true; const p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }, { passive: true });
+  canvas.addEventListener('mousemove', (e) => { if (!drawing) return; ctx.strokeStyle = currentColor; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); });
+  canvas.addEventListener('touchmove', (e) => { if (!drawing) return; e.preventDefault(); ctx.strokeStyle = currentColor; const p = getPos(e); ctx.lineTo(p.x, p.y); ctx.stroke(); }, { passive: false });
+  canvas.addEventListener('mouseup', () => { drawing = false; });
+  canvas.addEventListener('touchend', () => { drawing = false; });
+
+  window.drawColor = function(el, color) {
+    currentColor = color;
+    document.querySelectorAll('.draw-color').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  };
+
+  window.drawClear = function() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  };
+})();
+</script>
+
+</body>
+</html>

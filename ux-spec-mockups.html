@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Exploration Shell — UX Spec Mockups</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Inter:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #F5F3EE;
+    color: #1A1A1A;
+    padding: 40px 20px;
+  }
+
+  .page-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .page-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 48px;
+  }
+
+  .section {
+    max-width: 1100px;
+    margin: 0 auto 64px;
+  }
+
+  .section-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .section-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .section-desc {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* Two-column layout: spec + mockup */
+  .spec-row {
+    display: flex;
+    gap: 40px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .spec-text {
+    flex: 1;
+    min-width: 320px;
+  }
+
+  .spec-text ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .spec-text ul li {
+    position: relative;
+    padding: 6px 0 6px 20px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+  }
+
+  .spec-text ul li::before {
+    content: '•';
+    position: absolute;
+    left: 4px;
+    color: #999;
+    font-weight: 700;
+  }
+
+  .spec-text ul li strong {
+    color: #1A1A1A;
+  }
+
+  .spec-text ul ul {
+    margin-top: 2px;
+  }
+
+  .spec-text ul ul li {
+    padding: 3px 0 3px 20px;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .spec-text ul ul li::before {
+    content: '–';
+    color: #bbb;
+  }
+
+  .spec-text .wip-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #FFF3D6;
+    border: 1px solid #F0C040;
+    font-size: 11px;
+    font-weight: 600;
+    color: #8B6914;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 4px;
+  }
+
+  .spec-text .v2-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: #E0EDFA;
+    border: 1px solid #90BAE0;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2A5F8F;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: 4px;
+  }
+
+  .spec-mockups {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mockup-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .mockup-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-align: center;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 280px;
+    height: 520px;
+    background: #FFFDF8;
+    border-radius: 28px;
+    border: 3px solid #1A1A1A;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .phone.short {
+    height: auto;
+    min-height: 80px;
+  }
+
+  .phone.medium {
+    height: 400px;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 24px;
+    background: #FFFDF8;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 18px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #1A1A1A;
+    flex-shrink: 0;
+  }
+
+  /* Top bar */
+  .top-bar {
+    height: 44px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    border-bottom: 2px solid #1A1A1A;
+    background: #FFFDF8;
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  .top-bar .back-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 2px solid #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 700;
+    background: #FFFDF8;
+    flex-shrink: 0;
+  }
+
+  .top-bar .title {
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .top-bar .right-group {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+
+  .top-bar .icon-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    border: 2px solid #1A1A1A;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    background: #FFFDF8;
+    flex-shrink: 0;
+  }
+
+  .top-bar .step-pill {
+    height: 26px;
+    padding: 0 8px;
+    border-radius: 13px;
+    border: 2px solid #1A1A1A;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    background: #FFF7E0;
+    white-space: nowrap;
+  }
+
+  /* Content area */
+  .content {
+    flex: 1;
+    padding: 20px 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .content .mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 16px;
+    border: 2px solid #1A1A1A;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    align-self: flex-start;
+    margin-bottom: 12px;
+  }
+
+  .mode-claims { background: #FBE3E0; }
+  .mode-wonders { background: #E0EDFA; }
+  .mode-patterns { background: #E8F5E0; }
+  .mode-choices { background: #FFF3D6; }
+  .mode-builds { background: #F0E4FA; }
+
+  .content .context-image {
+    width: 100%;
+    height: 140px;
+    border-radius: 14px;
+    border: 2px solid #1A1A1A;
+    background: linear-gradient(135deg, #E8F5E0, #E0EDFA);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    font-size: 36px;
+  }
+
+  .content .exp-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .content .exp-desc {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .cta-btn {
+    width: 100%;
+    height: 44px;
+    border-radius: 11px;
+    border: 2px solid #1A1A1A;
+    background: #FFD54F;
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 3px 0 #1A1A1A;
+    margin-top: auto;
+  }
+
+  .cta-btn.secondary { background: #FFFDF8; }
+
+  /* Chip select */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+
+  .chip {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 2px solid #1A1A1A;
+    font-size: 13px;
+    font-weight: 500;
+    background: #FFFDF8;
+  }
+
+  .chip.selected {
+    background: #FFD54F;
+    box-shadow: 0 3px 0 #1A1A1A;
+    transform: translateY(-2px);
+  }
+
+  .chip.dimmed { opacity: 0.4; border-color: #ccc; }
+
+  .chip.locked {
+    background: #FFD54F;
+    opacity: 1;
+    position: relative;
+  }
+
+  .chip.locked::after {
+    content: '✓';
+    position: absolute;
+    top: -6px; right: -6px;
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: #4CAF50;
+    color: white;
+    font-size: 9px;
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid #1A1A1A;
+  }
+
+  .chip.wrong-anim {
+    background: #FBE3E0;
+    animation: shake 0.4s ease-in-out;
+  }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+
+  .feedback {
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .feedback.wrong { background: #FBE3E0; color: #8B2F26; }
+  .feedback.right { background: #E8F5E0; color: #2E7D32; }
+
+  /* Ending screen */
+  .ending-content {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+
+  .ending-emoji { font-size: 40px; margin-bottom: 6px; }
+
+  .ending-header {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+
+  .ending-takeaway {
+    font-size: 13px;
+    color: #555;
+    line-height: 1.5;
+    max-width: 220px;
+    margin-bottom: 20px;
+  }
+
+  .perf-row { display: flex; gap: 10px; margin-bottom: 20px; }
+
+  .perf-card {
+    width: 72px;
+    padding: 10px 6px;
+    border-radius: 10px;
+    border: 2px solid #1A1A1A;
+    text-align: center;
+  }
+
+  .perf-card .perf-val {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .perf-card .perf-label {
+    font-size: 9px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+
+  .perf-card.xp { background: #FFF3D6; }
+  .perf-card.acc { background: #E8F5E0; }
+  .perf-card.time { background: #E0EDFA; }
+
+  /* Share card */
+  .share-card {
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 2px solid #1A1A1A;
+    background: linear-gradient(135deg, #FFF7E0, #FFE8CC);
+    text-align: left;
+    margin-bottom: 12px;
+  }
+
+  .share-card .sc-mode {
+    font-size: 9px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em;
+    color: #888; margin-bottom: 3px;
+  }
+
+  .share-card .sc-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700; margin-bottom: 4px;
+  }
+
+  .share-card .sc-learning {
+    font-size: 12px; color: #555; line-height: 1.4;
+  }
+
+  .share-btn {
+    width: 100%; height: 36px;
+    border-radius: 9px; border: 2px solid #1A1A1A;
+    background: #FFFDF8;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  /* Dialog */
+  .dialog-overlay {
+    position: absolute; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10; border-radius: 26px;
+  }
+
+  .dialog {
+    width: 240px;
+    background: #FFFDF8;
+    border-radius: 18px;
+    border: 2px solid #1A1A1A;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+
+  .dialog .dialog-icon { font-size: 32px; margin-bottom: 10px; }
+
+  .dialog .dialog-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px; font-weight: 700; margin-bottom: 6px;
+  }
+
+  .dialog .dialog-text {
+    font-size: 12px; color: #555; line-height: 1.4; margin-bottom: 16px;
+  }
+
+  .dialog .dialog-btns { display: flex; flex-direction: column; gap: 8px; }
+
+  .dialog .dialog-btn {
+    height: 36px; border-radius: 9px; border: 2px solid #1A1A1A;
+    font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .dialog .dialog-btn.primary { background: #FFD54F; box-shadow: 0 2px 0 #1A1A1A; }
+  .dialog .dialog-btn.secondary { background: #FFFDF8; }
+
+  /* Read-only */
+  .readonly-banner {
+    background: #F0F0EC; border-radius: 8px;
+    padding: 5px 10px; font-size: 10px; font-weight: 600;
+    color: #888; text-align: center; margin-bottom: 10px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+  }
+
+  /* Nav buttons in back-nav mode */
+  .nav-row {
+    display: flex; gap: 8px; margin-top: auto;
+  }
+
+  .nav-btn {
+    flex: 1; height: 40px;
+    border-radius: 10px; border: 2px solid #1A1A1A;
+    font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 4px;
+    box-shadow: 0 2px 0 #1A1A1A;
+  }
+
+  .nav-btn.back { background: #F0F0EC; }
+  .nav-btn.forward { background: #E0EDFA; }
+
+  /* Loading */
+  .loading-content {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex: 1; text-align: center;
+  }
+
+  .loading-thumb {
+    width: 100px; height: 100px;
+    border-radius: 18px; border: 2px solid #1A1A1A;
+    background: linear-gradient(135deg, #E8F5E0, #E0EDFA);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin-bottom: 14px;
+  }
+
+  .loading-dots { display: flex; gap: 6px; margin-top: 10px; }
+
+  .loading-dots span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #1A1A1A;
+    animation: loadPulse 1.2s ease-in-out infinite;
+  }
+
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes loadPulse {
+    0%, 100% { opacity: 0.2; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Confetti */
+  .confetti-container {
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 180px; overflow: hidden; pointer-events: none;
+  }
+
+  .confetti-piece {
+    position: absolute; width: 7px; height: 7px; border-radius: 2px;
+    animation: confettiFall 2s ease-in forwards; opacity: 0.8;
+  }
+
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(180px) rotate(720deg); opacity: 0; }
+  }
+
+  .spec-divider {
+    max-width: 1100px;
+    margin: 0 auto 64px;
+    border: none;
+    border-top: 2px dashed #ddd;
+  }
+
+  .toast {
+    position: absolute; top: 76px; left: 14px; right: 14px;
+    background: #1A1A1A; color: white;
+    padding: 8px 14px; border-radius: 9px;
+    font-size: 12px; text-align: center; z-index: 5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .offline-content {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    flex: 1; text-align: center; padding: 32px 20px;
+  }
+
+  .offline-icon { font-size: 40px; margin-bottom: 12px; }
+
+  .offline-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px; font-weight: 700; margin-bottom: 6px;
+  }
+
+  .offline-desc { font-size: 13px; color: #777; line-height: 1.5; }
+
+  /* Sound table */
+  .sound-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 13px;
+  }
+
+  .sound-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: #F0F0EC;
+    border: 2px solid #1A1A1A;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .sound-table td {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+  }
+
+  .sound-table code {
+    background: #F0F0EC;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* Step types grid */
+  .step-type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0;
+  }
+
+  .step-type-card {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1.5px solid #ddd;
+    background: #FFFDF8;
+  }
+
+  .step-type-card .st-name {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .step-type-card .st-desc {
+    font-size: 12px;
+    color: #777;
+  }
+
+  /* Interaction toolkit grid */
+  .toolkit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin: 8px 0;
+  }
+
+  .toolkit-item {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: #F8F6F1;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .toolkit-item .tk-icon {
+    font-size: 14px;
+    width: 20px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
+  /* Mode header grid */
+  .mode-headers {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 8px 0;
+  }
+
+  .mode-header-chip {
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1.5px solid #1A1A1A;
+    font-size: 12px;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">Exploration Shell — UX Spec</div>
+<div class="page-subtitle">System-level patterns common across all explorations. Spec + visual mockups.</div>
+
+<!-- ========== 1. OPENING SCREEN ========== -->
+<div class="section">
+  <div class="section-label">Section 1</div>
+  <div class="section-title">Opening Screen</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li>Kid taps the exploration card → enters the exploration.</li>
+        <li><strong>3 components:</strong>
+          <ul>
+            <li><strong>Heading</strong> — exploration title.</li>
+            <li><strong>Context</strong> — image + text, child-friendly. Sets up the scenario and delivers the hook.</li>
+            <li><strong>CTA</strong> — "Start" / "Dive in" / "Find out" — contextual per activity.</li>
+          </ul>
+        </li>
+        <li>No estimated time shown.</li>
+        <li>Layout flow: Heading → Context → CTA. Concise, no clutter.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn" style="visibility: hidden;">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">1 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title">The Cup Trick</div>
+            <div class="context-image">🥤</div>
+            <div class="exp-desc">Tall glass or wide glass — which one holds more juice? Your eyes might be lying to you.</div>
+            <div class="cta-btn">Dive In →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Opening Frame</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 2. TOP BAR ========== -->
+<div class="section">
+  <div class="section-label">Section 2</div>
+  <div class="section-title">Top Bar</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Persistent throughout</strong> the exploration.</li>
+        <li><strong>Layout:</strong> <code>[←]  ···  Title  ···  [🔊] [3 of 8] [↻]</code></li>
+        <li><strong>Left:</strong> ← Back button — goes to previous step. Hidden on step 1 / opening frame.</li>
+        <li><strong>Center:</strong> Exploration title. Always visible.</li>
+        <li><strong>Right:</strong>
+          <ul>
+            <li>🔊 Mute/unmute toggle — persists across session.</li>
+            <li>Step progress — "3 of 8". Always show total.</li>
+            <li>↻ Restart — restarts same activity. Triggers confirmation dialog.</li>
+          </ul>
+        </li>
+        <li><strong>Exit (X)</strong> is handled at system level by tech team — not part of the HTML.</li>
+        <li>All touch targets: min 2cm × 2cm.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone short">
+          <div class="top-bar">
+            <div class="back-btn" style="visibility: hidden;">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">1 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">Step 1 — No back</div>
+      </div>
+      <div class="mockup-col">
+        <div class="phone short">
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">3 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">Step 3 — With back</div>
+      </div>
+      <div class="mockup-col">
+        <div class="phone short">
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔇</div>
+              <div class="step-pill">5 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">Muted</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 3. STEP STRUCTURE ========== -->
+<div class="section">
+  <div class="section-label">Section 3</div>
+  <div class="section-title">Step Structure</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Linear only.</strong> No branching.</li>
+        <li>Progress bar shows <strong>major steps</strong> only. Sub-steps managed by HTML internally.</li>
+        <li><strong>Step types</strong> (current set — expands over time):</li>
+      </ul>
+      <div class="step-type-grid">
+        <div class="step-type-card">
+          <div class="st-name">Hook / Context</div>
+          <div class="st-desc">Sets up the scenario. No interaction.</div>
+        </div>
+        <div class="step-type-card">
+          <div class="st-name">Gut Check / Prediction</div>
+          <div class="st-desc">Kid commits an answer before seeing math.</div>
+        </div>
+        <div class="step-type-card">
+          <div class="st-name">Interactive Simulation</div>
+          <div class="st-desc">Kid manipulates something, sees the result.</div>
+        </div>
+        <div class="step-type-card">
+          <div class="st-name">Reveal / BIT</div>
+          <div class="st-desc">Shows the kid their gut was wrong.</div>
+        </div>
+        <div class="step-type-card">
+          <div class="st-name">Concept Unlocked</div>
+          <div class="st-desc">Names the math principle.</div>
+        </div>
+        <div class="step-type-card">
+          <div class="st-name">Tool Earned</div>
+          <div class="st-desc">Kid gets a reusable mental tool.</div>
+        </div>
+        <div class="step-type-card" style="grid-column: span 2;">
+          <div class="st-name">Summary / Reflection</div>
+          <div class="st-desc">Wraps up what they learned.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 4. TRANSITIONS ========== -->
+<div class="section">
+  <div class="section-label">Section 4</div>
+  <div class="section-title">Transitions</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Animation:</strong> Fade-in + slight upward slide (0.45s ease). Same across all built explorations. Keep as-is.</li>
+        <li><strong>"Next" button:</strong> Fixed at bottom. Label is contextual per step — "Let's find out", "Check your answer", "Next".</li>
+        <li><strong>HTML → System data contract:</strong> <span class="wip-tag">WIP</span> Define what HTML passes to app on each step transition.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">2 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title" style="font-size: 15px;">Which glass holds more?</div>
+            <div class="exp-desc" style="font-size: 12px;">Look at the two glasses. Without measuring, which one holds more water?</div>
+            <div style="display: flex; gap: 20px; justify-content: center; margin: 12px 0;">
+              <div style="text-align: center;">
+                <div style="width: 40px; height: 80px; border: 2px solid #1A1A1A; border-radius: 3px 3px 6px 6px; background: linear-gradient(to top, #90CAF9 70%, transparent 70%);"></div>
+                <div style="font-size: 11px; font-weight: 600; margin-top: 4px;">Glass A</div>
+              </div>
+              <div style="text-align: center;">
+                <div style="width: 70px; height: 48px; border: 2px solid #1A1A1A; border-radius: 3px 3px 6px 6px; background: linear-gradient(to top, #90CAF9 70%, transparent 70%);"></div>
+                <div style="font-size: 11px; font-weight: 600; margin-top: 4px;">Glass B</div>
+              </div>
+            </div>
+            <div class="cta-btn">Let's find out →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Contextual CTA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 5. INTERACTION TOOLKIT ========== -->
+<div class="section">
+  <div class="section-label">Section 5</div>
+  <div class="section-title">Interaction Toolkit</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li>Current set — <strong>expands over time</strong>.</li>
+      </ul>
+      <div class="toolkit-grid">
+        <div class="toolkit-item"><span class="tk-icon">🔘</span> Chip select</div>
+        <div class="toolkit-item"><span class="tk-icon">↔️</span> Slider</div>
+        <div class="toolkit-item"><span class="tk-icon">✋</span> Drag and drop</div>
+        <div class="toolkit-item"><span class="tk-icon">👆</span> Tap on image</div>
+        <div class="toolkit-item"><span class="tk-icon">💧</span> Pour / fill sim</div>
+        <div class="toolkit-item"><span class="tk-icon">🔢</span> Number input</div>
+        <div class="toolkit-item"><span class="tk-icon">⚖️</span> Compare cards</div>
+        <div class="toolkit-item"><span class="tk-icon">🔛</span> Toggle</div>
+        <div class="toolkit-item"><span class="tk-icon">📊</span> Sorting / ordering</div>
+        <div class="toolkit-item"><span class="tk-icon">✏️</span> Drawing / tracing</div>
+        <div class="toolkit-item"><span class="tk-icon">💬</span> Free text (Band 3+)</div>
+      </div>
+
+      <ul style="margin-top: 16px;">
+        <li><strong>Two-phase input</strong> (chip select):
+          <ul>
+            <li><strong>Phase 1:</strong> Kid selects → it highlights. Others stay normal. Can change mind.</li>
+            <li><strong>Phase 2:</strong> Kid confirms → selected locks (outlined, brand color). Others dim. No further changes.</li>
+          </ul>
+        </li>
+        <li><strong>Wrong answer:</strong> Subtle shake (6px, 0.4s) + soft pink + encouraging text ("Not quite!"). No red. After 2 wrong → reveal correct.</li>
+        <li><strong>Right answer:</strong> Checkmark + brief positive text. Not over-the-top.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">2 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title" style="font-size: 15px;">Which glass holds more?</div>
+            <div class="chips">
+              <div class="chip">Glass A</div>
+              <div class="chip selected">Glass B</div>
+              <div class="chip">Both same</div>
+            </div>
+            <div style="font-size: 11px; color: #999;">Tap to change your pick</div>
+            <div style="flex:1;"></div>
+            <div class="cta-btn">Lock my answer ✓</div>
+          </div>
+        </div>
+        <div class="mockup-label">Phase 1 — Selecting</div>
+      </div>
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">2 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title" style="font-size: 15px;">Which glass holds more?</div>
+            <div class="chips">
+              <div class="chip dimmed">Glass A</div>
+              <div class="chip locked">Glass B</div>
+              <div class="chip dimmed">Both same</div>
+            </div>
+            <div class="feedback right">✓ Let's see if you're right!</div>
+            <div style="flex:1;"></div>
+            <div class="cta-btn">Pour to check →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Phase 2 — Locked</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 6. ANSWER HANDLING ========== -->
+<div class="section">
+  <div class="section-label">Section 6</div>
+  <div class="section-title">Answer Handling</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Wrong:</strong> Subtle shake (6px, 0.4s) + soft pink highlight + encouraging text ("Not quite!" or "Almost!"). No red. No harsh sound.</li>
+        <li>After <strong>2 wrong attempts</strong> → reveal the correct answer.</li>
+        <li><strong>Right:</strong> Checkmark + brief positive text ("Nailed it!"). Not over-the-top.</li>
+        <li><strong>Sound:</strong>
+          <ul>
+            <li>Wrong: gentle "oops" boop (400→350Hz sine, soft).</li>
+            <li>Right: rising two-tone (720→960Hz triangle).</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">Doubling Allowance</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">5 of 10</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title" style="font-size: 15px;">How much on Day 5?</div>
+            <div class="chips">
+              <div class="chip wrong-anim">10 cents</div>
+              <div class="chip">16 cents</div>
+              <div class="chip">32 cents</div>
+            </div>
+            <div class="feedback wrong">Not quite! Think about what doubling means.</div>
+          </div>
+        </div>
+        <div class="mockup-label">Wrong — shake + hint</div>
+      </div>
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">Doubling Allowance</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">5 of 10</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title" style="font-size: 15px;">How much on Day 5?</div>
+            <div class="chips">
+              <div class="chip dimmed">10 cents</div>
+              <div class="chip locked">16 cents</div>
+              <div class="chip dimmed">32 cents</div>
+            </div>
+            <div class="feedback right">✓ Nailed it!</div>
+            <div style="flex:1;"></div>
+            <div class="cta-btn">Next →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Correct</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 7. BACK NAVIGATION ========== -->
+<div class="section">
+  <div class="section-label">Section 7</div>
+  <div class="section-title">Back Navigation</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>← button</strong> (top-left) — goes to previous step.</li>
+        <li>When reviewing past steps, <strong>→ button appears</strong> — takes kid to the next step (forward through reviewed steps). Kid keeps pressing → to get back to their current step.</li>
+        <li>Past steps are <strong>read-only snapshots</strong> — inputs visible but locked. No animations replay.</li>
+        <li>Kid can go all the way back to step 1.</li>
+        <li>Bottom of past steps shows <strong>← Prev</strong> and <strong>Next →</strong> navigation buttons for clarity.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill" style="background: #F0F0EC; color: #999;">2 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="readonly-banner">👁 Reviewing step 2 — Read only</div>
+            <div class="exp-title" style="font-size: 15px; opacity: 0.7;">Which glass holds more?</div>
+            <div class="chips">
+              <div class="chip dimmed">Glass A</div>
+              <div class="chip locked" style="opacity: 0.7;">Glass B</div>
+              <div class="chip dimmed">Both same</div>
+            </div>
+            <div class="nav-row">
+              <div class="nav-btn forward" style="flex: 1;">Next →</div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">Reviewing past step</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 8. AUDIO & NARRATION ========== -->
+<div class="section">
+  <div class="section-label">Section 8</div>
+  <div class="section-title">Audio & Narration</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Band 1 (K-1):</strong> Auto-play narration. Tap to replay. ~1s pause before narration on new step.</li>
+        <li><strong>Band 2-5:</strong> Narration decided per activity. Not mandatory.</li>
+        <li><strong>Mute toggle:</strong> Top bar, right side.</li>
+      </ul>
+
+      <p style="font-weight: 600; font-size: 13px; margin: 16px 0 8px;">Sound Effects Bucket <span style="font-weight: 400; color: #888;">(synthesized via Web Audio — no files needed)</span></p>
+
+      <table class="sound-table">
+        <tr><th>Sound</th><th>Tone</th><th>Used for</th></tr>
+        <tr><td><code>tap</code></td><td>620Hz triangle</td><td>Button press</td></tr>
+        <tr><td><code>select</code></td><td>540Hz sine</td><td>Selection</td></tr>
+        <tr><td><code>right</code></td><td>720→960Hz triangle</td><td>Correct answer</td></tr>
+        <tr><td><code>oops</code></td><td>400→350Hz sine</td><td>Gentle wrong nudge</td></tr>
+        <tr><td><code>reveal</code></td><td>660→880→1100Hz sine</td><td>Reveal / BIT moment</td></tr>
+        <tr><td><code>tool</code></td><td>C-E-G-C arpeggio</td><td>Achievement unlocked</td></tr>
+        <tr><td><code>coin</code></td><td>1200→1600Hz pings</td><td>Earn sound</td></tr>
+        <tr><td><code>celebrate</code></td><td>5-6 note fanfare</td><td>Completion screen</td></tr>
+        <tr><td><code>pop</code></td><td>Quick sine burst</td><td>Element appearing</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 9. EXIT MID-FLOW ========== -->
+<div class="section">
+  <div class="section-label">Section 9</div>
+  <div class="section-title">Exit Mid-Flow</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Exit (X)</strong> handled at system level by tech team.</li>
+        <li>Saves at last completed <strong>step boundary</strong>.</li>
+        <li>If kid hasn't passed first interactive moment (<code>not_started</code>) → <strong>skip confirmation</strong>, just exit.</li>
+        <li>If in-progress → show confirmation dialog with step info.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium" style="position: relative;">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar" style="opacity: 0.3;">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">4 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content" style="opacity: 0.3;"></div>
+          <div class="dialog-overlay">
+            <div class="dialog">
+              <div class="dialog-icon">🚪</div>
+              <div class="dialog-title">Leaving?</div>
+              <div class="dialog-text">You're on step 4 of 8. You'll pick up right here next time.</div>
+              <div class="dialog-btns">
+                <div class="dialog-btn primary">Yes, leave</div>
+                <div class="dialog-btn secondary">Keep going</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">Exit confirmation</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 10. RESTART FLOW ========== -->
+<div class="section">
+  <div class="section-label">Section 10</div>
+  <div class="section-title">Restart Flow</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>↻ button</strong> in top bar triggers restart.</li>
+        <li>Confirmation: <em>"This will erase your progress. Start fresh?"</em></li>
+        <li>Resets all responses → back to step 1 → state → <code>not_started</code>.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium" style="position: relative;">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar" style="opacity: 0.3;">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">5 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content" style="opacity: 0.3;"></div>
+          <div class="dialog-overlay">
+            <div class="dialog">
+              <div class="dialog-icon">↻</div>
+              <div class="dialog-title">Start fresh?</div>
+              <div class="dialog-text">This will erase your progress. You'll begin from step 1.</div>
+              <div class="dialog-btns">
+                <div class="dialog-btn primary">Yes, start over</div>
+                <div class="dialog-btn secondary">Cancel</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="mockup-label">Restart confirmation</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 11. ENDING SCREEN ========== -->
+<div class="section">
+  <div class="section-label">Section 11</div>
+  <div class="section-title">Ending Screen</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>1-line takeaway:</strong> The key learning from the activity (provided by HTML).</li>
+        <li><strong>Performance section:</strong>
+          <ul>
+            <li><strong>XP</strong> — calculated by HTML, sent to system.</li>
+            <li><strong>Accuracy</strong> — <span class="wip-tag">WIP</span> Neha working on format.</li>
+            <li><strong>Time spent</strong> — shown.</li>
+          </ul>
+        </li>
+        <li><strong>Celebration:</strong> Brief confetti (minimal, 1.5s, fades) + <code>celebrate</code> sound.</li>
+        <li><strong>Header</strong> (mode-specific):</li>
+      </ul>
+      <div class="mode-headers">
+        <div class="mode-header-chip" style="background: #FBE3E0;">Claims: "Myth Busted!"</div>
+        <div class="mode-header-chip" style="background: #E0EDFA;">Wonders: "Mystery Solved!"</div>
+        <div class="mode-header-chip" style="background: #E8F5E0;">Patterns: "Pattern Cracked!"</div>
+        <div class="mode-header-chip" style="background: #FFF3D6;">Choices: "Smart Choice Made!"</div>
+        <div class="mode-header-chip" style="background: #F0E4FA;">Builds: TBD</div>
+      </div>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone" style="position: relative;">
+          <div class="confetti-container">
+            <div class="confetti-piece" style="left:15%; background:#FFD54F;"></div>
+            <div class="confetti-piece" style="left:30%; background:#FF7043; animation-delay:0.2s;"></div>
+            <div class="confetti-piece" style="left:45%; background:#42A5F5; animation-delay:0.1s;"></div>
+            <div class="confetti-piece" style="left:60%; background:#66BB6A; animation-delay:0.3s;"></div>
+            <div class="confetti-piece" style="left:75%; background:#AB47BC; animation-delay:0.15s;"></div>
+            <div class="confetti-piece" style="left:85%; background:#FFD54F; animation-delay:0.25s;"></div>
+          </div>
+          <div class="status-bar"><span>9:41</span><span>85%</span></div>
+          <div class="top-bar">
+            <div class="back-btn" style="visibility: hidden;">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill" style="background: #E8F5E0;">8 of 8 ✓</div>
+              <div class="icon-btn" style="visibility: hidden;">↻</div>
+            </div>
+          </div>
+          <div class="content ending-content">
+            <div class="ending-emoji">🎉</div>
+            <div class="ending-header">Myth Busted!</div>
+            <div class="ending-takeaway">"Tall doesn't mean more — volume depends on width too, not just height."</div>
+            <div class="perf-row">
+              <div class="perf-card xp">
+                <div class="perf-val">+20</div>
+                <div class="perf-label">XP</div>
+              </div>
+              <div class="perf-card acc">
+                <div class="perf-val">80%</div>
+                <div class="perf-label">Accuracy</div>
+              </div>
+              <div class="perf-card time">
+                <div class="perf-val">8m</div>
+                <div class="perf-label">Time</div>
+              </div>
+            </div>
+            <div class="cta-btn" style="margin-top: 0;">Back to Home →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Claims ending</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 12. POST ENDING ========== -->
+<div class="section">
+  <div class="section-label">Section 12</div>
+  <div class="section-title">Post Ending <span class="wip-tag">WIP</span></div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Share card:</strong> Exploration title + mode badge + 1-line learning takeaway. "Share" → native share sheet.</li>
+        <li><strong>Collectibles:</strong> <span class="wip-tag">TBD</span> Streak, badges, etc.</li>
+        <li><strong>CTAs:</strong>
+          <ul>
+            <li><strong>V1:</strong> "Back to enrichment home"</li>
+            <li><strong>V2:</strong> <span class="v2-tag">V2</span> Context-dependent — next exploration / done for week / continue other / all exhausted.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>85%</span></div>
+          <div class="content" style="padding-top: 14px;">
+            <div class="share-card">
+              <div class="sc-mode">🔍 Claims</div>
+              <div class="sc-title">The Cup Trick</div>
+              <div class="sc-learning">"I learned that tall doesn't mean more — volume depends on width too."</div>
+            </div>
+            <div class="share-btn">📤 Share</div>
+            <div style="flex:1;"></div>
+            <div class="cta-btn">Back to Home →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Share card + V1 CTA</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 13. RESUME FLOW ========== -->
+<div class="section">
+  <div class="section-label">Section 13</div>
+  <div class="section-title">Resume Flow</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li>Kid taps "Resume" → <strong>drops into the step they left off</strong>.</li>
+        <li>Can tap ← to review previous steps, then → to move forward back to current step.</li>
+        <li><span class="v2-tag">V2</span> 1-line context reminder toast on resume (written per activity at build time).</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium" style="position: relative;">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="top-bar">
+            <div class="back-btn">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill">4 of 8</div>
+              <div class="icon-btn">↻</div>
+            </div>
+          </div>
+          <div class="content">
+            <div class="exp-title" style="font-size: 15px;">Now pour into the tall glass</div>
+            <div class="exp-desc" style="font-size: 12px;">Drag the pitcher to fill the tall glass. Watch the water level carefully.</div>
+            <div style="flex:1;"></div>
+            <div class="cta-btn">Pour →</div>
+          </div>
+          <div class="toast">Resuming from step 4</div>
+        </div>
+        <div class="mockup-label">Resume — drops to last step</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="spec-divider">
+
+<!-- ========== 14. ERROR & EDGE CASES ========== -->
+<div class="section">
+  <div class="section-label">Section 14</div>
+  <div class="section-title">Error & Edge Cases</div>
+
+  <div class="spec-row">
+    <div class="spec-text">
+      <ul>
+        <li><strong>Offline:</strong> V1 requires internet. Show: "You need internet to start an exploration."</li>
+        <li><strong>Slow load:</strong> Exploration thumbnail + title + "Getting your exploration ready..."</li>
+        <li><strong>Crash recovery:</strong> Saves at step boundaries. Kid loses max ~2 min of in-step work. Resumes from start of the step they were on.</li>
+      </ul>
+    </div>
+    <div class="spec-mockups">
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="loading-content">
+            <div class="loading-thumb">🥤</div>
+            <div class="exp-title" style="font-size: 15px;">The Cup Trick</div>
+            <div style="font-size: 12px; color: #999; margin-top: 4px;">Getting your exploration ready...</div>
+            <div class="loading-dots"><span></span><span></span><span></span></div>
+          </div>
+        </div>
+        <div class="mockup-label">Slow load</div>
+      </div>
+      <div class="mockup-col">
+        <div class="phone medium">
+          <div class="status-bar"><span>9:41</span><span>87%</span></div>
+          <div class="offline-content">
+            <div class="offline-icon">📡</div>
+            <div class="offline-title">No internet</div>
+            <div class="offline-desc">You need internet to start an exploration. Connect and try again!</div>
+          </div>
+        </div>
+        <div class="mockup-label">Offline</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
