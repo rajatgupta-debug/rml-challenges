@@ -1320,7 +1320,8 @@
   <div class="spec-row">
     <div class="spec-text">
       <ul>
-        <li><strong>1-line takeaway:</strong> The key learning from the activity (provided by HTML).</li>
+        <li><strong>Header:</strong> Activity-specific, written by HTML author per activity. Not tied to mode — each activity picks what fits best.</li>
+        <li><strong>1-line takeaway:</strong> Key learning from the activity (provided by HTML).</li>
         <li><strong>Performance section:</strong>
           <ul>
             <li><strong>XP</strong> — calculated by HTML, sent to system.</li>
@@ -1329,17 +1330,15 @@
           </ul>
         </li>
         <li><strong>Celebration:</strong> Brief confetti (minimal, 1.5s, fades) + <code>celebrate</code> sound.</li>
-        <li><strong>Header</strong> (mode-specific):</li>
+        <li><strong>Top bar:</strong> Back hidden, step pill shows "✓", restart hidden.</li>
+        <li><strong>CTA:</strong> "Continue →" — goes to post-ending screen. <em>Not</em> "Back to Home" (that lives on the final post-ending screen).</li>
       </ul>
-      <div class="mode-headers">
-        <div class="mode-header-chip" style="background: #FBE3E0;">Claims: "Myth Busted!"</div>
-        <div class="mode-header-chip" style="background: #E0EDFA;">Wonders: "Mystery Solved!"</div>
-        <div class="mode-header-chip" style="background: #E8F5E0;">Patterns: "Pattern Cracked!"</div>
-        <div class="mode-header-chip" style="background: #FFF3D6;">Choices: "Smart Choice Made!"</div>
-        <div class="mode-header-chip" style="background: #F0E4FA;">Builds: TBD</div>
+      <div style="margin-top:12px; padding:10px 14px; background:#FFF7E0; border:1px solid #E0C040; border-radius:8px; font-size:12px; color:#8B6914; line-height:1.5;">
+        <strong>HTML must provide:</strong> <code>endingHeader</code>, <code>takeaway</code>, <code>xp</code>, <code>accuracy</code>, <code>timeSpent</code>
       </div>
     </div>
     <div class="spec-mockups">
+      <!-- Example 1: Claims (Cup Trick) -->
       <div class="mockup-col">
         <div class="phone" style="position: relative;">
           <div class="confetti-container">
@@ -1378,10 +1377,54 @@
                 <div class="perf-label">Time</div>
               </div>
             </div>
-            <div class="cta-btn" style="margin-top: 0;">Back to Home →</div>
+            <div class="cta-btn" style="margin-top: 0;">Continue →</div>
           </div>
         </div>
-        <div class="mockup-label">Claims ending</div>
+        <div class="mockup-label">Cup Trick — "Myth Busted!"</div>
+      </div>
+      <!-- Example 2: Wonders (GPS) -->
+      <div class="mockup-col">
+        <div class="phone" style="position: relative;">
+          <div class="confetti-container">
+            <div class="confetti-piece" style="left:10%; background:#42A5F5;"></div>
+            <div class="confetti-piece" style="left:25%; background:#FFD54F; animation-delay:0.15s;"></div>
+            <div class="confetti-piece" style="left:40%; background:#66BB6A; animation-delay:0.1s;"></div>
+            <div class="confetti-piece" style="left:55%; background:#FF7043; animation-delay:0.25s;"></div>
+            <div class="confetti-piece" style="left:70%; background:#AB47BC; animation-delay:0.2s;"></div>
+            <div class="confetti-piece" style="left:88%; background:#42A5F5; animation-delay:0.3s;"></div>
+          </div>
+          <div class="status-bar"><span>9:41</span><span>72%</span></div>
+          <div class="top-bar">
+            <div class="back-btn" style="visibility: hidden;">←</div>
+            <div class="title">GPS Trilateration</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill" style="background: #E8F5E0;">12 of 12 ✓</div>
+              <div class="icon-btn" style="visibility: hidden;">↻</div>
+            </div>
+          </div>
+          <div class="content ending-content">
+            <div class="ending-emoji">🎉</div>
+            <div class="ending-header">Mystery Solved!</div>
+            <div class="ending-takeaway">"3 circles, 3 distances, 1 point — that's how your phone finds you."</div>
+            <div class="perf-row">
+              <div class="perf-card xp">
+                <div class="perf-val">+25</div>
+                <div class="perf-label">XP</div>
+              </div>
+              <div class="perf-card acc">
+                <div class="perf-val">92%</div>
+                <div class="perf-label">Accuracy</div>
+              </div>
+              <div class="perf-card time">
+                <div class="perf-val">11m</div>
+                <div class="perf-label">Time</div>
+              </div>
+            </div>
+            <div class="cta-btn" style="margin-top: 0;">Continue →</div>
+          </div>
+        </div>
+        <div class="mockup-label">GPS — "Mystery Solved!"</div>
       </div>
     </div>
   </div>
@@ -1389,42 +1432,144 @@
 
 <hr class="spec-divider">
 
-<!-- ========== 12. POST ENDING ========== -->
+<!-- ========== 12. POST-ENDING SCREEN ========== -->
 <div class="section">
   <div class="section-label">Section 12</div>
-  <div class="section-title">Post Ending <span class="wip-tag">WIP</span></div>
+  <div class="section-title">Post-Ending Screen</div>
 
   <div class="spec-row">
     <div class="spec-text">
       <ul>
-        <li><strong>Share card:</strong> Exploration title + mode badge + 1-line learning takeaway. "Share" → native share sheet.</li>
-        <li><strong>Collectibles:</strong> <span class="wip-tag">TBD</span> Streak, badges, etc.</li>
-        <li><strong>CTAs:</strong>
-          <ul>
-            <li><strong>V1:</strong> "Back to enrichment home"</li>
-            <li><strong>V2:</strong> <span class="v2-tag">V2</span> Context-dependent — next exploration / done for week / continue other / all exhausted.</li>
-          </ul>
-        </li>
+        <li><strong>Collectible card:</strong> A visual card the kid "earns" for completing the activity.</li>
+        <li>Contains: mode color accent + activity name + fun fact / learning nugget (different from ending takeaway — a bonus "did you know" style insight).</li>
+        <li><strong>V1:</strong> Standard template for all activities (mode color + text).</li>
+        <li><strong>V2:</strong> <span class="v2-tag">V2</span> Custom illustration per activity.</li>
+        <li><strong>Share with Parents:</strong> Generates a screenshot-style image card (activity name + learning nugget + XP/accuracy/time + Cuemath branding) → native share sheet (WhatsApp etc.).</li>
+        <li><strong>Invite a Friend:</strong> Growth loop CTA — referral message with app link → native share sheet.</li>
+        <li><strong>Back to Home →</strong> Final exit. This is the only screen with this CTA.</li>
       </ul>
-    </div>
-    <div class="spec-mockups">
-      <div class="mockup-col">
-        <div class="phone medium">
-          <div class="status-bar"><span>9:41</span><span>85%</span></div>
-          <div class="content" style="padding-top: 14px;">
-            <div class="share-card">
-              <div class="sc-mode">🔍 Claims</div>
-              <div class="sc-title">The Cup Trick</div>
-              <div class="sc-learning">"I learned that tall doesn't mean more — volume depends on width too."</div>
-            </div>
-            <div class="share-btn">📤 Share</div>
-            <div style="flex:1;"></div>
-            <div class="cta-btn">Back to Home →</div>
-          </div>
-        </div>
-        <div class="mockup-label">Share card + V1 CTA</div>
+      <div style="margin-top:12px; padding:10px 14px; background:#FFF7E0; border:1px solid #E0C040; border-radius:8px; font-size:12px; color:#8B6914; line-height:1.5;">
+        <strong>HTML must provide:</strong> <code>funFact</code> (collectible card learning nugget)
       </div>
     </div>
+    <div class="spec-mockups">
+      <!-- Post-ending: Cup Trick -->
+      <div class="mockup-col">
+        <div class="phone" style="position:relative;">
+          <div class="status-bar"><span>9:41</span><span>85%</span></div>
+          <div class="top-bar">
+            <div class="back-btn" style="visibility: hidden;">←</div>
+            <div class="title">The Cup Trick</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill" style="background: #E8F5E0;">✓</div>
+              <div class="icon-btn" style="visibility: hidden;">↻</div>
+            </div>
+          </div>
+          <div class="content" style="padding-top: 14px; gap: 10px;">
+            <!-- Collectible card -->
+            <div style="width:100%; padding:16px; border-radius:14px; border:2px solid #1A1A1A; background: linear-gradient(135deg, #FBE3E0 0%, #FFF7E0 100%); position:relative; overflow:hidden;">
+              <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#D32F2F;"></div>
+              <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                <div style="width:28px; height:28px; border-radius:50%; border:2px solid #1A1A1A; background:#FBE3E0; display:flex; align-items:center; justify-content:center; font-size:13px;">🏆</div>
+                <div>
+                  <div style="font-family:'Sora',sans-serif; font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888;">Claims</div>
+                  <div style="font-family:'Sora',sans-serif; font-size:13px; font-weight:700;">The Cup Trick</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:#444; line-height:1.5; padding:8px 10px; background:rgba(255,255,255,0.6); border-radius:8px;">
+                "The world's tallest glass (2.4m) holds less water than a kiddie pool that's only 30cm deep."
+              </div>
+            </div>
+            <!-- Share with Parents -->
+            <div style="width:100%; height:40px; border-radius:10px; border:2px solid #1A1A1A; background:#FFFDF8; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 0 #1A1A1A;">
+              📤 Share with Parents
+            </div>
+            <!-- Invite a Friend -->
+            <div style="width:100%; height:40px; border-radius:10px; border:2px solid #1A1A1A; background:#E0EDFA; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 0 #1A1A1A;">
+              🎯 Invite a Friend
+            </div>
+            <div style="flex:1;"></div>
+            <!-- Back to Home -->
+            <div class="cta-btn" style="margin-top:0;">Back to Home →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Post-ending — Claims</div>
+      </div>
+      <!-- Post-ending: GPS -->
+      <div class="mockup-col">
+        <div class="phone" style="position:relative;">
+          <div class="status-bar"><span>9:41</span><span>72%</span></div>
+          <div class="top-bar">
+            <div class="back-btn" style="visibility: hidden;">←</div>
+            <div class="title">GPS Trilateration</div>
+            <div class="right-group">
+              <div class="icon-btn">🔊</div>
+              <div class="step-pill" style="background: #E8F5E0;">✓</div>
+              <div class="icon-btn" style="visibility: hidden;">↻</div>
+            </div>
+          </div>
+          <div class="content" style="padding-top: 14px; gap: 10px;">
+            <!-- Collectible card -->
+            <div style="width:100%; padding:16px; border-radius:14px; border:2px solid #1A1A1A; background: linear-gradient(135deg, #E0EDFA 0%, #FFF7E0 100%); position:relative; overflow:hidden;">
+              <div style="position:absolute; top:0; left:0; right:0; height:4px; background:#42A5F5;"></div>
+              <div style="display:flex; align-items:center; gap:6px; margin-bottom:8px;">
+                <div style="width:28px; height:28px; border-radius:50%; border:2px solid #1A1A1A; background:#E0EDFA; display:flex; align-items:center; justify-content:center; font-size:13px;">🏆</div>
+                <div>
+                  <div style="font-family:'Sora',sans-serif; font-size:9px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:#888;">Wonders</div>
+                  <div style="font-family:'Sora',sans-serif; font-size:13px; font-weight:700;">GPS Trilateration</div>
+                </div>
+              </div>
+              <div style="font-size:12px; color:#444; line-height:1.5; padding:8px 10px; background:rgba(255,255,255,0.6); border-radius:8px;">
+                "Your phone talks to 30+ satellites — but only needs 3 to pinpoint where you're standing."
+              </div>
+            </div>
+            <!-- Share with Parents -->
+            <div style="width:100%; height:40px; border-radius:10px; border:2px solid #1A1A1A; background:#FFFDF8; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 0 #1A1A1A;">
+              📤 Share with Parents
+            </div>
+            <!-- Invite a Friend -->
+            <div style="width:100%; height:40px; border-radius:10px; border:2px solid #1A1A1A; background:#E0EDFA; font-size:12px; font-weight:600; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 0 #1A1A1A;">
+              🎯 Invite a Friend
+            </div>
+            <div style="flex:1;"></div>
+            <!-- Back to Home -->
+            <div class="cta-btn" style="margin-top:0;">Back to Home →</div>
+          </div>
+        </div>
+        <div class="mockup-label">Post-ending — Wonders</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Share image preview -->
+  <div style="margin-top:32px;">
+    <div style="font-family:'Sora',sans-serif; font-size:14px; font-weight:700; margin-bottom:4px;">Share Image Preview</div>
+    <div style="font-size:13px; color:#555; margin-bottom:16px;">Screenshot-style image generated when "Share with Parents" is tapped. Sent via native share sheet.</div>
+    <div style="display:flex; gap:24px; flex-wrap:wrap; justify-content:center;">
+      <!-- Share image card -->
+      <div style="width:300px; padding:24px 20px; border-radius:18px; border:2px solid #1A1A1A; background:linear-gradient(135deg, #FFFDF8, #FFF7E0); box-shadow:0 6px 24px rgba(0,0,0,0.1); text-align:center;">
+        <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:#888; margin-bottom:4px;">🔍 Claims</div>
+        <div style="font-family:'Sora',sans-serif; font-size:18px; font-weight:700; margin-bottom:8px;">The Cup Trick</div>
+        <div style="font-size:13px; color:#555; line-height:1.5; margin-bottom:16px; padding:0 8px;">"Tall doesn't mean more — volume depends on width too, not just height."</div>
+        <div style="display:flex; gap:10px; justify-content:center; margin-bottom:16px;">
+          <div style="padding:8px 14px; border-radius:8px; background:#FFF3D6; border:1.5px solid #1A1A1A; text-align:center;">
+            <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700;">+20</div>
+            <div style="font-size:9px; color:#888; font-weight:600; text-transform:uppercase;">XP</div>
+          </div>
+          <div style="padding:8px 14px; border-radius:8px; background:#E8F5E0; border:1.5px solid #1A1A1A; text-align:center;">
+            <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700;">80%</div>
+            <div style="font-size:9px; color:#888; font-weight:600; text-transform:uppercase;">Accuracy</div>
+          </div>
+          <div style="padding:8px 14px; border-radius:8px; background:#E0EDFA; border:1.5px solid #1A1A1A; text-align:center;">
+            <div style="font-family:'Sora',sans-serif; font-size:15px; font-weight:700;">8m</div>
+            <div style="font-size:9px; color:#888; font-weight:600; text-transform:uppercase;">Time</div>
+          </div>
+        </div>
+        <div style="font-size:11px; color:#aaa; font-weight:600;">Cuemath Explorations</div>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:8px; font-size:11px; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em;">Share image — auto-generated</div>
   </div>
 </div>
 
