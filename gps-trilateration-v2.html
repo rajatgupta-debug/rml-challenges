@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>GPS — Find the Hiker · RML</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1A1A1A; --bg:#fff; --yellow:#F5C842; --mint:#2EB39E; --mint-bg:#E6F7F4;
+  --peach:#FF6B6B; --peach-bg:#FFF0F0; --sky:#4DAAFF;
+  --text:#1A1A1A; --text-2:#555; --text-3:#999;
+  --shadow:3px 3px 0 var(--ink); --shadow-sm:2px 2px 0 var(--ink);
+  --fd:'Sora',sans-serif; --fb:'Inter',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-text-size-adjust:100%;}
+body{font-family:var(--fb);background:#fff;color:var(--text);min-height:100dvh;
+  background-image:linear-gradient(rgba(0,0,0,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.03) 1px,transparent 1px);
+  background-size:32px 32px;}
+.step{display:none;opacity:0;transform:translateY(12px);}
+.step.active{display:block;animation:fadeSlideIn .45s ease forwards;}
+@keyframes fadeSlideIn{to{opacity:1;transform:translateY(0);}}
+
+/* ── REVIEWING (past step — read-only) ── */
+.step.reviewing .main{pointer-events:none;}
+.step.reviewing .btn,
+.step.reviewing .send-btn{background:#E8E8E8!important;color:var(--text-3)!important;box-shadow:var(--shadow-sm)!important;cursor:default!important;}
+.step.reviewing .chip,
+.step.reviewing .chip-sq{background:#F0F0F0!important;color:#999!important;border-color:#D0D0D0!important;box-shadow:none!important;cursor:default!important;}
+.step.reviewing .chip.selected,
+.step.reviewing .chip-sq.selected,
+.step.reviewing .chip.correct,
+.step.reviewing .chip-sq.correct,
+.step.reviewing .chip.revealed{background:#E0E0E0!important;color:#888!important;border-color:#C0C0C0!important;}
+.step.reviewing .cwrap,
+.step.reviewing .s3d{pointer-events:none;opacity:.7;}
+
+/* ── TOP BAR ── */
+#hdr{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid var(--ink);
+  padding:8px 12px;display:flex;align-items:center;gap:6px;background-image:none;}
+#hdr.dark{background:#080818;border-bottom:1px solid rgba(255,255,255,.1);}
+.hdr-back{width:32px;height:32px;border:2px solid var(--ink);display:flex;align-items:center;
+  justify-content:center;font-size:16px;font-weight:700;background:#fff;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.dark .hdr-back{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:#fff;}
+.hdr-title{font-family:var(--fd);font-size:13px;font-weight:700;flex:1;text-align:center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.dark .hdr-title{color:#fff;}
+.hdr-right{display:flex;align-items:center;gap:5px;flex-shrink:0;}
+.hdr-icon{width:28px;height:28px;border:2px solid var(--ink);display:flex;align-items:center;
+  justify-content:center;font-size:12px;background:#fff;cursor:pointer;flex-shrink:0;
+  -webkit-tap-highlight-color:transparent;}
+.dark .hdr-icon{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);}
+#step-pill{height:26px;padding:0 8px;border:2px solid var(--ink);font-family:var(--fd);
+  font-size:11px;font-weight:600;display:flex;align-items:center;background:#FFF7E0;white-space:nowrap;}
+.dark #step-pill{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.7);}
+
+/* ── BOTTOM NAV (back navigation) ── */
+#bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:90;background:#fff;border-top:2px solid var(--ink);
+  padding:10px 20px;display:none;justify-content:flex-end;max-width:600px;margin:0 auto;}
+#bottom-nav .nav-btn{padding:12px 24px;font-family:var(--fd);font-size:14px;font-weight:700;
+  background:var(--yellow);border:2px solid var(--ink);box-shadow:var(--shadow-sm);cursor:pointer;
+  -webkit-tap-highlight-color:transparent;}
+#bottom-nav .nav-btn:active{transform:translate(2px,2px);box-shadow:none;}
+
+/* LAYOUT */
+.main{max-width:600px;margin:0 auto;padding:28px 20px 80px;}
+.eyebrow{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:8px;}
+.headline{font-family:var(--fd);font-size:clamp(26px,7vw,36px);font-weight:800;line-height:1.15;margin-bottom:14px;}
+.body-text{font-family:var(--fb);font-size:16px;font-weight:500;line-height:1.65;color:var(--text-2);margin-bottom:18px;}
+.prompt{font-family:var(--fd);font-size:clamp(17px,4.5vw,20px);font-weight:700;margin-bottom:16px;line-height:1.3;}
+
+/* BANNER */
+.banner{background:var(--ink);color:#fff;font-family:var(--fd);font-size:13px;font-weight:700;
+  padding:10px 16px;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+.bdot{width:7px;height:7px;background:var(--yellow);border-radius:50%;flex-shrink:0;}
+
+/* CALLOUT */
+.callout{border:2px solid var(--ink);box-shadow:var(--shadow-sm);padding:14px 18px;margin-bottom:16px;background:#fff;}
+.callout-label{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text-3);margin-bottom:4px;}
+.callout-value{font-family:var(--fd);font-size:clamp(18px,5vw,24px);font-weight:800;}
+
+/* CHIPS */
+.chips{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.chips-h{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.chip{padding:14px 18px;font-family:var(--fd);font-size:15px;font-weight:700;
+  border:2px solid var(--ink);background:#fff;box-shadow:var(--shadow-sm);cursor:pointer;
+  text-align:left;user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:transform .08s,box-shadow .08s;}
+.chip:active{transform:translate(2px,2px);box-shadow:none;}
+.chip-sq{padding:22px 10px;font-family:var(--fd);font-size:22px;font-weight:800;
+  border:2px solid var(--ink);background:#fff;box-shadow:var(--shadow-sm);cursor:pointer;
+  text-align:center;user-select:none;-webkit-tap-highlight-color:transparent;
+  transition:transform .08s,box-shadow .08s;}
+.chip-sq:active{transform:translate(2px,2px);box-shadow:none;}
+.chip.selected,.chip-sq.selected{background:var(--yellow);}
+.chip.correct,.chip-sq.correct{background:var(--mint);color:#fff;border-color:var(--mint);}
+.chip.wrong,.chip-sq.wrong{background:var(--peach-bg);border-color:var(--peach);animation:shake .4s;}
+.chip.revealed{background:var(--mint);color:#fff;border-color:var(--mint);opacity:.85;}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+
+/* FEEDBACK */
+.fb{font-family:var(--fd);font-size:14px;font-weight:700;padding:12px 16px;margin-top:10px;border:2px solid;display:none;}
+.fb.ok{background:var(--mint-bg);border-color:var(--mint);color:var(--mint);display:block;}
+.fb.err{background:var(--peach-bg);border-color:var(--peach);color:var(--peach);display:block;}
+
+/* BUTTON */
+.btn{display:block;width:100%;padding:16px;font-family:var(--fd);font-size:16px;font-weight:800;
+  background:var(--yellow);border:2px solid var(--ink);box-shadow:var(--shadow);cursor:pointer;
+  margin-top:20px;-webkit-tap-highlight-color:transparent;transition:transform .08s,box-shadow .08s;}
+.btn:active{transform:translate(3px,3px);box-shadow:none;}
+.btn:disabled{background:#E8E8E8;color:var(--text-3);cursor:not-allowed;box-shadow:var(--shadow-sm);}
+
+/* CANVAS */
+.cwrap{position:relative;border:2px solid var(--ink);box-shadow:var(--shadow);background:#F8F8F6;
+  margin-bottom:14px;overflow:hidden;touch-action:none;cursor:crosshair;}
+.cwrap canvas{display:block;width:100%;height:auto;}
+.dlabel{position:absolute;font-family:var(--fd);font-size:12px;font-weight:700;padding:3px 8px;
+  border:1.5px solid;background:#fff;pointer-events:none;white-space:nowrap;display:none;transform:translate(10px,-50%);}
+.dlabel.v{color:var(--mint);border-color:var(--mint);}
+.dlabel.x{color:var(--peach);border-color:var(--peach);}
+.counter{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--text-3);margin-bottom:8px;letter-spacing:1px;}
+
+/* ILLUSTRATION */
+.illus{border:2px solid var(--ink);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;}
+
+/* SAT GRID (payoff) */
+.sat-row{display:flex;gap:10px;margin-bottom:10px;}
+.sat-chip{flex:1;border:2px solid var(--ink);padding:10px 12px;box-shadow:var(--shadow-sm);}
+.sat-chip-label{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);margin-bottom:3px;}
+.sat-chip-val{font-family:var(--fd);font-size:15px;font-weight:800;}
+.coord-box{border:2px solid var(--ink);box-shadow:var(--shadow);padding:18px 20px;margin-bottom:20px;background:var(--ink);color:#fff;}
+.coord-label{font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:.5;margin-bottom:6px;}
+.coord-val{font-family:var(--fd);font-size:clamp(18px,5vw,24px);font-weight:800;}
+
+/* QUESTION PROMPT */
+.q-prompt{font-family:var(--fd);font-size:clamp(19px,5vw,24px);font-weight:800;
+  line-height:1.25;margin-bottom:16px;padding-left:14px;border-left:4px solid var(--yellow);}
+.dark-step .q-prompt{color:rgba(255,255,255,.92);}
+
+/* ── STICKY QUESTION BAR ── */
+#sticky-q{position:sticky;top:48px;z-index:90;
+  background:#FFFDF8;border-bottom:2px solid var(--ink);
+  padding:10px 16px;display:none;gap:10px;align-items:flex-start;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);}
+#sticky-q.dark{background:#12122a;border-bottom:1px solid rgba(255,255,255,.15);
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);}
+#sticky-q .sq-dot{width:8px;height:8px;border-radius:50%;background:var(--yellow);
+  border:1.5px solid var(--ink);flex-shrink:0;margin-top:5px;}
+#sticky-q.dark .sq-dot{border-color:rgba(255,255,255,.3);}
+#sticky-q .sq-text{font-family:var(--fd);font-size:13px;font-weight:700;line-height:1.35;}
+#sticky-q.dark .sq-text{color:rgba(255,255,255,.9);}
+#sticky-q .sq-sub{font-family:var(--fb);font-size:11px;color:var(--text-3);margin-top:2px;font-weight:500;}
+#sticky-q.dark .sq-sub{color:rgba(255,255,255,.45);}
+
+/* SEND BTN */
+.send-btn{display:block;width:100%;padding:20px;font-family:var(--fd);font-size:18px;font-weight:800;
+  background:var(--mint);border:2px solid var(--ink);box-shadow:var(--shadow);cursor:pointer;
+  margin-top:20px;color:#fff;letter-spacing:.5px;-webkit-tap-highlight-color:transparent;
+  transition:transform .08s,box-shadow .08s;}
+.send-btn:active{transform:translate(3px,3px);box-shadow:none;}
+
+/* CLOSE */
+.close-big{font-family:var(--fd);font-size:clamp(28px,8vw,44px);font-weight:800;line-height:1.1;margin-bottom:16px;}
+.close-sub{font-family:var(--fb);font-size:17px;line-height:1.65;color:var(--text-2);margin-bottom:20px;}
+.tag{display:inline-block;font-family:var(--fd);font-size:13px;font-weight:700;padding:6px 14px;background:var(--mint-bg);border:2px solid var(--mint);color:var(--mint);}
+
+/* 3D */
+.dark-step{background:#080818!important;}
+.dark-step .eyebrow{color:rgba(255,255,255,.35);}
+.dark-step .prompt{color:#fff;}
+.dark-step .body-text{color:rgba(255,255,255,.6);}
+.dark-step .banner{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);}
+.dark-step .callout{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15);}
+.dark-step .callout-label{color:rgba(255,255,255,.35);}
+.dark-step .callout-value{color:#fff;}
+.dark-step .chip{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.18);color:#fff;box-shadow:none;}
+.dark-step .chip.correct{background:var(--mint);border-color:var(--mint);}
+.dark-step .chip.wrong{background:rgba(255,107,107,.15);border-color:var(--peach);}
+.dark-step .fb.ok{background:rgba(46,179,158,.15);}
+.dark-step .fb.err{background:rgba(255,107,107,.12);}
+.s3d{border:2px solid var(--ink);box-shadow:var(--shadow);margin-bottom:14px;position:relative;background:#080818;touch-action:none;}
+.s3d canvas{display:block;width:100%;height:300px;}
+.rot-hint{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.3);pointer-events:none;white-space:nowrap;}
+
+/* ── OPENING SCREEN ── */
+.opening{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:40px;}
+.opening .open-title{font-family:var(--fd);font-size:clamp(28px,7vw,38px);font-weight:800;line-height:1.15;margin-bottom:20px;}
+.opening .open-img{width:100%;border:2px solid var(--ink);box-shadow:var(--shadow);margin-bottom:20px;overflow:hidden;}
+.opening .open-desc{font-family:var(--fb);font-size:16px;font-weight:500;line-height:1.65;color:var(--text-2);margin-bottom:24px;text-align:left;}
+
+/* ── ENDING SCREEN ── */
+.ending{display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:32px;}
+.ending .end-emoji{font-size:48px;margin-bottom:8px;}
+.ending .end-header{font-family:var(--fd);font-size:clamp(28px,7vw,38px);font-weight:800;line-height:1.1;margin-bottom:12px;}
+.ending .end-takeaway{font-family:var(--fb);font-size:15px;font-weight:500;line-height:1.5;color:var(--text-2);
+  margin-bottom:24px;padding:0 12px;font-style:italic;}
+.perf-row{display:flex;gap:10px;width:100%;margin-bottom:24px;}
+.perf-card{flex:1;border:2px solid var(--ink);padding:14px 8px;box-shadow:var(--shadow-sm);}
+.perf-val{font-family:var(--fd);font-size:clamp(20px,5vw,26px);font-weight:800;margin-bottom:2px;}
+.perf-label{font-family:var(--fd);font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-3);}
+.perf-card.xp .perf-val{color:var(--mint);}
+.perf-card.acc .perf-val{color:var(--sky);}
+.perf-card.time .perf-val{color:var(--yellow);}
+
+/* ── CONFETTI ── */
+.confetti-container{position:absolute;top:0;left:0;right:0;height:100%;pointer-events:none;overflow:hidden;z-index:50;}
+.confetti-piece{position:absolute;top:-10px;width:8px;height:14px;opacity:.85;animation:confettiFall 2s ease-in forwards;}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:.85;}100%{transform:translateY(600px) rotate(720deg);opacity:0;}}
+
+/* ── DIALOG OVERLAY ── */
+.dialog-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.45);z-index:200;
+  display:none;align-items:center;justify-content:center;}
+.dialog-overlay.show{display:flex;}
+.dialog{background:#fff;border:2px solid var(--ink);box-shadow:6px 6px 0 var(--ink);padding:28px 24px;
+  max-width:320px;width:90%;text-align:center;}
+.dialog-icon{font-size:32px;margin-bottom:8px;}
+.dialog-title{font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:8px;}
+.dialog-text{font-family:var(--fb);font-size:14px;color:var(--text-2);line-height:1.5;margin-bottom:20px;}
+.dialog-btns{display:flex;gap:10px;}
+.dialog-btn{flex:1;padding:12px;font-family:var(--fd);font-size:14px;font-weight:700;border:2px solid var(--ink);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.dialog-btn.primary{background:var(--yellow);box-shadow:var(--shadow-sm);}
+.dialog-btn.secondary{background:#fff;}
+.dialog-btn:active{transform:translate(2px,2px);box-shadow:none;}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOP BAR ═══ -->
+<header id="hdr">
+  <button class="hdr-back" id="back-btn" onclick="goBack()" style="visibility:hidden">←</button>
+  <div class="hdr-title" id="hdr-title">GPS — Find the Hiker</div>
+  <div class="hdr-right">
+    <button class="hdr-icon" id="mute-btn" onclick="toggleMute()">🔊</button>
+    <div id="step-pill">1 of 16</div>
+    <button class="hdr-icon" id="restart-btn" onclick="showRestart()">↻</button>
+  </div>
+</header>
+
+<!-- ═══ STICKY QUESTION BAR ═══ -->
+<div id="sticky-q">
+  <div class="sq-dot"></div>
+  <div>
+    <div class="sq-text" id="sq-text"></div>
+    <div class="sq-sub" id="sq-sub"></div>
+  </div>
+</div>
+
+<!-- ═══ BOTTOM NAV (appears when reviewing past steps) ═══ -->
+<div id="bottom-nav"><button class="nav-btn" id="nav-next" onclick="goForward()">Next →</button></div>
+
+<!-- ═══ RESTART DIALOG ═══ -->
+<div class="dialog-overlay" id="restart-dialog">
+  <div class="dialog">
+    <div class="dialog-icon">↻</div>
+    <div class="dialog-title">Start fresh?</div>
+    <div class="dialog-text">This will erase your progress. You'll begin from step 1.</div>
+    <div class="dialog-btns">
+      <div class="dialog-btn primary" onclick="doRestart()">Yes, start over</div>
+      <div class="dialog-btn secondary" onclick="hideRestart()">Cancel</div>
+    </div>
+  </div>
+</div>
+
+<!-- F0: OPENING SCREEN -->
+<section class="step active" id="f0">
+<div class="main opening">
+  <div class="open-title">GPS — Find the Hiker</div>
+  <svg class="open-img" viewBox="0 0 560 170" xmlns="http://www.w3.org/2000/svg">
+    <rect width="560" height="170" fill="#EAF4FF"/>
+    <polygon points="0,170 90,55 180,170" fill="#94A3B8"/>
+    <polygon points="60,170 185,25 310,170" fill="#64748B"/>
+    <polygon points="185,25 215,62 155,62" fill="#E2E8F0"/>
+    <polygon points="230,170 355,45 480,170" fill="#475569"/>
+    <polygon points="355,45 378,78 332,78" fill="#E2E8F0"/>
+    <polygon points="390,170 470,80 560,170" fill="#64748B"/>
+    <circle cx="340" cy="50" r="10" fill="#FF6B6B" opacity=".15"/>
+    <circle cx="340" cy="50" r="6" fill="#FF6B6B"/>
+    <g transform="translate(55,22)"><rect x="-10" y="-5" width="20" height="10" rx="2" fill="#4DAAFF"/><rect x="-22" y="-2" width="10" height="4" rx="1" fill="#4DAAFF" opacity=".6"/><rect x="12" y="-2" width="10" height="4" rx="1" fill="#4DAAFF" opacity=".6"/></g>
+    <g transform="translate(200,12)"><rect x="-10" y="-5" width="20" height="10" rx="2" fill="#F5C842"/><rect x="-22" y="-2" width="10" height="4" rx="1" fill="#F5C842" opacity=".6"/><rect x="12" y="-2" width="10" height="4" rx="1" fill="#F5C842" opacity=".6"/></g>
+    <g transform="translate(455,18)"><rect x="-10" y="-5" width="20" height="10" rx="2" fill="#FF6B6B"/><rect x="-22" y="-2" width="10" height="4" rx="1" fill="#FF6B6B" opacity=".6"/><rect x="12" y="-2" width="10" height="4" rx="1" fill="#FF6B6B" opacity=".6"/></g>
+    <line x1="55" y1="27" x2="337" y2="48" stroke="#4DAAFF" stroke-width="1.5" stroke-dasharray="5,3" opacity=".5"/>
+    <line x1="200" y1="17" x2="340" y2="47" stroke="#F5C842" stroke-width="1.5" stroke-dasharray="5,3" opacity=".5"/>
+    <line x1="455" y1="23" x2="343" y2="48" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="5,3" opacity=".5"/>
+    <rect x="352" y="32" width="52" height="20" rx="3" fill="white" opacity=".92"/>
+    <text x="378" y="46" font-size="9" fill="#1A1A1A" font-family="Sora,sans-serif" font-weight="700" text-anchor="middle">dist: ? km</text>
+    <rect x="334" y="42" width="8" height="12" rx="1" fill="#2EB39E"/>
+    <line x1="338" y1="42" x2="338" y2="37" stroke="#2EB39E" stroke-width="1.5"/>
+  </svg>
+  <div class="open-desc">A hiker is stuck in the mountains. His beacon device communicates with satellites to tell how far away each one is. Can you use math to find his exact location?</div>
+  <button class="btn" onclick="go('f0b')">Let's find him →</button>
+</div></section>
+
+<!-- F0B: GUT CHECK -->
+<section class="step" id="f0b">
+<div class="main">
+  <div class="eyebrow">Your Guess</div>
+  <div class="q-prompt">There are many satellites in the sky. What is the minimum number the hiker's beacon needs to find his exact location?</div>
+  <div class="chips-h">
+    <button class="chip-sq" onclick="gutCheck(this,'1–3')">1–3</button>
+    <button class="chip-sq" onclick="gutCheck(this,'4–6')">4–6</button>
+    <button class="chip-sq" onclick="gutCheck(this,'7–10')">7–10</button>
+    <button class="chip-sq" style="font-size:15px" onclick="gutCheck(this,'More than 10')">More than 10</button>
+  </div>
+  <button class="btn" id="btn0b" disabled onclick="go('f1')">Let's find out →</button>
+</div></section>
+
+<!-- F1: SIMPLIFY -->
+<section class="step" id="f1">
+<div class="main">
+  <div class="eyebrow">Let's Find Out</div>
+  <div class="headline">Start simple.</div>
+  <svg class="illus" viewBox="0 0 560 220" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:20px">
+    <rect width="560" height="220" fill="#F8F8F6"/>
+    <g stroke="rgba(0,0,0,.06)" stroke-width="1">
+      <line x1="70" y1="0" x2="70" y2="220"/><line x1="140" y1="0" x2="140" y2="220"/>
+      <line x1="210" y1="0" x2="210" y2="220"/><line x1="280" y1="0" x2="280" y2="220"/>
+      <line x1="350" y1="0" x2="350" y2="220"/><line x1="420" y1="0" x2="420" y2="220"/>
+      <line x1="490" y1="0" x2="490" y2="220"/>
+      <line x1="0" y1="55" x2="560" y2="55"/><line x1="0" y1="110" x2="560" y2="110"/>
+      <line x1="0" y1="165" x2="560" y2="165"/>
+    </g>
+    <line x1="0" y1="110" x2="560" y2="110" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+    <line x1="280" y1="0" x2="280" y2="220" stroke="rgba(0,0,0,.18)" stroke-width="1.5"/>
+    <text x="140" y="124" font-size="11" fill="#BBB" font-family="Sora,sans-serif" font-weight="600" text-anchor="middle">-2</text>
+    <text x="420" y="124" font-size="11" fill="#BBB" font-family="Sora,sans-serif" font-weight="600" text-anchor="middle">2</text>
+    <text x="267" y="59" font-size="11" fill="#BBB" font-family="Sora,sans-serif" font-weight="600" text-anchor="end">2</text>
+    <text x="267" y="169" font-size="11" fill="#BBB" font-family="Sora,sans-serif" font-weight="600" text-anchor="end">-2</text>
+    <g transform="translate(280,110)">
+      <line x1="0" y1="-22" x2="0" y2="-6" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round"/>
+      <circle cx="0" cy="-29" r="7" fill="#F5C842" stroke="#1A1A1A" stroke-width="2"/>
+      <line x1="-10" y1="-17" x2="10" y2="-17" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="0" y1="-6" x2="-7" y2="8" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="0" y1="-6" x2="7" y2="8" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round"/>
+      <rect x="3" y="-21" width="7" height="11" rx="2" fill="#FF6B6B" stroke="#1A1A1A" stroke-width="1.5"/>
+      <text x="22" y="-24" font-size="24" font-family="Sora,sans-serif" font-weight="800" fill="#FF6B6B">?</text>
+    </g>
+  </svg>
+  <div class="body-text">Before we get to satellites and 3D space — imagine the hiker is lost in a 2D world. A flat map. Ground beacons instead of satellites. Same idea, much easier to see.</div>
+  <button class="btn" onclick="go('f1b')">Let's try →</button>
+</div></section>
+
+<!-- F1B: BEACON SETUP -->
+<section class="step" id="f1b">
+<div class="main">
+  <div class="eyebrow">The Setup</div>
+  <div class="body-text">Three beacons picked up the hiker's signal. Each one measured just one thing — his distance. Let's work through them one by one.</div>
+  <div class="cwrap" id="cw1b"><canvas id="cv1b" width="560" height="560"></canvas></div>
+  <div class="sat-row" style="margin-top:14px">
+    <div class="sat-chip"><div class="sat-chip-label" style="color:#4DAAFF">Beacon A</div><div class="sat-chip-val">10m</div></div>
+    <div class="sat-chip"><div class="sat-chip-label" style="color:#F5C842">Beacon B</div><div class="sat-chip-val">8m</div></div>
+    <div class="sat-chip"><div class="sat-chip-label" style="color:#FF6B6B">Beacon C</div><div class="sat-chip-val">12m</div></div>
+  </div>
+  <button class="btn" onclick="go('f2a')">Start with Beacon A →</button>
+</div></section>
+
+<!-- F2A: ONE BEACON EXPLORE -->
+<section class="step" id="f2a">
+<div class="main">
+  <div class="eyebrow">Beacon A</div>
+  <div class="banner"><div class="bdot"></div>Beacon A · hiker is 10m away</div>
+  <div id="f2a-s0"><div class="q-prompt">Tap a spot on the map that is 10m from A.</div></div>
+  <div id="f2a-s1" style="display:none">
+    <div class="q-prompt">Is this the only spot 10m from A?</div>
+    <div class="chips">
+      <button class="chip" onclick="ansUnique(this,'yes')">Yes — just this one</button>
+      <button class="chip" onclick="ansUnique(this,'no')">No — there could be more</button>
+    </div>
+    <div class="fb" id="fb-uq"></div>
+  </div>
+  <div id="f2a-s2" style="display:none">
+    <div class="counter" id="ctr2a">1 / 8 spots found</div>
+    <div class="q-prompt">Find 7 more spots 10m from A.</div>
+  </div>
+  <div id="f2a-s3" style="display:none">
+    <div class="q-prompt">What shape do all these points form?</div>
+    <div class="chips">
+      <button class="chip" onclick="ansShape(this,'line')">A straight line</button>
+      <button class="chip" onclick="ansShape(this,'circle')">A circle</button>
+    </div>
+    <div class="fb" id="fb-sq"></div>
+  </div>
+  <div id="f2a-s4" style="display:none"><div class="q-prompt">Now draw it. Tap A and drag outward.</div></div>
+  <div class="cwrap" id="cw2a"><canvas id="cv2a" width="560" height="560"></canvas><div class="dlabel" id="dl2a"></div></div>
+  <button class="btn" id="btn-uq-next" style="display:none;margin-top:16px" onclick="enterFindMore()">Find more spots →</button>
+  <button class="btn" id="btn2a-shape" style="display:none;margin-top:16px" onclick="enterDraw2a()">Draw the circle →</button>
+  <div class="fb" id="fb-2a-draw" style="margin-top:12px"></div>
+  <button class="btn" id="btn2a" disabled onclick="go('f3')" style="display:none">Continue →</button>
+</div></section>
+
+<!-- F3: SECOND BEACON -->
+<section class="step" id="f3">
+<div class="main">
+  <div class="banner"><div class="bdot"></div>Beacon A · 10m &nbsp;·&nbsp; Beacon B · 8m</div>
+  <div id="p3-explore">
+    <div class="counter" id="ctr3" style="display:none">1 / 4 spots found</div>
+    <div class="q-prompt">Beacon B is 8m from the hiker. Mark some spots where he could be.</div>
+  </div>
+  <div id="p3-circle-q" style="display:none">
+    <div class="q-prompt">Will all these spots form a circle too?</div>
+    <div class="chips">
+      <button class="chip" onclick="ansCircleB(this,'no')">No</button>
+      <button class="chip" onclick="ansCircleB(this,'yes')">Yes</button>
+    </div>
+    <div class="fb" id="fb-3cq"></div>
+  </div>
+  <div id="p3-draw" style="display:none"><div class="q-prompt">Now draw Beacon B's circle. Tap B and drag outward.</div></div>
+  <div id="q3sel" style="display:none">
+    <div class="q-prompt">What could be the position of the hiker? Tap the spots to mark them.</div>
+    <div class="fb" id="fb-3"></div>
+  </div>
+  <div class="cwrap" id="cw3"><canvas id="cv3" width="560" height="560"></canvas><div class="dlabel" id="dl3"></div></div>
+  <button class="btn" id="btn3-draw" style="display:none;margin-top:16px" onclick="revealF3Draw()">Draw Beacon B's circle →</button>
+  <button class="btn" id="btn3" disabled onclick="go('f4')">Continue →</button>
+</div></section>
+
+<!-- F4: THIRD BEACON -->
+<section class="step" id="f4">
+<div class="main">
+  <div class="banner"><div class="bdot"></div>A · 10m &nbsp;·&nbsp; B · 8m &nbsp;·&nbsp; C · 12m</div>
+  <div class="callout"><div class="callout-label">New reading</div><div class="callout-value">Beacon C: 12m away</div></div>
+  <div class="q-prompt" id="p4">Draw Beacon C's circle.</div>
+  <div id="q4sel" style="display:none">
+    <div class="q-prompt">Can you find the exact spot?</div>
+    <div id="dist4-info" style="display:none;margin-top:12px">
+      <div class="sat-row" style="margin-bottom:0">
+        <div class="sat-chip"><div class="sat-chip-label" style="color:#4DAAFF">From A</div><div class="sat-chip-val">10m ✓</div></div>
+        <div class="sat-chip"><div class="sat-chip-label" style="color:#F5C842">From B</div><div class="sat-chip-val">8m ✓</div></div>
+        <div class="sat-chip"><div class="sat-chip-label" style="color:#FF6B6B">From C</div><div class="sat-chip-val">12m ✓</div></div>
+      </div>
+    </div>
+    <div class="fb" id="fb-4"></div>
+  </div>
+  <div class="cwrap" id="cw4"><canvas id="cv4" width="560" height="560"></canvas><div class="dlabel" id="dl4"></div></div>
+  <button class="btn" id="btn4" disabled onclick="go('f5')">Continue →</button>
+</div></section>
+
+<!-- F5: BRIDGE TO 3D -->
+<section class="step" id="f5">
+<div class="main">
+  <div class="eyebrow">One Step Up</div>
+  <div class="headline">Now in 3D.</div>
+  <div class="body-text">In 2D, 3 beacons were enough. But GPS doesn't work on flat ground — satellites orbit in space. Same problem, one dimension up.</div>
+  <svg class="illus" viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:20px">
+    <rect width="278" height="200" fill="#F8F8F6"/>
+    <line x1="0" y1="100" x2="278" y2="100" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+    <line x1="139" y1="0" x2="139" y2="200" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+    <circle cx="100" cy="108" r="62" fill="none" stroke="#4DAAFF" stroke-width="2" stroke-dasharray="6,4" opacity=".8"/>
+    <circle cx="100" cy="108" r="5" fill="#4DAAFF"/>
+    <text x="86" y="118" font-size="10" fill="#4DAAFF" font-family="Sora,sans-serif" font-weight="700">A</text>
+    <circle cx="168" cy="108" r="50" fill="none" stroke="#F5C842" stroke-width="2" stroke-dasharray="6,4" opacity=".8"/>
+    <circle cx="168" cy="108" r="5" fill="#F5C842"/>
+    <text x="172" y="118" font-size="10" fill="#F5C842" font-family="Sora,sans-serif" font-weight="700">B</text>
+    <circle cx="130" cy="78" r="56" fill="none" stroke="#FF6B6B" stroke-width="2" stroke-dasharray="6,4" opacity=".8"/>
+    <circle cx="130" cy="78" r="5" fill="#FF6B6B"/>
+    <text x="134" y="74" font-size="10" fill="#FF6B6B" font-family="Sora,sans-serif" font-weight="700">C</text>
+    <circle cx="154" cy="62" r="9" fill="#2EB39E" opacity=".2"/>
+    <circle cx="154" cy="62" r="5.5" fill="#2EB39E"/>
+    <rect x="8" y="8" width="30" height="16" rx="2" fill="#1A1A1A"/>
+    <text x="23" y="20" font-size="9" fill="white" font-family="Sora,sans-serif" font-weight="700" text-anchor="middle">2D</text>
+    <line x1="279" y1="0" x2="279" y2="200" stroke="#1A1A1A" stroke-width="1.5" stroke-dasharray="4,3" opacity=".25"/>
+    <rect x="282" width="278" height="200" fill="#080818"/>
+    <circle cx="310" cy="22" r="1.2" fill="white" opacity=".5"/>
+    <circle cx="380" cy="12" r="1" fill="white" opacity=".4"/>
+    <circle cx="450" cy="30" r="1.5" fill="white" opacity=".6"/>
+    <circle cx="520" cy="18" r="1" fill="white" opacity=".35"/>
+    <circle cx="298" cy="80" r="1" fill="white" opacity=".3"/>
+    <circle cx="545" cy="90" r="1.2" fill="white" opacity=".5"/>
+    <circle cx="420" cy="170" r="1" fill="white" opacity=".4"/>
+    <circle cx="305" cy="160" r="1.5" fill="white" opacity=".3"/>
+    <ellipse cx="421" cy="105" rx="72" ry="72" fill="none" stroke="#4DAAFF" stroke-width="1.5" opacity=".45"/>
+    <ellipse cx="421" cy="105" rx="72" ry="24" fill="none" stroke="#4DAAFF" stroke-width="1" stroke-dasharray="4,3" opacity=".25"/>
+    <ellipse cx="421" cy="105" rx="24" ry="72" fill="none" stroke="#4DAAFF" stroke-width="1" stroke-dasharray="4,3" opacity=".25"/>
+    <circle cx="493" cy="105" r="5" fill="#4DAAFF"/>
+    <text x="501" y="109" font-size="9" fill="#4DAAFF" font-family="Sora,sans-serif" font-weight="700">S1</text>
+    <line x1="421" y1="105" x2="488" y2="105" stroke="#4DAAFF" stroke-width="1" stroke-dasharray="4,3" opacity=".3"/>
+    <rect x="290" y="8" width="30" height="16" rx="2" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.2)" stroke-width="1"/>
+    <text x="305" y="20" font-size="9" fill="rgba(255,255,255,.7)" font-family="Sora,sans-serif" font-weight="700" text-anchor="middle">3D</text>
+  </svg>
+  <button class="btn" onclick="go('f6a')">Scale up →</button>
+</div></section>
+
+<!-- F6A: SATELLITE 1 -->
+<section class="step dark-step" id="f6a">
+<div class="main">
+  <div class="banner"><div class="bdot"></div>S1 · 20,200 km</div>
+  <div id="q6a-inst"><div class="q-prompt">Satellite 1 is 20,200 km away. To find the possible positions, tap S1 and drag outwards.</div></div>
+  <div id="q6a" style="display:none">
+    <div class="q-prompt">What shape are all the possible positions?</div>
+    <div class="chips">
+      <button class="chip" onclick="ans6(this,'6a','circle')">A circle</button>
+      <button class="chip" onclick="ans6(this,'6a','sphere')">A sphere</button>
+    </div>
+    <div class="fb" id="fb-6a"></div>
+  </div>
+  <div class="s3d" id="s3d-a"><div class="rot-hint">TWO FINGERS TO ROTATE</div></div>
+  <button class="btn" id="btn6a" disabled onclick="go('f6b')">Continue →</button>
+</div></section>
+
+<!-- F6B: SATELLITE 2 -->
+<section class="step dark-step" id="f6b">
+<div class="main">
+  <div class="banner"><div class="bdot"></div>S1 · 20,200 km &nbsp;·&nbsp; S2 · 24,100 km</div>
+  <div id="q6b-inst"><div class="q-prompt">Satellite 2 is 24,100 km away. Draw its sphere too.</div></div>
+  <div id="q6b-1" style="display:none">
+    <div class="q-prompt">Where is the hiker now?</div>
+    <div class="chips">
+      <button class="chip" onclick="ans6b1(this,'full')">Anywhere on S2's full sphere</button>
+      <button class="chip" onclick="ans6b1(this,'both')">Somewhere on both spheres</button>
+    </div>
+    <div class="fb" id="fb-6b1"></div>
+  </div>
+  <div id="q6b-2" style="display:none">
+    <div class="q-prompt">What shape does two spheres crossing form?</div>
+    <div class="chips">
+      <button class="chip" onclick="ans6b2(this,'line')">A straight line</button>
+      <button class="chip" onclick="ans6b2(this,'circle')">A circle</button>
+    </div>
+    <div class="fb" id="fb-6b2"></div>
+  </div>
+  <div class="s3d" id="s3d-b"><div class="rot-hint">TWO FINGERS TO ROTATE</div></div>
+  <button class="btn" id="btn6b" disabled onclick="go('f6c')">Continue →</button>
+</div></section>
+
+<!-- F6C: SATELLITE 3 -->
+<section class="step dark-step" id="f6c">
+<div class="main">
+  <div class="banner"><div class="bdot"></div>S1 · S2 · S3 · 21,800 km</div>
+  <div id="q6c-inst"><div class="q-prompt">Satellite 3 is 21,800 km. Draw its sphere.</div></div>
+  <div id="q6c" style="display:none">
+    <div class="q-prompt">How many possible locations now?</div>
+    <div class="chips">
+      <button class="chip" onclick="ans6(this,'6c','2')">2 spots</button>
+      <button class="chip" onclick="ans6(this,'6c','1')">1 exact spot</button>
+    </div>
+    <div class="fb" id="fb-6c"></div>
+  </div>
+  <div class="s3d" id="s3d-c"><div class="rot-hint">TWO FINGERS TO ROTATE</div></div>
+  <button class="btn" id="btn6c" disabled onclick="go('f6d')">Continue →</button>
+</div></section>
+
+<!-- F6D: SATELLITE 4 -->
+<section class="step dark-step" id="f6d">
+<div class="main">
+  <div class="banner"><div class="bdot"></div>S1 · S2 · S3 · S4 · 23,500 km</div>
+  <div id="q6d-inst"><div class="q-prompt">Satellite 4 is 23,500 km. Draw its sphere.</div></div>
+  <div id="q6d" style="display:none">
+    <div class="q-prompt">Is this enough to find him?</div>
+    <div class="chips">
+      <button class="chip" onclick="ans6(this,'6d','no')">Still not sure</button>
+      <button class="chip" onclick="ans6(this,'6d','yes')">Yes — one exact point</button>
+    </div>
+    <div class="fb" id="fb-6d"></div>
+  </div>
+  <div id="q6d-tap" style="display:none">
+    <div class="q-prompt">Tap the exact point where the hiker is.</div>
+    <div class="fb" id="fb-6d-tap"></div>
+  </div>
+  <div class="s3d" id="s3d-d"><div class="rot-hint">TWO FINGERS TO ROTATE</div></div>
+  <button class="btn" id="btn6d" disabled onclick="go('f6e')">Continue →</button>
+</div></section>
+
+<!-- F6E: PAYOFF — EXACT LOCATION -->
+<section class="step" id="f6e">
+<div class="main">
+  <div class="eyebrow">Location Found</div>
+  <div class="headline">He's here.</div>
+  <div class="coord-box">
+    <div class="coord-label">Exact coordinates</div>
+    <div class="coord-val">27.9881° N &nbsp;·&nbsp; 86.9250° E</div>
+  </div>
+  <div class="body-text">Confirmed by 4 satellites:</div>
+  <div class="sat-row">
+    <div class="sat-chip"><div class="sat-chip-label">S1</div><div class="sat-chip-val">20,200 km ✓</div></div>
+    <div class="sat-chip"><div class="sat-chip-label">S2</div><div class="sat-chip-val">24,100 km ✓</div></div>
+  </div>
+  <div class="sat-row">
+    <div class="sat-chip"><div class="sat-chip-label">S3</div><div class="sat-chip-val">21,800 km ✓</div></div>
+    <div class="sat-chip"><div class="sat-chip-label">S4</div><div class="sat-chip-val">23,500 km ✓</div></div>
+  </div>
+  <button class="btn" onclick="go('f6f')">Send to rescue team →</button>
+</div></section>
+
+<!-- F6F: SEND COORDINATES -->
+<section class="step" id="f6f">
+<div class="main">
+  <div class="eyebrow">Rescue Team</div>
+  <div class="headline">Send his location.</div>
+  <div class="coord-box">
+    <div class="coord-label">Coordinates ready</div>
+    <div class="coord-val">27.9881° N &nbsp;·&nbsp; 86.9250° E</div>
+  </div>
+  <button class="send-btn" id="send-btn" onclick="sendCoords()">SEND COORDINATES →</button>
+  <div class="fb" id="fb-send" style="margin-top:16px"></div>
+  <button class="btn" id="btn-send-next" disabled onclick="go('f7a')">Continue →</button>
+</div></section>
+
+<!-- F7A: CLOSE — NUMBERS -->
+<section class="step" id="f7a">
+<div class="main">
+  <div class="eyebrow">Mission Complete</div>
+  <svg class="illus" viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg">
+    <rect width="560" height="200" fill="#080818"/>
+    <circle cx="40" cy="30" r="1.5" fill="white" opacity=".6"/>
+    <circle cx="120" cy="15" r="1" fill="white" opacity=".4"/>
+    <circle cx="300" cy="25" r="1.5" fill="white" opacity=".5"/>
+    <circle cx="440" cy="10" r="1" fill="white" opacity=".6"/>
+    <circle cx="510" cy="35" r="2" fill="white" opacity=".3"/>
+    <circle cx="80" cy="160" r="1" fill="white" opacity=".4"/>
+    <circle cx="480" cy="170" r="1.5" fill="white" opacity=".5"/>
+    <rect x="215" y="50" width="130" height="110" rx="14" fill="#1A1A1A" stroke="rgba(255,255,255,.15)" stroke-width="1.5"/>
+    <rect x="226" y="62" width="108" height="86" rx="8" fill="#0D1B2A"/>
+    <circle cx="280" cy="105" r="14" fill="#2EB39E" opacity=".2"/>
+    <circle cx="280" cy="105" r="7" fill="#2EB39E"/>
+    <g transform="translate(55,38)"><rect x="-12" y="-6" width="24" height="12" rx="3" fill="#4DAAFF"/><rect x="-26" y="-3" width="12" height="6" rx="1" fill="#4DAAFF" opacity=".5"/><rect x="14" y="-3" width="12" height="6" rx="1" fill="#4DAAFF" opacity=".5"/></g>
+    <g transform="translate(500,38)"><rect x="-12" y="-6" width="24" height="12" rx="3" fill="#F5C842"/><rect x="-26" y="-3" width="12" height="6" rx="1" fill="#F5C842" opacity=".5"/><rect x="14" y="-3" width="12" height="6" rx="1" fill="#F5C842" opacity=".5"/></g>
+    <g transform="translate(55,162)"><rect x="-12" y="-6" width="24" height="12" rx="3" fill="#FF6B6B"/><rect x="-26" y="-3" width="12" height="6" rx="1" fill="#FF6B6B" opacity=".5"/><rect x="14" y="-3" width="12" height="6" rx="1" fill="#FF6B6B" opacity=".5"/></g>
+    <g transform="translate(500,162)"><rect x="-12" y="-6" width="24" height="12" rx="3" fill="#A67BFF"/><rect x="-26" y="-3" width="12" height="6" rx="1" fill="#A67BFF" opacity=".5"/><rect x="14" y="-3" width="12" height="6" rx="1" fill="#A67BFF" opacity=".5"/></g>
+    <line x1="67" y1="44" x2="224" y2="90" stroke="#4DAAFF" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <line x1="488" y1="44" x2="342" y2="90" stroke="#F5C842" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <line x1="67" y1="156" x2="224" y2="128" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <line x1="488" y1="156" x2="342" y2="128" stroke="#A67BFF" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <text x="30" y="22" font-size="10" fill="#4DAAFF" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S1</text>
+    <text x="512" y="22" font-size="10" fill="#F5C842" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S2</text>
+    <text x="30" y="185" font-size="10" fill="#FF6B6B" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S3</text>
+    <text x="512" y="185" font-size="10" fill="#A67BFF" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S4</text>
+  </svg>
+  <div class="close-big">4 satellites.<br>4 distances.<br>1 exact location.</div>
+  <div class="close-sub">You guessed <strong id="gd">—</strong>. The exact answer is 4 — and you just proved why.</div>
+  <button class="btn" onclick="go('f7b')">See the bigger picture →</button>
+</div></section>
+
+<!-- F7B: CLOSE — GRAND PAYOFF -->
+<section class="step" id="f7b">
+<div class="main">
+  <div class="eyebrow">The Bigger Picture</div>
+  <svg class="illus" viewBox="0 0 560 200" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:20px">
+    <rect width="560" height="200" fill="#F0F8FF"/>
+    <g transform="translate(55,30)"><rect x="-14" y="-7" width="28" height="14" rx="3" fill="#4DAAFF"/><rect x="-28" y="-4" width="12" height="8" rx="2" fill="#4DAAFF" opacity=".5"/><rect x="16" y="-4" width="12" height="8" rx="2" fill="#4DAAFF" opacity=".5"/></g>
+    <g transform="translate(505,30)"><rect x="-14" y="-7" width="28" height="14" rx="3" fill="#F5C842"/><rect x="-28" y="-4" width="12" height="8" rx="2" fill="#F5C842" opacity=".5"/><rect x="16" y="-4" width="12" height="8" rx="2" fill="#F5C842" opacity=".5"/></g>
+    <g transform="translate(55,170)"><rect x="-14" y="-7" width="28" height="14" rx="3" fill="#FF6B6B"/><rect x="-28" y="-4" width="12" height="8" rx="2" fill="#FF6B6B" opacity=".5"/><rect x="16" y="-4" width="12" height="8" rx="2" fill="#FF6B6B" opacity=".5"/></g>
+    <g transform="translate(505,170)"><rect x="-14" y="-7" width="28" height="14" rx="3" fill="#A67BFF"/><rect x="-28" y="-4" width="12" height="8" rx="2" fill="#A67BFF" opacity=".5"/><rect x="16" y="-4" width="12" height="8" rx="2" fill="#A67BFF" opacity=".5"/></g>
+    <line x1="69" y1="37" x2="238" y2="105" stroke="#4DAAFF" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <line x1="491" y1="37" x2="322" y2="105" stroke="#F5C842" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <line x1="69" y1="163" x2="238" y2="115" stroke="#FF6B6B" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <line x1="491" y1="163" x2="322" y2="115" stroke="#A67BFF" stroke-width="1.5" stroke-dasharray="6,4" opacity=".6"/>
+    <rect x="225" y="65" width="55" height="90" rx="8" fill="#1A1A1A" stroke="rgba(0,0,0,.15)" stroke-width="1.5"/>
+    <rect x="231" y="73" width="43" height="72" rx="4" fill="#0D1B2A"/>
+    <circle cx="252" cy="109" r="12" fill="#2EB39E" opacity=".25"/>
+    <circle cx="252" cy="109" r="6" fill="#2EB39E"/>
+    <rect x="120" y="115" width="60" height="28" rx="6" fill="#64748B"/>
+    <rect x="130" y="103" width="40" height="20" rx="4" fill="#94A3B8"/>
+    <circle cx="132" cy="143" r="8" fill="#1A1A1A"/>
+    <circle cx="168" cy="143" r="8" fill="#1A1A1A"/>
+    <circle cx="132" cy="143" r="4" fill="#CBD5E1"/>
+    <circle cx="168" cy="143" r="4" fill="#CBD5E1"/>
+    <rect x="133" y="107" width="14" height="12" rx="2" fill="#BAE6FD" opacity=".8"/>
+    <rect x="151" y="107" width="14" height="12" rx="2" fill="#BAE6FD" opacity=".8"/>
+    <rect x="370" y="110" width="70" height="44" rx="4" fill="#1A1A1A"/>
+    <rect x="375" y="115" width="60" height="34" rx="2" fill="#1e3a5f"/>
+    <circle cx="405" cy="132" r="7" fill="#2EB39E" opacity=".3"/>
+    <circle cx="405" cy="132" r="4" fill="#2EB39E"/>
+    <rect x="362" y="154" width="86" height="6" rx="3" fill="#334155"/>
+    <line x1="220" y1="105" x2="178" y2="118" stroke="#2EB39E" stroke-width="1.5" stroke-dasharray="4,3" opacity=".5"/>
+    <line x1="279" y1="105" x2="375" y2="125" stroke="#2EB39E" stroke-width="1.5" stroke-dasharray="4,3" opacity=".5"/>
+    <text x="30" y="16" font-size="9" fill="#4DAAFF" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S1</text>
+    <text x="512" y="16" font-size="9" fill="#F5C842" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S2</text>
+    <text x="30" y="188" font-size="9" fill="#FF6B6B" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S3</text>
+    <text x="512" y="188" font-size="9" fill="#A67BFF" font-family="Sora,sans-serif" font-weight="700" opacity=".8">S4</text>
+  </svg>
+  <div class="close-big">Every device.<br>Every second.</div>
+  <div class="close-sub">Your phone, your laptop, every car with GPS — right now, they're all doing exactly what you just did. Four satellites. Four distances. One point. Calculated fresh every second.</div>
+  <div class="close-sub">You didn't just learn GPS. You proved it works.</div>
+  <button class="btn" onclick="go('ending')">Finish →</button>
+</div></section>
+
+<!-- ═══ ENDING SCREEN ═══ -->
+<section class="step" id="ending" style="position:relative;">
+<div class="confetti-container" id="confetti-box"></div>
+<div class="main ending">
+  <div class="end-emoji">🎉</div>
+  <div class="end-header">Mystery Solved!</div>
+  <div class="end-takeaway">"4 satellites, 4 distances, 1 exact point — that's how every GPS device on Earth finds you."</div>
+  <div class="perf-row">
+    <div class="perf-card xp"><div class="perf-val" id="perf-xp">+20</div><div class="perf-label">XP</div></div>
+    <div class="perf-card acc"><div class="perf-val" id="perf-acc">—</div><div class="perf-label">Accuracy</div></div>
+    <div class="perf-card time"><div class="perf-val" id="perf-time">—</div><div class="perf-label">Time</div></div>
+  </div>
+  <button class="btn" onclick="sfx('tap')">Back to Home →</button>
+</div></section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script>
+/* ═══════════════════════════════
+   SOUND EFFECTS (Web Audio API)
+═══════════════════════════════ */
+let audioCtx=null, muted=false;
+function getAudio(){
+  if(!audioCtx) try{audioCtx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}
+  return audioCtx;
+}
+function tone(freq,dur,type='sine',gain=0.06){
+  if(muted) return;
+  const ctx=getAudio(); if(!ctx) return;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.type=type; o.frequency.value=freq;
+  g.gain.value=gain; g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime+dur);
+}
+function sfx(kind){
+  if(muted) return;
+  switch(kind){
+    case 'tap': tone(620,.07,'triangle',.04); break;
+    case 'select': tone(540,.08,'sine',.05); break;
+    case 'right': tone(720,.10,'triangle',.06); setTimeout(()=>tone(960,.12,'triangle',.05),80); break;
+    case 'oops': tone(400,.12,'sine',.05); setTimeout(()=>tone(350,.15,'sine',.04),60); break;
+    case 'reveal': tone(660,.10,'sine',.06); setTimeout(()=>tone(880,.10,'sine',.06),100); setTimeout(()=>tone(1100,.14,'sine',.05),200); break;
+    case 'tool': [523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.18,'triangle',.06),i*110)); break;
+    case 'coin': tone(1200,.05,'sine',.04); setTimeout(()=>tone(1600,.08,'sine',.03),40); break;
+    case 'celebrate': [523,659,784,880,1047,1319].forEach((f,i)=>setTimeout(()=>tone(f,.2,'triangle',.05),i*100)); break;
+    case 'pop': tone(800,.06,'sine',.05); break;
+  }
+}
+function toggleMute(){
+  muted=!muted;
+  document.getElementById('mute-btn').textContent=muted?'🔇':'🔊';
+  sfx('tap');
+}
+
+/* ═══════════════════════════════
+   FRAMES & NAVIGATION
+═══════════════════════════════ */
+const FRAMES=['f0','f0b','f1','f1b','f2a','f3','f4','f5','f6a','f6b','f6c','f6d','f6e','f6f','f7a','f7b','ending'];
+const DARK=new Set(['f6a','f6b','f6c','f6d']);
+let currentFrame='f0', maxReached=0, history=[];
+const startTime=Date.now();
+let correctCount=0, totalQuestions=0;
+
+function go(id){
+  sfx('tap');
+  const idx=FRAMES.indexOf(id);
+  const prevIdx=FRAMES.indexOf(currentFrame);
+
+  document.querySelectorAll('.step').forEach(s=>{s.classList.remove('active','reviewing');s.style.display='none';s.style.opacity='';s.style.transform='';});
+  const el=document.getElementById(id);
+  el.style.display='block';
+  void el.offsetWidth;
+  el.classList.add('active');
+
+  currentFrame=id;
+  if(idx>maxReached) maxReached=idx;
+  history.push(id);
+
+  // Lock past steps — read-only when reviewing
+  const reviewing=idx<maxReached;
+  if(reviewing) el.classList.add('reviewing');
+
+  // Header dark mode
+  const hdr=document.getElementById('hdr');
+  const dark=DARK.has(id);
+  hdr.classList.toggle('dark',dark);
+  document.getElementById('hdr-title').style.color=dark?'#fff':'';
+
+  // Step pill
+  document.getElementById('step-pill').textContent=(idx+1)+' of '+FRAMES.length;
+
+  // Back button
+  document.getElementById('back-btn').style.visibility=(idx>0&&id!=='ending')?'visible':'hidden';
+
+  // Restart button — hide on ending
+  document.getElementById('restart-btn').style.visibility=id==='ending'?'hidden':'visible';
+
+  // Bottom nav — show Next → only when reviewing a past step
+  document.getElementById('bottom-nav').style.display=reviewing?'flex':'none';
+
+  // Sticky question bar — dark mode + visibility
+  const stickyFrames=new Set(['f2a','f3','f4','f6a','f6b','f6c']);
+  const sq=document.getElementById('sticky-q');
+  sq.classList.toggle('dark',dark);
+  if(stickyFrames.has(id)){
+    sq.style.display='flex';
+    setStickyQ(...stickyInit(id));
+  } else {
+    sq.style.display='none';
+  }
+
+  window.scrollTo(0,0);
+  if(id==='f1b') initF1b();
+  if(id==='f2a') initF2a();
+  if(id==='f3') initF3();
+  if(id==='f4') initF4();
+  if(DARK.has(id)) initOrMove3D(id);
+  if(id==='ending') showEnding();
+}
+
+/* ── STICKY QUESTION BAR ── */
+function setStickyQ(text,sub){
+  document.getElementById('sq-text').textContent=text||'';
+  document.getElementById('sq-sub').textContent=sub||'';
+  document.getElementById('sq-sub').style.display=sub?'block':'none';
+}
+function stickyInit(id){
+  switch(id){
+    case 'f2a': return ['Tap a spot on the map that is 10m from A.',''];
+    case 'f3':  return ['Beacon B is 8m from the hiker.','Mark some spots where he could be.'];
+    case 'f4':  return ["Draw Beacon C's circle.",'Tap C and drag outward.'];
+    case 'f6a': return ['Satellite 1 is 20,200 km away.','Tap S1 and drag outward to draw.'];
+    case 'f6b': return ['Satellite 2 is 24,100 km away.','Draw its sphere too.'];
+    case 'f6c': return ['Satellite 3 is 21,800 km.','Draw its sphere.'];
+    default: return ['',''];
+  }
+}
+
+function goBack(){
+  sfx('tap');
+  const idx=FRAMES.indexOf(currentFrame);
+  if(idx>0) go(FRAMES[idx-1]);
+}
+
+function goForward(){
+  sfx('tap');
+  const idx=FRAMES.indexOf(currentFrame);
+  if(idx<maxReached) go(FRAMES[idx+1]);
+}
+
+/* ── RESTART ── */
+function showRestart(){sfx('tap');document.getElementById('restart-dialog').classList.add('show');}
+function hideRestart(){sfx('tap');document.getElementById('restart-dialog').classList.remove('show');}
+function doRestart(){hideRestart();location.reload();}
+
+/* ── ENDING ── */
+function showEnding(){
+  sfx('celebrate');
+  // Accuracy
+  const acc=totalQuestions>0?Math.round(correctCount/totalQuestions*100):100;
+  document.getElementById('perf-acc').textContent=acc+'%';
+  // Time
+  const mins=Math.round((Date.now()-startTime)/60000);
+  document.getElementById('perf-time').textContent=(mins<1?'<1':mins)+'m';
+  // XP
+  const xp=Math.max(10,Math.min(30,Math.round(acc/100*25)+5));
+  document.getElementById('perf-xp').textContent='+'+xp;
+  // Confetti
+  const box=document.getElementById('confetti-box');
+  box.innerHTML='';
+  const colors=['#FFD54F','#FF7043','#42A5F5','#66BB6A','#AB47BC','#FF6B6B','#4DAAFF'];
+  for(let i=0;i<18;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.left=Math.random()*100+'%';
+    p.style.background=colors[i%colors.length];
+    p.style.animationDelay=(Math.random()*.5)+'s';
+    p.style.animationDuration=(1.5+Math.random())+'s';
+    box.appendChild(p);
+  }
+}
+
+/* ── GUT CHECK ── */
+let gutGuess='?';
+function gutCheck(btn,val){
+  sfx('select');
+  document.querySelectorAll('#f0b .chip-sq').forEach(c=>c.classList.remove('selected'));
+  gutGuess=val;
+  document.getElementById('gd').textContent=val;
+  btn.classList.add('selected');
+  document.getElementById('btn0b').disabled=false;
+}
+
+/* ── SEND COORDS ── */
+function sendCoords(){
+  sfx('tap');
+  document.getElementById('send-btn').disabled=true;
+  document.getElementById('send-btn').textContent='Sending…';
+  setTimeout(()=>{
+    sfx('reveal');
+    document.getElementById('fb-send').textContent='✓ Coordinates sent. Rescue team is on the way.';
+    document.getElementById('fb-send').className='fb ok';
+    document.getElementById('send-btn').textContent='SENT ✓';
+    document.getElementById('btn-send-next').disabled=false;
+  },1200);
+}
+
+/* ══════════════════════════════
+   2D CANVAS SYSTEM
+══════════════════════════════ */
+const CS=560, GM=22, SC=CS/GM, OX=CS/2, OY=CS/2;
+const BA={x:0,y:0,r:10,col:'#4DAAFF',lbl:'A'};
+const BB={x:8,y:0,r:8,col:'#F5C842',lbl:'B'};
+const BC={x:-5,y:3.631,r:12,col:'#FF6B6B',lbl:'C'};
+const P1={x:6.25,y:7.806};
+const P2={x:6.25,y:-7.806};
+
+function wx(x){return OX+x*SC;}
+function wy(y){return OY-y*SC;}
+function toW(cx,cy){return{x:(cx-OX)/SC,y:-(cy-OY)/SC};}
+function cXY(cv,e){
+  const r=cv.getBoundingClientRect(),sx=CS/r.width,sy=CS/r.height;
+  const s=e.touches?e.touches[0]:e;
+  return{cx:(s.clientX-r.left)*sx,cy:(s.clientY-r.top)*sy,clientX:s.clientX,clientY:s.clientY};
+}
+function showDL(dl,cx,cy,wrap,txt,ok){
+  const r=wrap.getBoundingClientRect();
+  dl.style.left=(cx-r.left+12)+'px'; dl.style.top=(cy-r.top)+'px';
+  dl.style.display='block'; dl.textContent=txt; dl.className='dlabel '+(ok?'v':'x');
+}
+function drawGrid(ctx){
+  ctx.clearRect(0,0,CS,CS);
+  ctx.fillStyle='#F8F8F6'; ctx.fillRect(0,0,CS,CS);
+  ctx.strokeStyle='rgba(0,0,0,.07)'; ctx.lineWidth=1;
+  for(let m=-11;m<=11;m++){
+    ctx.beginPath();ctx.moveTo(wx(m),0);ctx.lineTo(wx(m),CS);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(0,wy(m));ctx.lineTo(CS,wy(m));ctx.stroke();
+  }
+  ctx.strokeStyle='rgba(0,0,0,.15)';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,OY);ctx.lineTo(CS,OY);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(OX,0);ctx.lineTo(OX,CS);ctx.stroke();
+  ctx.fillStyle='#BBB';ctx.font='600 16px Inter,sans-serif';ctx.textAlign='center';
+  for(let m=-10;m<=10;m+=2){
+    if(m===0)continue;
+    ctx.fillText(m,wx(m),OY+22);
+    ctx.textAlign='right';ctx.fillText(m,OX-6,wy(m)+5);ctx.textAlign='center';
+  }
+}
+function drawBeacon(ctx,b,pulse){
+  const bx=wx(b.x),by=wy(b.y);
+  if(pulse){
+    ctx.beginPath();ctx.arc(bx,by,18+Math.sin(Date.now()/250)*5,0,Math.PI*2);
+    ctx.strokeStyle=b.col+'44';ctx.lineWidth=3;ctx.stroke();
+  }
+  ctx.beginPath();ctx.arc(bx,by,10,0,Math.PI*2);
+  ctx.fillStyle=b.col;ctx.fill();
+  ctx.strokeStyle='#1A1A1A';ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle='#1A1A1A';ctx.font='700 18px Sora,sans-serif';
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(b.lbl,bx,by-24);ctx.textBaseline='alphabetic';
+}
+function drawArc(ctx,b,r,a=1){
+  ctx.save();ctx.globalAlpha=a;
+  ctx.beginPath();ctx.arc(wx(b.x),wy(b.y),r*SC,0,Math.PI*2);
+  ctx.strokeStyle=b.col;ctx.lineWidth=2.5;ctx.setLineDash([10,6]);ctx.stroke();
+  ctx.setLineDash([]);ctx.restore();
+}
+function drawDot(ctx,p,col,sz=9){
+  ctx.beginPath();ctx.arc(wx(p.x),wy(p.y),sz,0,Math.PI*2);
+  ctx.fillStyle=col;ctx.fill();ctx.strokeStyle='#1A1A1A';ctx.lineWidth=2;ctx.stroke();
+}
+function springBack(drawFn,startR){
+  let r=startR;
+  const t=()=>{r*=0.82;drawFn(r);if(r>0.3)requestAnimationFrame(t);else drawFn(0);};
+  requestAnimationFrame(t);
+}
+
+/* ═══ TWO-WRONG-REVEAL HELPER ═══ */
+const wrongCounts={};
+function handleChipAnswer(btn,questionId,isCorrect,chips,fb,okText,errText,onCorrect){
+  totalQuestions++;
+  if(!wrongCounts[questionId]) wrongCounts[questionId]=0;
+
+  if(isCorrect){
+    correctCount++;
+    sfx('right');
+    chips.forEach(c=>{c.disabled=true;c.style.opacity='0.5';});
+    btn.classList.add('correct');btn.style.opacity='1';
+    fb.textContent=okText;fb.className='fb ok';
+    if(onCorrect) onCorrect();
+  } else {
+    sfx('oops');
+    wrongCounts[questionId]++;
+    btn.classList.add('wrong');btn.disabled=true;
+    if(wrongCounts[questionId]>=2){
+      const correct=Array.from(chips).find(c=>!c.disabled);
+      if(correct){
+        correct.classList.add('revealed');
+        correct.disabled=true;
+        chips.forEach(c=>{if(c!==correct){c.disabled=true;c.style.opacity='0.5';}});
+        fb.textContent=okText;fb.className='fb ok';
+        sfx('reveal');
+        if(onCorrect) onCorrect();
+      }
+    } else {
+      fb.textContent=errText;fb.className='fb err';
+    }
+  }
+}
+
+/* ── F1B ── */
+let f1bInited=false;
+function initF1b(){
+  if(f1bInited)return;f1bInited=true;
+  const cv=document.getElementById('cv1b'),ctx=cv.getContext('2d');
+  drawGrid(ctx);
+  drawBeacon(ctx,BA,false);drawBeacon(ctx,BB,false);drawBeacon(ctx,BC,false);
+}
+
+/* ── F2A ── */
+let f2aInited=false,f2aPhase=0,f2aDots=[];
+let f2aMode='explore';
+let f2aDrawDragging=false,f2aDrawSnapped=false,f2aDrawR=0;
+function showF2aState(n){
+  for(let i=0;i<=4;i++)document.getElementById('f2a-s'+i).style.display=(i===n?'block':'none');
+}
+function enterFindMore(){
+  document.getElementById('btn-uq-next').style.display='none';
+  showF2aState(2);
+  document.getElementById('ctr2a').textContent=f2aDots.length+' / 8 spots found';
+  f2aPhase=2;
+  setStickyQ('Find 7 more spots 10m from A.','Tap on the map.');
+}
+function initF2a(){
+  if(f2aInited)return;f2aInited=true;
+  const cv=document.getElementById('cv2a'),ctx=cv.getContext('2d');
+  const dl=document.getElementById('dl2a'),wrap=document.getElementById('cw2a');
+  f2aDots=[];f2aPhase=0;f2aMode='explore';f2aDrawSnapped=false;f2aDrawR=0;
+  showF2aState(0);
+  renderF2a(ctx);
+  cv.addEventListener('pointermove',e=>{
+    if(f2aMode==='draw'){
+      if(!f2aDrawDragging||f2aDrawSnapped)return;
+      const{cx,cy,clientX,clientY}=cXY(cv,e);
+      f2aDrawR=Math.sqrt((cx-wx(BA.x))**2+(cy-wy(BA.y))**2)/SC;
+      showDL(dl,clientX,clientY,wrap,f2aDrawR.toFixed(1)+'m',Math.abs(f2aDrawR-BA.r)<1);
+      renderF2aDraw(ctx,f2aDrawR);
+      if(Math.abs(f2aDrawR-BA.r)<0.6)snapF2aDraw(ctx,dl);
+      return;
+    }
+    if(f2aPhase===1||f2aDots.length>=8)return;
+    const{cx,cy,clientX,clientY}=cXY(cv,e);
+    const{x,y}=toW(cx,cy);const d=Math.sqrt(x*x+y*y);
+    showDL(dl,clientX,clientY,wrap,d.toFixed(1)+'m from A',d>=9&&d<=11);
+  });
+  cv.addEventListener('pointerleave',()=>dl.style.display='none');
+  cv.addEventListener('pointerdown',e=>{
+    if(f2aMode==='draw'){
+      if(f2aDrawSnapped)return;
+      e.preventDefault();
+      const{cx,cy}=cXY(cv,e);
+      if(Math.sqrt((cx-wx(BA.x))**2+(cy-wy(BA.y))**2)<22){
+        f2aDrawDragging=true;cv.setPointerCapture(e.pointerId);
+      }
+      return;
+    }
+    if(f2aPhase===1||f2aDots.length>=8)return;
+    e.preventDefault();
+    const{cx,cy}=cXY(cv,e);
+    const{x,y}=toW(cx,cy);const d=Math.sqrt(x*x+y*y);
+    if(d>=9&&d<=11){
+      sfx('pop');
+      f2aDots.push({x,y});renderF2a(ctx);
+      if(f2aPhase===0){
+        f2aPhase=1;
+        dl.style.display='none';
+        setTimeout(()=>{showF2aState(1);setStickyQ('Is this the only spot 10m from A?','Pick one.');},300);
+      } else {
+        const c=document.getElementById('ctr2a');
+        c.textContent=f2aDots.length+' / 8 spots found';
+        if(f2aDots.length>=8){
+          dl.style.display='none';
+          setTimeout(()=>{showF2aState(3);setStickyQ('What shape do all these points form?','');},400);
+        }
+      }
+    } else {
+      sfx('oops');
+      ctx.save();ctx.globalAlpha=0.35;
+      ctx.beginPath();ctx.arc(cx,cy,9,0,Math.PI*2);ctx.fillStyle='#FF6B6B';ctx.fill();ctx.restore();
+      setTimeout(()=>renderF2a(ctx),500);
+    }
+  });
+  cv.addEventListener('pointerup',e=>{
+    if(f2aMode!=='draw')return;
+    if(!f2aDrawDragging||f2aDrawSnapped)return;
+    f2aDrawDragging=false;dl.style.display='none';
+    if(f2aDrawR<BA.r-0.6){
+      springBack(r=>renderF2aDraw(ctx,r),f2aDrawR);f2aDrawR=0;
+      const fb=document.getElementById('fb-2a-draw');
+      fb.textContent='Aim for 10m — drag a bit further.';fb.className='fb err';
+      setTimeout(()=>fb.className='fb',1500);
+    }
+  });
+}
+function renderF2a(ctx){
+  drawGrid(ctx);
+  f2aDots.forEach(d=>drawDot(ctx,d,'#2EB39E'));
+  drawBeacon(ctx,BA,false);
+}
+function renderF2aDraw(ctx,r){
+  drawGrid(ctx);
+  if(!f2aDrawSnapped)f2aDots.forEach(d=>drawDot(ctx,d,'#2EB39E'));
+  if(f2aDrawSnapped)drawArc(ctx,BA,BA.r,1);
+  else if(r>0.2)drawArc(ctx,BA,r);
+  drawBeacon(ctx,BA,!f2aDrawSnapped);
+}
+function snapF2aDraw(ctx,dl){
+  f2aDrawSnapped=true;f2aDrawDragging=false;dl.style.display='none';
+  f2aDots=[];
+  renderF2aDraw(ctx,0);
+  sfx('right');
+  const fb=document.getElementById('fb-2a-draw');
+  fb.textContent="Every point 10m from A. One circle. He's somewhere on this.";fb.className='fb ok';
+  document.getElementById('btn2a').style.display='block';
+  document.getElementById('btn2a').disabled=false;
+}
+function ansUnique(btn,ans){
+  const fb=document.getElementById('fb-uq');
+  const chips=document.querySelectorAll('#f2a-s1 .chip');
+  handleChipAnswer(btn,'uq',ans==='no',chips,fb,
+    'Exactly. Find 7 more spots at the same distance.',
+    'Try tapping a different spot at the same distance — is there another valid spot?',
+    ()=>{document.getElementById('btn-uq-next').style.display='block';}
+  );
+}
+function ansShape(btn,ans){
+  const fb=document.getElementById('fb-sq');
+  const chips=document.querySelectorAll('#f2a-s3 .chip');
+  handleChipAnswer(btn,'shape',ans==='circle',chips,fb,
+    'Exactly. Every spot 10m from A sits on a circle.',
+    'Look at all the dots — do they curve around a single point?',
+    ()=>{document.getElementById('btn2a-shape').style.display='block';}
+  );
+}
+function enterDraw2a(){
+  sfx('tap');
+  document.getElementById('btn2a-shape').style.display='none';
+  showF2aState(4);
+  f2aMode='draw';
+  setStickyQ('Draw the circle.','Tap A and drag outward.');
+  renderF2aDraw(document.getElementById('cv2a').getContext('2d'),0);
+}
+
+/* ── F3 ── */
+let f3Inited=false;
+let f3Phase='explore';
+let f3ExploreDots=[],f3ExploreNeeded=4;
+let f3Snapped=false,f3Dragging=false,f3R=0,f3Found=[];
+let ctx3;
+function initF3(){
+  if(f3Inited)return;f3Inited=true;
+  f3Phase='explore';f3ExploreDots=[];f3Snapped=false;f3R=0;f3Found=[];
+  const cv=document.getElementById('cv3');ctx3=cv.getContext('2d');
+  const dl=document.getElementById('dl3'),wrap=document.getElementById('cw3');
+  renderF3();
+  cv.addEventListener('pointermove',e=>{
+    if(f3Phase==='explore'){
+      if(f3ExploreDots.length>=f3ExploreNeeded)return;
+      const{cx,cy,clientX,clientY}=cXY(cv,e);
+      const p=toW(cx,cy);
+      const d=Math.sqrt((p.x-BB.x)**2+(p.y-BB.y)**2);
+      showDL(dl,clientX,clientY,wrap,d.toFixed(1)+'m from B',Math.abs(d-BB.r)<1);
+    } else if(f3Phase==='draw'){
+      if(!f3Dragging||f3Snapped)return;
+      const{cx,cy,clientX,clientY}=cXY(cv,e);
+      f3R=Math.sqrt((cx-wx(BB.x))**2+(cy-wy(BB.y))**2)/SC;
+      showDL(dl,clientX,clientY,wrap,f3R.toFixed(1)+'m',Math.abs(f3R-BB.r)<1);
+      renderF3();
+      if(Math.abs(f3R-BB.r)<0.6)snapF3(dl);
+    }
+  });
+  cv.addEventListener('pointerleave',()=>dl.style.display='none');
+  cv.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(f3Phase==='question')return;
+    if(f3Phase==='explore'){
+      if(f3ExploreDots.length>=f3ExploreNeeded)return;
+      const{cx,cy}=cXY(cv,e);
+      const p=toW(cx,cy);
+      const d=Math.sqrt((p.x-BB.x)**2+(p.y-BB.y)**2);
+      if(Math.abs(d-BB.r)<1){
+        sfx('pop');
+        f3ExploreDots.push({x:p.x,y:p.y});renderF3();
+        const ctr=document.getElementById('ctr3');
+        ctr.textContent=f3ExploreDots.length+' / '+f3ExploreNeeded+' spots found';
+        if(f3ExploreDots.length===1)ctr.style.display='block';
+        if(f3ExploreDots.length>=f3ExploreNeeded){
+          dl.style.display='none';
+          setTimeout(()=>{
+            document.getElementById('p3-explore').style.display='none';
+            document.getElementById('p3-circle-q').style.display='block';
+            f3Phase='question';
+            setStickyQ('Will all these spots form a circle too?','');
+          },400);
+        }
+      } else {
+        sfx('oops');
+        ctx3.save();ctx3.globalAlpha=0.35;
+        ctx3.beginPath();ctx3.arc(cx,cy,9,0,Math.PI*2);ctx3.fillStyle='#FF6B6B';ctx3.fill();ctx3.restore();
+        setTimeout(()=>renderF3(),500);
+      }
+    } else if(f3Phase==='draw'){
+      if(!f3Snapped){
+        const{cx,cy}=cXY(cv,e);
+        if(Math.sqrt((cx-wx(BB.x))**2+(cy-wy(BB.y))**2)<22){f3Dragging=true;cv.setPointerCapture(e.pointerId);}
+      }
+    } else {
+      selectF3(e,cv);
+    }
+  });
+  cv.addEventListener('pointerup',e=>{
+    if(f3Phase!=='draw'||!f3Dragging||f3Snapped)return;
+    f3Dragging=false;dl.style.display='none';
+    if(f3R<BB.r-0.6){springBack(r=>{f3R=r;renderF3();},f3R);f3R=0;}
+  });
+}
+function renderF3(){
+  drawGrid(ctx3);
+  drawArc(ctx3,BA,BA.r);
+  f3ExploreDots.forEach(d=>drawDot(ctx3,d,BB.col,8));
+  if(f3Phase==='draw'||f3Phase==='select'){
+    if(!f3Snapped&&f3R>0.2)drawArc(ctx3,BB,f3R,0.8);
+    if(f3Snapped){
+      drawArc(ctx3,BB,BB.r,1);
+      if(f3Found.includes(0))drawDot(ctx3,P1,'#2EB39E',9);
+      if(f3Found.includes(1))drawDot(ctx3,P2,'#2EB39E',9);
+    }
+  }
+  drawBeacon(ctx3,BA,false);
+  drawBeacon(ctx3,BB,f3Phase==='explore'||(f3Phase==='draw'&&!f3Snapped));
+}
+function snapF3(dl){
+  f3Snapped=true;f3Dragging=false;dl.style.display='none';
+  f3ExploreDots=[];
+  sfx('right');
+  renderF3();
+  document.getElementById('p3-draw').style.display='none';
+  document.getElementById('q3sel').style.display='block';
+  f3Phase='select';
+  setStickyQ('Where could the hiker be?','Tap the intersection points.');
+}
+function ansCircleB(btn,ans){
+  const fb=document.getElementById('fb-3cq');
+  const chips=document.querySelectorAll('#p3-circle-q .chip');
+  handleChipAnswer(btn,'circleB',ans==='yes',chips,fb,
+    'Right. Every spot at a fixed distance from a point forms a circle.',
+    'Think about Beacon A — what shape did those spots form?',
+    ()=>{document.getElementById('btn3-draw').style.display='block';}
+  );
+}
+function revealF3Draw(){
+  sfx('tap');
+  document.getElementById('p3-circle-q').style.display='none';
+  document.getElementById('p3-draw').style.display='block';
+  document.getElementById('btn3-draw').style.display='none';
+  f3Phase='draw';
+  setStickyQ("Draw Beacon B's circle.",'Tap B and drag outward.');
+}
+function selectF3(e,cv){
+  const{cx,cy}=cXY(cv,e);
+  const thresh=35;
+  let hit=false;
+  [[P1,0],[P2,1]].forEach(([p,i])=>{
+    if(f3Found.includes(i))return;
+    if(Math.sqrt((cx-wx(p.x))**2+(cy-wy(p.y))**2)<thresh){
+      sfx('pop');
+      f3Found.push(i);hit=true;
+      renderF3();
+    }
+  });
+  if(!hit&&f3Found.length<2){
+    sfx('oops');
+    ctx3.save();ctx3.globalAlpha=0.3;
+    ctx3.beginPath();ctx3.arc(cx,cy,12,0,Math.PI*2);ctx3.fillStyle='#FF6B6B';ctx3.fill();ctx3.restore();
+    const fb=document.getElementById('fb-3');fb.textContent='Look carefully at where both circles overlap.';fb.className='fb err';
+    setTimeout(()=>{renderF3();if(f3Found.length===0)fb.className='fb';},700);
+  }
+  if(f3Found.length===2){
+    sfx('right');
+    const fb=document.getElementById('fb-3');
+    fb.textContent='Two spots where both circles agree. The hiker is at one of these.';fb.className='fb ok';
+    document.getElementById('btn3').disabled=false;
+  } else if(f3Found.length===1&&hit){
+    const fb=document.getElementById('fb-3');
+    fb.textContent='Good — find the other one.';fb.className='fb ok';
+  }
+}
+
+/* ── F4 ── */
+let f4Inited=false,f4Snapped=false,f4Dragging=false,f4R=0,f4PointFound=false;
+let ctx4;
+function initF4(){
+  if(f4Inited)return;f4Inited=true;
+  const cv=document.getElementById('cv4');ctx4=cv.getContext('2d');
+  const dl=document.getElementById('dl4'),wrap=document.getElementById('cw4');
+  renderF4(ctx4,0,false);
+  cv.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(!f4Snapped){
+      const{cx,cy}=cXY(cv,e);
+      if(Math.sqrt((cx-wx(BC.x))**2+(cy-wy(BC.y))**2)<22){f4Dragging=true;cv.setPointerCapture(e.pointerId);}
+    } else {
+      selectF4(e,cv);
+    }
+  });
+  cv.addEventListener('pointermove',e=>{
+    if(!f4Dragging||f4Snapped)return;
+    const{cx,cy,clientX,clientY}=cXY(cv,e);
+    f4R=Math.sqrt((cx-wx(BC.x))**2+(cy-wy(BC.y))**2)/SC;
+    showDL(dl,clientX,clientY,wrap,f4R.toFixed(1)+'m',Math.abs(f4R-BC.r)<1);
+    renderF4(ctx4,f4R,false);
+    if(Math.abs(f4R-BC.r)<0.6)snapF4(ctx4,dl);
+  });
+  cv.addEventListener('pointerup',e=>{
+    if(!f4Dragging||f4Snapped)return;
+    f4Dragging=false;dl.style.display='none';
+    if(f4R<BC.r-0.6){springBack(r=>renderF4(ctx4,r,false),f4R);f4R=0;}
+  });
+}
+function renderF4(ctx,r,snapped){
+  drawGrid(ctx);
+  drawArc(ctx,BA,BA.r);drawArc(ctx,BB,BB.r);
+  if(r>0.2)drawArc(ctx,BC,r,0.8);
+  if(snapped){
+    drawArc(ctx,BC,BC.r,1);
+    ctx.save();ctx.globalAlpha=0.15;drawDot(ctx,P2,'#999',8);ctx.restore();
+    if(f4PointFound){
+      ctx.beginPath();ctx.arc(wx(P1.x),wy(P1.y),20,0,Math.PI*2);
+      ctx.strokeStyle='#2EB39E55';ctx.lineWidth=3;ctx.stroke();
+      drawDot(ctx,P1,'#2EB39E',11);
+      ctx.font='20px serif';ctx.textAlign='center';
+      ctx.fillText('📍',wx(P1.x),wy(P1.y)-24);
+    }
+  }
+  drawBeacon(ctx,BA,false);drawBeacon(ctx,BB,false);drawBeacon(ctx,BC,!snapped);
+}
+function snapF4(ctx,dl){
+  f4Snapped=true;f4Dragging=false;dl.style.display='none';
+  sfx('right');
+  renderF4(ctx,BC.r,true);
+  document.getElementById('p4').style.display='none';
+  document.getElementById('q4sel').style.display='block';
+  setStickyQ('Can you find the exact spot?','Tap where all 3 circles meet.');
+}
+function selectF4(e,cv){
+  if(f4PointFound)return;
+  const{cx,cy}=cXY(cv,e);
+  const d=Math.sqrt((cx-wx(P1.x))**2+(cy-wy(P1.y))**2);
+  if(d<38){
+    sfx('celebrate');
+    f4PointFound=true;
+    renderF4(ctx4,BC.r,true);
+    document.getElementById('dist4-info').style.display='block';
+    const fb=document.getElementById('fb-4');
+    fb.textContent='All three circles agree — one exact spot.';fb.className='fb ok';
+    document.getElementById('btn4').disabled=false;
+  } else {
+    sfx('oops');
+    ctx4.save();ctx4.globalAlpha=0.3;
+    ctx4.beginPath();ctx4.arc(cx,cy,12,0,Math.PI*2);ctx4.fillStyle='#FF6B6B';ctx4.fill();ctx4.restore();
+    const fb=document.getElementById('fb-4');
+    fb.textContent='Find where all three circles cross at the same point.';fb.className='fb err';
+    setTimeout(()=>{renderF4(ctx4,BC.r,true);},700);
+  }
+}
+
+/* ══════════════════════════════
+   THREE.JS 3D
+══════════════════════════════ */
+const TSAT=[
+  {pos:new THREE.Vector3(20.2,0,0), r:20.2, col:0x4DAAFF},
+  {pos:new THREE.Vector3(0,24.1,0), r:24.1, col:0xFFBF4D},
+  {pos:new THREE.Vector3(15,15,5),  r:21.79,col:0xFF6B6B},
+  {pos:new THREE.Vector3(10,15,15), r:23.45,col:0xA67BFF},
+];
+const AMBIG=new THREE.Vector3(10.42,8.73,-15.37);
+
+let THR=null,tCanvas=null;
+let tSph={theta:0.6,phi:0.9};
+const TCAM=80;
+let tCurrentSat=0,tSnapped=[false,false,false,false];
+let tDragging=false,tOrbiting=false,tDragStart=null,tOrbitStart=null;
+let tGrowingMesh=null,tGrowingOutline=null,tGrowingR=0;
+let tSatDots=[],tSpheres=[],tRings=[],tAmbigPts=[],tHikerMesh=null;
+
+function buildTHR(container){
+  if(!THR){
+    tCanvas=document.createElement('canvas');
+    tCanvas.style.cssText='display:block;width:100%;height:300px;';
+    const scene=new THREE.Scene();scene.background=new THREE.Color(0x080818);
+    const w=container.clientWidth||560,h=300;
+    const camera=new THREE.PerspectiveCamera(55,w/h,0.1,1000);
+    const renderer=new THREE.WebGLRenderer({canvas:tCanvas,antialias:true});
+    renderer.setSize(w,h);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+    scene.add(new THREE.AmbientLight(0xffffff,0.5));
+    const dl=new THREE.DirectionalLight(0xffffff,0.8);dl.position.set(15,25,15);scene.add(dl);
+    addStars(scene);
+    THR={scene,camera,renderer};
+    loop3D();
+  }
+  const hint=container.querySelector('.rot-hint');
+  container.insertBefore(tCanvas,hint);
+  updateCam();
+  tCanvas.removeEventListener('pointerdown',onD3);
+  tCanvas.removeEventListener('pointermove',onM3);
+  tCanvas.removeEventListener('pointerup',onU3);
+  tCanvas.addEventListener('pointerdown',onD3);
+  tCanvas.addEventListener('pointermove',onM3);
+  tCanvas.addEventListener('pointerup',onU3);
+}
+function addStars(scene){
+  const v=[];for(let i=0;i<500;i++)v.push((Math.random()-.5)*600,(Math.random()-.5)*600,(Math.random()-.5)*600);
+  const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(v,3));
+  scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:0.5})));
+}
+function updateCam(){
+  if(!THR)return;
+  const r=TCAM,{theta,phi}=tSph;
+  THR.camera.position.set(r*Math.sin(phi)*Math.sin(theta),r*Math.cos(phi),r*Math.sin(phi)*Math.cos(theta));
+  THR.camera.lookAt(0,0,0);
+}
+function loop3D(){
+  requestAnimationFrame(loop3D);
+  const t=Date.now()*.002;
+  tSatDots.forEach((d,i)=>d.scale.setScalar(1+Math.sin(t*2+i)*.15));
+  if(tHikerMesh)tHikerMesh.scale.setScalar(1+Math.sin(t*3)*.3);
+  if(THR)THR.renderer.render(THR.scene,THR.camera);
+}
+function addSatDot(idx){
+  const s=TSAT[idx];
+  const g=new THREE.SphereGeometry(2.5,16,16);
+  const mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:s.col}));
+  mesh.position.copy(s.pos);THR.scene.add(mesh);tSatDots.push(mesh);
+  const lp=[new THREE.Vector3(0,0,0),s.pos.clone()];
+  const lg=new THREE.BufferGeometry().setFromPoints(lp);
+  THR.scene.add(new THREE.Line(lg,new THREE.LineBasicMaterial({color:s.col,transparent:true,opacity:.15})));
+}
+function mkSphere(idx,r,final){
+  const s=TSAT[idx];
+  const mesh=new THREE.Mesh(
+    new THREE.SphereGeometry(r,48,48),
+    new THREE.MeshPhongMaterial({color:s.col,transparent:true,opacity:final?.13:.09,side:THREE.DoubleSide,depthWrite:false})
+  );mesh.position.copy(s.pos);THR.scene.add(mesh);
+  const wm=new THREE.Mesh(
+    new THREE.SphereGeometry(r,20,20),
+    new THREE.MeshBasicMaterial({color:s.col,wireframe:true,transparent:true,opacity:.05})
+  );wm.position.copy(s.pos);THR.scene.add(wm);
+  return{mesh,wm};
+}
+function mkRing(i1,i2){
+  const s1=TSAT[i1],s2=TSAT[i2];
+  const d=s1.pos.distanceTo(s2.pos);
+  const h=(d*d+s1.r*s1.r-s2.r*s2.r)/(2*d);
+  const rR=Math.sqrt(Math.max(0,s1.r*s1.r-h*h));
+  const dir=new THREE.Vector3().subVectors(s2.pos,s1.pos).normalize();
+  const center=new THREE.Vector3().copy(s1.pos).addScaledVector(dir,h);
+  const pts=[];for(let i=0;i<=80;i++)pts.push(new THREE.Vector3(Math.cos(i/80*Math.PI*2)*rR,Math.sin(i/80*Math.PI*2)*rR,0));
+  const line=new THREE.LineLoop(
+    new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({color:0xffffff,transparent:true,opacity:.65})
+  );
+  line.position.copy(center);
+  line.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),dir);
+  THR.scene.add(line);tRings.push(line);
+}
+function mkPoint(pos,col,sz=1.2){
+  const m=new THREE.Mesh(new THREE.SphereGeometry(sz,16,16),new THREE.MeshBasicMaterial({color:col}));
+  m.position.copy(pos);THR.scene.add(m);return m;
+}
+function getSatScreen(idx){
+  const v=TSAT[idx].pos.clone().project(THR.camera);
+  const r=tCanvas.getBoundingClientRect();
+  return{x:(v.x*.5+.5)*r.width+r.left,y:(-v.y*.5+.5)*r.height+r.top};
+}
+function onD3(e){
+  e.preventDefault();
+  const src=e.touches?e.touches[0]:e;
+  if(tFindingHiker){
+    const hp=getWorldScreen(new THREE.Vector3(0,0,0));
+    const d=Math.sqrt((src.clientX-hp.x)**2+(src.clientY-hp.y)**2);
+    if(d<55){
+      tFindingHiker=false;
+      sfx('celebrate');
+      const fb=document.getElementById('fb-6d-tap');
+      fb.textContent='Found him! That\'s his exact location.';fb.className='fb ok';
+      document.getElementById('btn6d').disabled=false;
+    } else {
+      tOrbiting=true;tOrbitStart={x:src.clientX,y:src.clientY};
+    }
+    return;
+  }
+  if(tSnapped[tCurrentSat]){
+    tOrbiting=true;tOrbitStart={x:src.clientX,y:src.clientY};return;
+  }
+  const sp=getSatScreen(tCurrentSat);
+  const d=Math.sqrt((src.clientX-sp.x)**2+(src.clientY-sp.y)**2);
+  if(d<50){tDragging=true;tDragStart={x:src.clientX,y:src.clientY};tGrowingR=0;tCanvas.setPointerCapture&&tCanvas.setPointerCapture(e.pointerId);}
+  else{tOrbiting=true;tOrbitStart={x:src.clientX,y:src.clientY};}
+}
+function onM3(e){
+  e.preventDefault();
+  const src=e.touches?e.touches[0]:e;
+  if(tOrbiting&&tOrbitStart){
+    tSph.theta+=(src.clientX-tOrbitStart.x)*.012;
+    tSph.phi=Math.max(.1,Math.min(Math.PI-.1,tSph.phi+(src.clientY-tOrbitStart.y)*.012));
+    tOrbitStart={x:src.clientX,y:src.clientY};updateCam();return;
+  }
+  if(!tDragging||!tDragStart)return;
+  const dx=src.clientX-tDragStart.x,dy=src.clientY-tDragStart.y;
+  tGrowingR=Math.min(Math.sqrt(dx*dx+dy*dy)/160*TSAT[tCurrentSat].r,TSAT[tCurrentSat].r*1.05);
+  if(tGrowingMesh){THR.scene.remove(tGrowingMesh.mesh);THR.scene.remove(tGrowingMesh.wm);}
+  if(tGrowingR>0.5)tGrowingMesh=mkSphere(tCurrentSat,tGrowingR,false);
+  if(Math.abs(tGrowingR-TSAT[tCurrentSat].r)<TSAT[tCurrentSat].r*.05)snapSphere();
+}
+function onU3(e){
+  tOrbiting=false;tOrbitStart=null;
+  if(!tDragging)return;tDragging=false;
+  if(tGrowingR<TSAT[tCurrentSat].r*.4){
+    if(tGrowingMesh){THR.scene.remove(tGrowingMesh.mesh);THR.scene.remove(tGrowingMesh.wm);tGrowingMesh=null;}
+    tGrowingR=0;
+  }
+}
+function snapSphere(){
+  tDragging=false;
+  sfx('right');
+  if(tGrowingMesh){THR.scene.remove(tGrowingMesh.mesh);THR.scene.remove(tGrowingMesh.wm);tGrowingMesh=null;}
+  tSpheres.push(mkSphere(tCurrentSat,TSAT[tCurrentSat].r,true));
+  tSnapped[tCurrentSat]=true;
+  autoRot(1800,()=>{
+    const idx=tCurrentSat;
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(idx===0){
+      document.getElementById('q6a-inst').style.display='none';
+      document.getElementById('q6a').style.display='block';
+      setStickyQ('What shape are all the possible positions?','');
+    }
+    if(idx===1){
+      document.getElementById('q6b-inst').style.display='none';
+      document.getElementById('q6b-1').style.display='block';
+      setStickyQ('Where is the hiker now?','');
+    }
+    if(idx===2){
+      document.getElementById('q6c-inst').style.display='none';
+      mkRing(0,2);mkRing(1,2);
+      document.getElementById('q6c').style.display='block';
+      setStickyQ('How many possible locations now?','');
+    }
+    if(idx===3){
+      document.getElementById('q6d-inst').style.display='none';
+      tAmbigPts.forEach(p=>THR.scene.remove(p));tAmbigPts=[];
+      document.getElementById('q6d').style.display='block';
+    }
+  });
+}
+function autoRot(ms,cb){
+  const t0=Date.now(),st=tSph.theta;
+  const tick=()=>{
+    const p=Math.min((Date.now()-t0)/ms,1);
+    tSph.theta=st+p*Math.PI*.4;updateCam();
+    if(p<1)requestAnimationFrame(tick);else if(cb)cb();
+  };requestAnimationFrame(tick);
+}
+function initOrMove3D(frameId){
+  const map={f6a:'s3d-a',f6b:'s3d-b',f6c:'s3d-c',f6d:'s3d-d'};
+  const cont=document.getElementById(map[frameId]);
+  if(!cont)return;
+  buildTHR(cont);
+  const idx={f6a:0,f6b:1,f6c:2,f6d:3}[frameId];
+  tCurrentSat=idx;
+  if(!tSatDots[idx]||tSatDots.length<=idx)addSatDot(idx);
+  tGrowingR=0;tDragging=false;
+}
+
+/* ── 3D CHIP ANSWERS ── */
+const ANS6={
+  '6a':{correct:'sphere',ok:"Not a ring — a whole shell. He could be anywhere on this surface.",err:'Rotate it and look from the side — is it flat?',btn:'btn6a'},
+  '6b':{correct:'ring',  ok:'Two spheres cross in a circle. Still too many spots.',err:'Rotate and look from the side — what shape forms where the two shells overlap?',btn:'btn6b'},
+  '6c':{correct:'2',     ok:"Two spots. Still not exact enough — which one is the hiker?",err:'Where do all three shells intersect at the same time?',btn:'btn6c'},
+  '6d':{correct:'yes',   ok:"One exact spot.",err:'How many points are left where all four shells overlap?',btn:'btn6d'},
+};
+let tFindingHiker=false;
+function ans6(btn,frame,val){
+  const cfg=ANS6[frame],fb=document.getElementById('fb-'+frame);
+  const chips=document.querySelectorAll('#q'+frame+' .chip');
+  handleChipAnswer(btn,'3d_'+frame,val===cfg.correct,chips,fb,cfg.ok,cfg.err,()=>{
+    if(frame==='6d'){
+      tHikerMesh=mkPoint(new THREE.Vector3(0,0,0),0xF5C842,2.0);
+      document.getElementById('q6d').style.display='none';
+      document.getElementById('q6d-tap').style.display='block';
+      tFindingHiker=true;
+    } else {
+      document.getElementById(cfg.btn).disabled=false;
+    }
+    if(frame==='6c'){
+      tAmbigPts.push(mkPoint(new THREE.Vector3(0,0,0),0xF5C842,1.0));
+      tAmbigPts.push(mkPoint(AMBIG,0xF5C842,1.0));
+    }
+  });
+}
+function getWorldScreen(pos){
+  const v=pos.clone().project(THR.camera);
+  const r=tCanvas.getBoundingClientRect();
+  return{x:(v.x*.5+.5)*r.width+r.left,y:(-v.y*.5+.5)*r.height+r.top};
+}
+
+/* ── F6B TWO-STEP ANSWERS ── */
+let btn6b1Next=null;
+function ans6b1(btn,ans){
+  const fb=document.getElementById('fb-6b1');
+  const chips=document.querySelectorAll('#q6b-1 .chip');
+  handleChipAnswer(btn,'6b1',ans==='both',chips,fb,
+    'Right. He must be where both spheres overlap.',
+    'He has to satisfy both distances at once — where does that put him?',
+    ()=>{
+      if(!btn6b1Next){
+        btn6b1Next=document.createElement('button');
+        btn6b1Next.className='btn';
+        btn6b1Next.style.marginTop='12px';
+        btn6b1Next.textContent='What shape does that overlap form? →';
+        btn6b1Next.onclick=()=>{
+          sfx('tap');
+          document.getElementById('q6b-1').style.display='none';
+          document.getElementById('q6b-2').style.display='block';
+          setStickyQ('What shape does two spheres crossing form?','');
+          window.scrollTo({top:0,behavior:'smooth'});
+        };
+        document.getElementById('q6b-1').appendChild(btn6b1Next);
+      }
+      btn6b1Next.style.display='block';
+    }
+  );
+}
+function ans6b2(btn,ans){
+  const fb=document.getElementById('fb-6b2');
+  const chips=document.querySelectorAll('#q6b-2 .chip');
+  handleChipAnswer(btn,'6b2',ans==='circle',chips,fb,
+    'A circle. Two spheres always cross in a ring — still too many spots.',
+    'Look at where two bubbles overlap — what curve forms at the boundary?',
+    ()=>{
+      mkRing(0,1);
+      document.getElementById('btn6b').disabled=false;
+    }
+  );
+}
+</script>
+</body>
+</html>
