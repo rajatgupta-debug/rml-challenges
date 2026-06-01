@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Sticky Question Bar — Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1A1A1A; --yellow:#F5C842; --mint:#2EB39E;
+  --sky:#4DAAFF; --peach:#FF6B6B;
+  --fd:'Sora',sans-serif; --fb:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--fb);background:#fff;color:var(--ink);
+  background-image:linear-gradient(rgba(0,0,0,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.03) 1px,transparent 1px);
+  background-size:32px 32px;}
+
+/* ── Page layout ── */
+.page{max-width:420px;margin:0 auto;}
+
+/* ── Toggle ── */
+.toggle-bar{position:sticky;top:0;z-index:200;background:#1A1A1A;padding:10px 16px;display:flex;gap:8px;align-items:center;}
+.toggle-bar span{color:white;font-family:var(--fd);font-size:12px;font-weight:600;}
+.toggle-btn{padding:6px 14px;border-radius:8px;border:2px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.6);font-family:var(--fd);font-size:11px;font-weight:600;cursor:pointer;}
+.toggle-btn.active{background:#F5C842;color:#1A1A1A;border-color:#F5C842;}
+
+/* ── Top bar ── */
+.hdr{position:sticky;top:44px;z-index:100;background:#fff;border-bottom:2px solid var(--ink);
+  padding:8px 12px;display:flex;align-items:center;gap:6px;}
+.hdr-back{width:32px;height:32px;border-radius:8px;border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;background:#fff;}
+.hdr-title{font-family:var(--fd);font-size:13px;font-weight:700;flex:1;text-align:center;}
+.hdr-pill{height:26px;padding:0 10px;border-radius:13px;border:2px solid var(--ink);font-size:10px;font-weight:600;display:flex;align-items:center;background:#FFF7E0;}
+
+/* ── Sticky question bar ── */
+.sticky-q{
+  position:sticky;
+  top:92px; /* below toggle (44px) + hdr (48px) */
+  z-index:90;
+  background:#FFFDF8;
+  border-bottom:2px solid var(--ink);
+  padding:10px 16px;
+  display:none; /* toggled by JS */
+  align-items:flex-start;
+  gap:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.06);
+}
+.sticky-q .sq-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--yellow);border:1.5px solid var(--ink);
+  flex-shrink:0;margin-top:5px;
+}
+.sticky-q .sq-text{
+  font-family:var(--fd);font-size:13px;font-weight:700;line-height:1.4;
+  flex:1;
+}
+.sticky-q .sq-chips{
+  display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;
+}
+.sticky-q .sq-chip{
+  padding:6px 12px;border-radius:8px;border:2px solid var(--ink);font-size:11px;font-weight:600;
+  background:#fff;font-family:var(--fb);
+}
+
+/* ── Content ── */
+.main{max-width:600px;margin:0 auto;padding:28px 20px 100px;}
+
+.eyebrow{font-family:var(--fd);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.12em;color:#999;margin-bottom:4px;}
+.body-text{font-size:15px;line-height:1.6;color:#333;margin-bottom:18px;}
+.banner{padding:8px 14px;border-radius:10px;border:2px solid var(--ink);background:#FFF7E0;font-family:var(--fd);font-size:12px;font-weight:600;display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.bdot{width:8px;height:8px;border-radius:50%;background:var(--sky);border:1.5px solid var(--ink);}
+.q-prompt{font-family:var(--fd);font-size:15px;font-weight:700;line-height:1.4;margin-bottom:12px;}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+.chip{padding:9px 16px;border-radius:10px;border:2px solid var(--ink);font-size:13px;font-weight:500;background:#fff;font-family:var(--fb);cursor:pointer;}
+.chip:hover{transform:translateY(-1px);}
+
+.cwrap{position:relative;border:2px solid var(--ink);box-shadow:3px 3px 0 var(--ink);background:#F8F8F6;border-radius:6px;overflow:hidden;margin:14px 0;}
+.cwrap canvas{display:block;width:100%;height:auto;}
+
+.btn{width:100%;height:48px;border-radius:12px;border:2px solid var(--ink);background:var(--yellow);font-family:var(--fd);font-size:14px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 var(--ink);margin-top:16px;}
+
+/* ── Before/After labels ── */
+.demo-label{
+  max-width:420px;margin:40px auto 12px;padding:12px 16px;border-radius:10px;
+  font-family:var(--fd);font-size:14px;font-weight:700;text-align:center;
+}
+.demo-label.before{background:#FBE3E0;color:#8B2F26;}
+.demo-label.after{background:#E8F5E0;color:#2E7D32;}
+.demo-label small{display:block;font-family:var(--fb);font-size:11px;font-weight:500;margin-top:2px;opacity:.7;}
+
+.divider{max-width:420px;margin:32px auto;border:none;border-top:3px dashed #ddd;}
+</style>
+</head>
+<body>
+
+<!-- Toggle to switch between before/after -->
+<div class="toggle-bar">
+  <span>View:</span>
+  <button class="toggle-btn active" onclick="showView('before')">Before</button>
+  <button class="toggle-btn" onclick="showView('after')">After — Sticky Bar</button>
+</div>
+
+<!-- ═══════════════════════════════ -->
+<!-- BEFORE: Current layout problem -->
+<!-- ═══════════════════════════════ -->
+<div id="view-before" class="page">
+  <div class="hdr">
+    <div class="hdr-back">←</div>
+    <div class="hdr-title">GPS — Find the Hiker</div>
+    <div class="hdr-pill">4 of 12</div>
+  </div>
+
+  <div class="demo-label before">PROBLEM: Question is above the canvas<small>On mobile, kid sees only the grid — question is scrolled off</small></div>
+
+  <!-- Step F3 recreation -->
+  <div class="main">
+    <div class="banner"><div class="bdot"></div>Beacon A · 10m &nbsp;·&nbsp; Beacon B · 8m</div>
+    <div class="q-prompt">What could be the position of the hiker? Tap the spots to mark them.</div>
+    <div class="cwrap"><canvas id="cv-before" width="560" height="560"></canvas></div>
+    <button class="btn">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- AFTER: Sticky question bar solution -->
+<!-- ═══════════════════════════════════ -->
+<div id="view-after" class="page" style="display:none;">
+  <div class="hdr">
+    <div class="hdr-back">←</div>
+    <div class="hdr-title">GPS — Find the Hiker</div>
+    <div class="hdr-pill">4 of 12</div>
+  </div>
+
+  <!-- Sticky question bar -->
+  <div class="sticky-q" id="sticky-demo" style="display:flex;">
+    <div class="sq-dot"></div>
+    <div>
+      <div class="sq-text">What could be the position of the hiker?</div>
+      <div style="font-size:11px;color:#999;margin-top:2px;">Tap the spots on the map to mark them.</div>
+    </div>
+  </div>
+
+  <div class="demo-label after">FIX: Question sticks below the top bar<small>Always visible while kid scrolls and interacts with the canvas</small></div>
+
+  <div class="main">
+    <div class="banner"><div class="bdot"></div>Beacon A · 10m &nbsp;·&nbsp; Beacon B · 8m</div>
+    <div class="cwrap"><canvas id="cv-after" width="560" height="560"></canvas></div>
+    <button class="btn">Continue →</button>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Second example: with chips -->
+  <div class="hdr" style="position:relative;">
+    <div class="hdr-back">←</div>
+    <div class="hdr-title">GPS — Find the Hiker</div>
+    <div class="hdr-pill">3 of 12</div>
+  </div>
+
+  <div class="sticky-q" style="display:flex;position:relative;top:0;">
+    <div class="sq-dot"></div>
+    <div>
+      <div class="sq-text">What shape do all these points form?</div>
+      <div class="sq-chips">
+        <div class="sq-chip">A straight line</div>
+        <div class="sq-chip">A circle</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-label after" style="margin-top:16px;">Also works with chip-select questions<small>Question + chips stay pinned — canvas scrollable below</small></div>
+
+  <div class="main" style="padding-top:16px;">
+    <div class="cwrap"><canvas id="cv-chips" width="560" height="560"></canvas></div>
+    <button class="btn">Continue →</button>
+  </div>
+</div>
+
+<script>
+// ── Draw grids on canvases ──
+function drawGrid(cvId, circles) {
+  const cv = document.getElementById(cvId);
+  if (!cv) return;
+  const ctx = cv.getContext('2d');
+  const w = cv.width, h = cv.height;
+  const cx = w/2, cy = h/2;
+  const scale = w/22;
+
+  // Background
+  ctx.fillStyle = '#F8F8F6';
+  ctx.fillRect(0, 0, w, h);
+
+  // Grid lines
+  ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 1;
+  for (let i = -10; i <= 10; i++) {
+    const x = cx + i * scale;
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+    const y = cy + i * scale;
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  // Axes
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, h); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, cy); ctx.lineTo(w, cy); ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle = '#999';
+  ctx.font = '600 13px Inter';
+  ctx.textAlign = 'center';
+  for (let i = -10; i <= 10; i += 2) {
+    if (i === 0) continue;
+    ctx.fillText(i, cx + i * scale, cy + 16);
+    ctx.fillText(i, cx - 16, cy - i * scale + 4);
+  }
+
+  // Circles
+  if (circles) {
+    circles.forEach(c => {
+      ctx.setLineDash([8, 6]);
+      ctx.strokeStyle = c.color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.arc(cx + c.x * scale, cy - c.y * scale, c.r * scale, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // Beacons
+  const beacons = [
+    { label: 'A', x: 0, y: 0, color: '#4DAAFF' },
+    { label: 'B', x: 8, y: 0, color: '#F5C842' },
+    { label: 'C', x: -5, y: 3, color: '#FF6B6B' }
+  ];
+  beacons.forEach(b => {
+    const bx = cx + b.x * scale, by = cy - b.y * scale;
+    ctx.fillStyle = b.color;
+    ctx.strokeStyle = '#1A1A1A';
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(bx, by, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#1A1A1A';
+    ctx.font = '700 14px Sora';
+    ctx.textAlign = 'center';
+    ctx.fillText(b.label, bx, by - 16);
+  });
+
+  // Intersection points (green dots)
+  if (circles && circles.length >= 2) {
+    const pts = [{x:6, y:7.5}, {x:6, y:-8}];
+    pts.forEach(p => {
+      const px = cx + p.x * scale, py = cy - p.y * scale;
+      ctx.fillStyle = '#2EB39E';
+      ctx.strokeStyle = '#1A1A1A';
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    });
+  }
+}
+
+// Draw all canvases
+drawGrid('cv-before', [
+  {x:0, y:0, r:10, color:'#4DAAFF'},
+  {x:8, y:0, r:8, color:'#F5C842'}
+]);
+drawGrid('cv-after', [
+  {x:0, y:0, r:10, color:'#4DAAFF'},
+  {x:8, y:0, r:8, color:'#F5C842'}
+]);
+drawGrid('cv-chips', [
+  {x:0, y:0, r:10, color:'#4DAAFF'}
+]);
+
+// ── Toggle view ──
+function showView(v) {
+  document.getElementById('view-before').style.display = v === 'before' ? '' : 'none';
+  document.getElementById('view-after').style.display = v === 'after' ? '' : 'none';
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
