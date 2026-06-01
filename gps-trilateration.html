@@ -23,6 +23,15 @@ body{font-family:var(--fb);background:#fff;color:var(--text);min-height:100dvh;
 .step.active{display:block;animation:fadeSlideIn .45s ease forwards;}
 @keyframes fadeSlideIn{to{opacity:1;transform:translateY(0);}}
 
+/* ── REVIEWING (past step — read-only) ── */
+.step.reviewing .main{pointer-events:none;opacity:.85;}
+.step.reviewing .btn,
+.step.reviewing .chip,
+.step.reviewing .chip-sq,
+.step.reviewing .send-btn,
+.step.reviewing .cwrap,
+.step.reviewing .s3d{pointer-events:none;}
+
 /* ── TOP BAR ── */
 #hdr{position:sticky;top:0;z-index:100;background:#fff;border-bottom:2px solid var(--ink);
   padding:8px 12px;display:flex;align-items:center;gap:6px;background-image:none;}
@@ -707,7 +716,7 @@ function go(id){
   const idx=FRAMES.indexOf(id);
   const prevIdx=FRAMES.indexOf(currentFrame);
 
-  document.querySelectorAll('.step').forEach(s=>{s.classList.remove('active');s.style.display='none';s.style.opacity='';s.style.transform='';});
+  document.querySelectorAll('.step').forEach(s=>{s.classList.remove('active','reviewing');s.style.display='none';s.style.opacity='';s.style.transform='';});
   const el=document.getElementById(id);
   el.style.display='block';
   void el.offsetWidth;
@@ -716,6 +725,10 @@ function go(id){
   currentFrame=id;
   if(idx>maxReached) maxReached=idx;
   history.push(id);
+
+  // Lock past steps — read-only when reviewing
+  const reviewing=idx<maxReached;
+  if(reviewing) el.classList.add('reviewing');
 
   // Header dark mode
   const hdr=document.getElementById('hdr');
@@ -733,7 +746,6 @@ function go(id){
   document.getElementById('restart-btn').style.visibility=id==='ending'?'hidden':'visible';
 
   // Bottom nav — show Next → only when reviewing a past step
-  const reviewing=idx<maxReached;
   document.getElementById('bottom-nav').style.display=reviewing?'flex':'none';
 
   window.scrollTo(0,0);
