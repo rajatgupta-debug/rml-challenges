@@ -706,6 +706,118 @@
 <div class="page-title">Interaction Toolkit</div>
 <div class="page-subtitle">Live interactive examples. Try each one — this is how they feel to a kid.</div>
 
+<!-- ═══════════════════════════════════════════════════════
+     SECTION A: COMPLETE STEP DEMOS (auto-playing)
+     Shows multi-phase interactions within a single step
+═══════════════════════════════════════════════════════ -->
+<div style="max-width:520px;margin:0 auto 24px;background:#1A1A1A;color:white;padding:16px 20px;border-radius:12px;">
+  <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;">Why Learnosity won't work</div>
+  <div style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;">Each "step" in an exploration isn't a single question — it's a chain of dependent interactions. One thing triggers the next. Below are 3 real steps from 3 different activities, auto-playing so you can see the flow.</div>
+</div>
+
+<!-- ═══ DEMO 1: GPS — Beacon A Step ═══ -->
+<div class="section" style="max-width:520px;">
+  <div class="section-num">Complete Step 1</div>
+  <div class="section-title">GPS Trilateration — Beacon A</div>
+  <div class="section-source">From: GPS — Find the Hiker (Wonders, Band 3)</div>
+  <div class="section-desc">6 sub-phases in ONE step. Kid taps canvas → question → finds more → shape question → draws circle. Each phase depends on the previous one.</div>
+
+  <div class="demo-phone" style="max-width:340px;position:relative;overflow:hidden;">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">GPS — Find the Hiker</div>
+      <div class="db-pill">5 of 16</div>
+    </div>
+    <div class="demo-content" style="min-height:380px;position:relative;" id="gps-demo">
+      <div id="gps-phase" style="min-height:340px;"></div>
+    </div>
+    <!-- Phase indicator -->
+    <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
+      <div id="gps-phase-label" style="font-size:10px;font-weight:600;color:#999;letter-spacing:0.05em;"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+    <button class="reset-btn" onclick="gpsReplay()" style="padding:6px 16px;">▶ Replay</button>
+    <button class="reset-btn" id="gps-pause-btn" onclick="gpsPause()" style="padding:6px 16px;">⏸ Pause</button>
+  </div>
+  <!-- Annotation timeline -->
+  <div id="gps-timeline" style="margin-top:12px;padding:8px 0;">
+    <div style="font-size:11px;font-weight:600;color:#999;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Phase timeline</div>
+    <div id="gps-steps-list" style="font-size:12px;line-height:2;color:#777;"></div>
+  </div>
+</div>
+
+<hr class="spec-divider" style="max-width:520px;">
+
+<!-- ═══ DEMO 2: Cup Trick — Pour Step ═══ -->
+<div class="section" style="max-width:520px;">
+  <div class="section-num">Complete Step 2</div>
+  <div class="section-title">Cup Trick — Pour & Compare</div>
+  <div class="section-source">From: The Cup Trick (Claims, Band 2)</div>
+  <div class="section-desc">4 sub-phases in ONE step. Kid predicts → locks answer → pour simulation plays → volumes revealed → comparison question. Prediction feeds into simulation.</div>
+
+  <div class="demo-phone" style="max-width:340px;position:relative;overflow:hidden;">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">The Cup Trick</div>
+      <div class="db-pill">3 of 8</div>
+    </div>
+    <div class="demo-content" style="min-height:380px;position:relative;" id="cup-demo">
+      <div id="cup-phase" style="min-height:340px;"></div>
+    </div>
+    <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
+      <div id="cup-phase-label" style="font-size:10px;font-weight:600;color:#999;letter-spacing:0.05em;"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+    <button class="reset-btn" onclick="cupReplay()" style="padding:6px 16px;">▶ Replay</button>
+    <button class="reset-btn" id="cup-pause-btn" onclick="cupPause()" style="padding:6px 16px;">⏸ Pause</button>
+  </div>
+  <div id="cup-timeline" style="margin-top:12px;padding:8px 0;">
+    <div style="font-size:11px;font-weight:600;color:#999;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Phase timeline</div>
+    <div id="cup-steps-list" style="font-size:12px;line-height:2;color:#777;"></div>
+  </div>
+</div>
+
+<hr class="spec-divider" style="max-width:520px;">
+
+<!-- ═══ DEMO 3: Bounce Lab — Drop & Measure ═══ -->
+<div class="section" style="max-width:520px;">
+  <div class="section-num">Complete Step 3</div>
+  <div class="section-title">Bounce Lab — Drop & Measure</div>
+  <div class="section-source">From: Bounce Lab (Patterns, Band 3)</div>
+  <div class="section-desc">5 sub-phases in ONE step. Kid picks ball → ball rises → tap to drop → physics simulation with gravity → freeze at peak → data card animates in. Real-time physics drives the UI.</div>
+
+  <div class="demo-phone" style="max-width:340px;position:relative;overflow:hidden;">
+    <div class="demo-bar">
+      <div class="db-back">←</div>
+      <div class="db-title">Bounce Lab</div>
+      <div class="db-pill">3 of 10</div>
+    </div>
+    <div class="demo-content" style="min-height:380px;position:relative;" id="bounce-demo">
+      <div id="bounce-phase" style="min-height:340px;"></div>
+    </div>
+    <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
+      <div id="bounce-phase-label" style="font-size:10px;font-weight:600;color:#999;letter-spacing:0.05em;"></div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;justify-content:center;margin-top:10px;">
+    <button class="reset-btn" onclick="bounceReplay()" style="padding:6px 16px;">▶ Replay</button>
+    <button class="reset-btn" id="bounce-pause-btn" onclick="bouncePause()" style="padding:6px 16px;">⏸ Pause</button>
+  </div>
+  <div id="bounce-timeline" style="margin-top:12px;padding:8px 0;">
+    <div style="font-size:11px;font-weight:600;color:#999;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.08em;">Phase timeline</div>
+    <div id="bounce-steps-list" style="font-size:12px;line-height:2;color:#777;"></div>
+  </div>
+</div>
+
+<hr class="spec-divider" style="max-width:520px;">
+
+<div style="max-width:520px;margin:0 auto 48px;text-align:center;">
+  <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;">Individual interaction widgets below ↓</div>
+  <div style="font-size:12px;color:#999;">The above steps are built by combining these widgets in sequence.</div>
+</div>
+
 <!-- ═══════════ 1. CHIP SELECT ═══════════ -->
 <div class="section">
   <div class="section-num">Interaction 1</div>
@@ -1434,6 +1546,523 @@ function sortReset() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
   };
 })();
+
+/* ═══════════════════════════════════════
+   AUTO-PLAYING STEP DEMOS
+═══════════════════════════════════════ */
+
+// ── Shared helpers ──
+function animEl(html){const d=document.createElement('div');d.innerHTML=html;d.style.opacity='0';d.style.transform='translateY(8px)';d.style.transition='all 0.4s ease';return d;}
+function fadeIn(el){requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateY(0)';});}
+function cursorDot(parent,x,y){
+  const c=document.createElement('div');
+  c.style.cssText=`position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(26,26,26,0.25);border:2px solid rgba(26,26,26,0.4);left:${x}px;top:${y}px;transform:translate(-50%,-50%);transition:all 0.6s ease;pointer-events:none;z-index:10;`;
+  parent.appendChild(c);
+  return c;
+}
+
+// ── Timeline helper ──
+function markPhase(listId,phases,activeIdx){
+  const el=document.getElementById(listId);
+  el.innerHTML=phases.map((p,i)=>{
+    const active=i===activeIdx;
+    const done=i<activeIdx;
+    const icon=done?'✓':active?'→':'○';
+    const color=done?'#4CAF50':active?'#1A1A1A':'#bbb';
+    const weight=active?'600':'400';
+    return `<div style="color:${color};font-weight:${weight};">${icon} ${p}</div>`;
+  }).join('');
+}
+
+// ════════════════════════════
+// DEMO 1: GPS Beacon A
+// ════════════════════════════
+const GPS_PHASES=[
+  'Tap a spot 10m from Beacon A',
+  'Question: "Is this the only spot?"',
+  'Kid answers: "No — there could be more"',
+  'Find 7 more spots on canvas',
+  'Question: "What shape do they form?"',
+  'Kid drags from A to draw the circle'
+];
+let gpsTimers=[], gpsPaused=false;
+
+function gpsRun(){
+  gpsTimers.forEach(clearTimeout);gpsTimers=[];gpsPaused=false;
+  document.getElementById('gps-pause-btn').textContent='⏸ Pause';
+  const box=document.getElementById('gps-phase');
+  const label=document.getElementById('gps-phase-label');
+  box.innerHTML='';label.textContent='';
+  markPhase('gps-steps-list',GPS_PHASES,-1);
+  let t=500;
+
+  // Phase 1: Show canvas + prompt
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,0);
+    label.textContent='PHASE 1 OF 6';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Tap a spot on the map that is 10m from A.</div>
+      <svg viewBox="0 0 280 200" style="width:100%;border:2px solid #1A1A1A;border-radius:8px;background:#F8F8F6;margin-bottom:8px;">
+        <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="140" y1="0" x2="140" y2="200" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <circle cx="140" cy="100" r="8" fill="#4DAAFF" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="85" font-size="11" fill="#1A1A1A" font-family="Sora" font-weight="700" text-anchor="middle">A</text>
+        <circle id="gps-tap1" cx="210" cy="55" r="0" fill="#2EB39E" stroke="#1A1A1A" stroke-width="1.5" opacity="0"/>
+      </svg>`;
+    // Simulate tap after delay
+    gpsTimers.push(setTimeout(()=>{
+      if(gpsPaused)return;
+      const dot=document.getElementById('gps-tap1');
+      if(dot){dot.setAttribute('r','7');dot.setAttribute('opacity','1');dot.style.transition='all 0.3s';}
+      sfx('pop');
+    },1200));
+  },t));
+  t+=2800;
+
+  // Phase 2: Question appears
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,1);
+    label.textContent='PHASE 2 OF 6';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">Is this the only spot 10m from A?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="chip" style="opacity:.5;">Yes — just this one</div>
+        <div class="chip" id="gps-chip-no" style="background:var(--cream);">No — there could be more</div>
+      </div>`;
+    sfx('pop');
+  },t));
+  t+=2000;
+
+  // Phase 3: Answer selected
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,2);
+    label.textContent='PHASE 3 OF 6';
+    const c=document.getElementById('gps-chip-no');
+    if(c){c.style.background='#E8F5E0';c.style.borderColor='#4CAF50';c.style.color='#2E7D32';}
+    sfx('right');
+    // Add feedback
+    const fb=document.createElement('div');
+    fb.style.cssText='font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;';
+    fb.textContent='✓ Exactly. Find 7 more spots at the same distance.';
+    box.appendChild(fb);
+  },t));
+  t+=2500;
+
+  // Phase 4: Canvas with multiple dots
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,3);
+    label.textContent='PHASE 4 OF 6';
+    let dots='';
+    for(let i=0;i<8;i++){
+      const a=i*Math.PI/4;
+      const cx=140+70*Math.cos(a),cy=100-70*Math.sin(a);
+      dots+=`<circle cx="${cx}" cy="${cy}" r="6" fill="#2EB39E" stroke="#1A1A1A" stroke-width="1.5" opacity="0"><animate attributeName="opacity" to="1" dur="0.3s" begin="${i*0.2}s" fill="freeze"/><animate attributeName="r" from="0" to="6" dur="0.3s" begin="${i*0.2}s" fill="freeze"/></circle>`;
+    }
+    box.innerHTML=`
+      <div style="font-size:12px;font-weight:600;color:#999;margin-bottom:4px;letter-spacing:0.08em;">8 / 8 SPOTS FOUND</div>
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Find 7 more spots 10m from A.</div>
+      <svg viewBox="0 0 280 200" style="width:100%;border:2px solid #1A1A1A;border-radius:8px;background:#F8F8F6;">
+        <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="140" y1="0" x2="140" y2="200" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        ${dots}
+        <circle cx="140" cy="100" r="8" fill="#4DAAFF" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="85" font-size="11" fill="#1A1A1A" font-family="Sora" font-weight="700" text-anchor="middle">A</text>
+      </svg>`;
+    sfx('pop');
+  },t));
+  t+=3000;
+
+  // Phase 5: Shape question
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,4);
+    label.textContent='PHASE 5 OF 6';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">What shape do all these points form?</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="chip" style="opacity:.5;">A straight line</div>
+        <div class="chip" style="background:#E8F5E0;border-color:#4CAF50;color:#2E7D32;">A circle ✓</div>
+      </div>
+      <div style="font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;">✓ Exactly. Every spot 10m from A sits on a circle.</div>`;
+    sfx('right');
+  },t));
+  t+=2500;
+
+  // Phase 6: Draw circle
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,5);
+    label.textContent='PHASE 6 OF 6';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Now draw it. Tap A and drag outward.</div>
+      <svg viewBox="0 0 280 200" style="width:100%;border:2px solid #1A1A1A;border-radius:8px;background:#F8F8F6;">
+        <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <line x1="140" y1="0" x2="140" y2="200" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
+        <circle cx="140" cy="100" r="70" fill="none" stroke="#4DAAFF" stroke-width="2" stroke-dasharray="6,4" opacity="0">
+          <animate attributeName="r" from="8" to="70" dur="1s" fill="freeze"/>
+          <animate attributeName="opacity" from="0" to="0.8" dur="0.4s" fill="freeze"/>
+        </circle>
+        <circle cx="140" cy="100" r="8" fill="#4DAAFF" stroke="#1A1A1A" stroke-width="2"/>
+        <text x="140" y="85" font-size="11" fill="#1A1A1A" font-family="Sora" font-weight="700" text-anchor="middle">A</text>
+      </svg>
+      <div style="font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;">✓ Every point 10m from A. One circle. He's somewhere on this.</div>
+      <div style="margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#999;">Continue →</div>`;
+    sfx('reveal');
+  },t));
+  t+=2000;
+
+  // Done
+  gpsTimers.push(setTimeout(()=>{
+    if(gpsPaused)return;
+    markPhase('gps-steps-list',GPS_PHASES,6);
+    label.textContent='STEP COMPLETE — 6 PHASES IN 1 STEP';
+  },t));
+}
+function gpsReplay(){gpsRun();}
+function gpsPause(){
+  gpsPaused=!gpsPaused;
+  document.getElementById('gps-pause-btn').textContent=gpsPaused?'▶ Resume':'⏸ Pause';
+  if(!gpsPaused)gpsRun();
+}
+
+// ════════════════════════════
+// DEMO 2: Cup Trick
+// ════════════════════════════
+const CUP_PHASES=[
+  'Predict: "Which cup has more juice?"',
+  'Lock answer → others dim',
+  'Pour simulation — juice fills beakers',
+  'Volumes revealed — compare',
+  'Probe question: "Was your guess right?"'
+];
+let cupTimers=[], cupPaused=false;
+
+function cupRun(){
+  cupTimers.forEach(clearTimeout);cupTimers=[];cupPaused=false;
+  document.getElementById('cup-pause-btn').textContent='⏸ Pause';
+  const box=document.getElementById('cup-phase');
+  const label=document.getElementById('cup-phase-label');
+  box.innerHTML='';label.textContent='';
+  markPhase('cup-steps-list',CUP_PHASES,-1);
+  let t=500;
+
+  // Phase 1: Prediction
+  cupTimers.push(setTimeout(()=>{
+    if(cupPaused)return;
+    markPhase('cup-steps-list',CUP_PHASES,0);
+    label.textContent='PHASE 1 OF 5';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">Which cup has more juice?</div>
+      <div style="display:flex;gap:12px;justify-content:center;margin:12px 0;">
+        <div style="text-align:center;">
+          <svg viewBox="0 0 60 80" width="60"><rect x="10" y="10" width="40" height="60" rx="4" fill="none" stroke="#1A1A1A" stroke-width="2.5"/><rect x="12" y="35" width="36" height="33" rx="2" fill="#90CAF9" opacity=".6"/></svg>
+          <div class="chip" id="cup-a" style="font-size:12px;padding:6px 12px;">Cup A (wide)</div>
+        </div>
+        <div style="text-align:center;">
+          <svg viewBox="0 0 40 100" width="40"><rect x="5" y="5" width="30" height="85" rx="4" fill="none" stroke="#1A1A1A" stroke-width="2.5"/><rect x="7" y="30" width="26" height="58" rx="2" fill="#90CAF9" opacity=".6"/></svg>
+          <div class="chip" id="cup-b" style="font-size:12px;padding:6px 12px;">Cup B (tall)</div>
+        </div>
+      </div>`;
+    sfx('pop');
+    // Select Cup B after delay
+    cupTimers.push(setTimeout(()=>{
+      if(cupPaused)return;
+      const cb=document.getElementById('cup-b');
+      if(cb){cb.classList.add('selected');}
+      sfx('select');
+    },1200));
+  },t));
+  t+=3000;
+
+  // Phase 2: Lock
+  cupTimers.push(setTimeout(()=>{
+    if(cupPaused)return;
+    markPhase('cup-steps-list',CUP_PHASES,1);
+    label.textContent='PHASE 2 OF 5';
+    const ca=document.getElementById('cup-a');
+    const cb=document.getElementById('cup-b');
+    if(ca)ca.classList.add('dimmed');
+    if(cb){cb.classList.remove('selected');cb.classList.add('locked');}
+    sfx('tap');
+  },t));
+  t+=2000;
+
+  // Phase 3: Pour simulation
+  cupTimers.push(setTimeout(()=>{
+    if(cupPaused)return;
+    markPhase('cup-steps-list',CUP_PHASES,2);
+    label.textContent='PHASE 3 OF 5';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">Pour them into beakers.</div>
+      <div style="display:flex;gap:20px;justify-content:center;align-items:flex-end;margin:16px 0;">
+        <div style="text-align:center;">
+          <div style="width:50px;height:120px;border:2.5px solid #1A1A1A;border-top:none;border-radius:0 0 6px 6px;position:relative;overflow:hidden;">
+            <div id="beaker-a" style="position:absolute;bottom:0;width:100%;height:0;background:#90CAF9;transition:height 1.5s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+          <div style="font-size:11px;font-weight:600;margin-top:4px;">Cup A</div>
+          <div id="beaker-a-val" style="font-size:11px;font-weight:600;color:#4CAF50;opacity:0;transition:opacity 0.4s;">240ml</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:50px;height:120px;border:2.5px solid #1A1A1A;border-top:none;border-radius:0 0 6px 6px;position:relative;overflow:hidden;">
+            <div id="beaker-b" style="position:absolute;bottom:0;width:100%;height:0;background:#90CAF9;transition:height 1.5s cubic-bezier(.4,0,.2,1);"></div>
+          </div>
+          <div style="font-size:11px;font-weight:600;margin-top:4px;">Cup B</div>
+          <div id="beaker-b-val" style="font-size:11px;font-weight:600;color:#4CAF50;opacity:0;transition:opacity 0.4s;">240ml</div>
+        </div>
+      </div>`;
+    // Animate fill
+    cupTimers.push(setTimeout(()=>{
+      if(cupPaused)return;
+      const a=document.getElementById('beaker-a');
+      const b=document.getElementById('beaker-b');
+      if(a)a.style.height='65%';
+      if(b)b.style.height='65%';
+    },300));
+    sfx('select');
+  },t));
+  t+=2500;
+
+  // Phase 4: Reveal values
+  cupTimers.push(setTimeout(()=>{
+    if(cupPaused)return;
+    markPhase('cup-steps-list',CUP_PHASES,3);
+    label.textContent='PHASE 4 OF 5';
+    const av=document.getElementById('beaker-a-val');
+    const bv=document.getElementById('beaker-b-val');
+    if(av)av.style.opacity='1';
+    if(bv)bv.style.opacity='1';
+    sfx('reveal');
+    // Add comparison
+    const comp=document.createElement('div');
+    comp.style.cssText='text-align:center;font-family:"Sora",sans-serif;font-size:15px;font-weight:700;margin-top:8px;padding:8px;background:#FFF7E0;border:2px solid #1A1A1A;border-radius:8px;';
+    comp.textContent='240ml = 240ml — Same!';
+    box.appendChild(comp);
+  },t));
+  t+=2500;
+
+  // Phase 5: Probe question
+  cupTimers.push(setTimeout(()=>{
+    if(cupPaused)return;
+    markPhase('cup-steps-list',CUP_PHASES,4);
+    label.textContent='PHASE 5 OF 5';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;padding-left:10px;border-left:3px solid #FFD54F;">Was your guess right?</div>
+      <div style="font-size:12px;color:#555;margin-bottom:10px;">You picked Cup B (tall). Both cups had 240ml.</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="chip" style="background:#FBE3E0;border-color:#D32F2F;color:#8B2F26;">No — I was wrong ✗</div>
+        <div class="chip" style="opacity:.5;">Yes — I was right</div>
+      </div>
+      <div style="font-size:12px;padding:8px 12px;border-radius:8px;background:#FFF7E0;border:1px solid #E0C040;color:#8B6914;margin-top:10px;font-weight:500;line-height:1.5;">
+        <strong>Tall doesn't mean more.</strong> Volume depends on width too, not just height.
+      </div>
+      <div style="margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#999;">Next round →</div>`;
+    sfx('oops');
+  },t));
+  t+=2000;
+
+  cupTimers.push(setTimeout(()=>{
+    if(cupPaused)return;
+    markPhase('cup-steps-list',CUP_PHASES,5);
+    label.textContent='STEP COMPLETE — 5 PHASES IN 1 STEP';
+  },t));
+}
+function cupReplay(){cupRun();}
+function cupPause(){
+  cupPaused=!cupPaused;
+  document.getElementById('cup-pause-btn').textContent=cupPaused?'▶ Resume':'⏸ Pause';
+  if(!cupPaused)cupRun();
+}
+
+// ════════════════════════════
+// DEMO 3: Bounce Lab
+// ════════════════════════════
+const BOUNCE_PHASES=[
+  'Kid picks a ball from the shelf',
+  'Ball rises to drop height',
+  'Kid taps to drop — gravity simulation',
+  'Ball bounces — freezes at peak for 1s',
+  'Trial card slides in with data bars'
+];
+let bounceTimers=[], bouncePaused=false;
+
+function bounceRun(){
+  bounceTimers.forEach(clearTimeout);bounceTimers=[];bouncePaused=false;
+  document.getElementById('bounce-pause-btn').textContent='⏸ Pause';
+  const box=document.getElementById('bounce-phase');
+  const label=document.getElementById('bounce-phase-label');
+  box.innerHTML='';label.textContent='';
+  markPhase('bounce-steps-list',BOUNCE_PHASES,-1);
+  let t=500;
+
+  // Phase 1: Pick ball
+  bounceTimers.push(setTimeout(()=>{
+    if(bouncePaused)return;
+    markPhase('bounce-steps-list',BOUNCE_PHASES,0);
+    label.textContent='PHASE 1 OF 5';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">Pick a ball to test.</div>
+      <div style="display:flex;gap:16px;justify-content:center;margin:16px 0;">
+        <div style="text-align:center;">
+          <div style="width:48px;height:48px;border-radius:50%;background:#FF7043;border:2.5px solid #1A1A1A;margin:0 auto 4px;"></div>
+          <div style="font-size:10px;font-weight:600;">Rubber</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="bounce-ball-pick" style="width:48px;height:48px;border-radius:50%;background:#FDD835;border:2.5px solid #1A1A1A;margin:0 auto 4px;box-shadow:0 0 0 3px #FFD54F;"></div>
+          <div style="font-size:10px;font-weight:600;">Tennis ←</div>
+        </div>
+        <div style="text-align:center;">
+          <div style="width:48px;height:48px;border-radius:50%;background:#90A4AE;border:2.5px solid #1A1A1A;margin:0 auto 4px;"></div>
+          <div style="font-size:10px;font-weight:600;">Steel</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#999;text-align:center;">Kid taps the tennis ball</div>`;
+    sfx('select');
+  },t));
+  t+=2500;
+
+  // Phase 2: Ball rises
+  bounceTimers.push(setTimeout(()=>{
+    if(bouncePaused)return;
+    markPhase('bounce-steps-list',BOUNCE_PHASES,1);
+    label.textContent='PHASE 2 OF 5';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Ball rising to drop height...</div>
+      <div style="position:relative;height:220px;border:2px solid #1A1A1A;border-radius:8px;background:linear-gradient(to bottom,#E3F0FF,#F8F8F6);overflow:hidden;">
+        <div style="position:absolute;bottom:0;left:0;right:0;height:3px;background:#1A1A1A;"></div>
+        <div style="position:absolute;left:20px;top:20px;bottom:10px;width:1px;border-left:1px dashed #ccc;"></div>
+        <div style="position:absolute;left:10px;top:18px;font-size:9px;color:#999;font-weight:600;">200cm</div>
+        <div style="position:absolute;left:10px;bottom:8px;font-size:9px;color:#999;font-weight:600;">0</div>
+        <div id="bounce-ball" style="position:absolute;left:50%;width:36px;height:36px;border-radius:50%;background:#FDD835;border:2.5px solid #1A1A1A;transform:translateX(-50%);bottom:6px;transition:bottom 1.2s cubic-bezier(.33,1,.68,1);"></div>
+        <div id="bounce-speech" style="position:absolute;left:50%;transform:translateX(-50%);top:16px;background:#1A1A1A;color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;opacity:0;transition:opacity 0.3s;white-space:nowrap;">Tap the ball!</div>
+      </div>`;
+    // Animate rise
+    cupTimers.push(setTimeout(()=>{
+      if(bouncePaused)return;
+      const ball=document.getElementById('bounce-ball');
+      if(ball)ball.style.bottom='176px';
+    },200));
+    sfx('pop');
+  },t));
+  t+=2000;
+
+  // Phase 3: Drop
+  bounceTimers.push(setTimeout(()=>{
+    if(bouncePaused)return;
+    markPhase('bounce-steps-list',BOUNCE_PHASES,2);
+    label.textContent='PHASE 3 OF 5';
+    const speech=document.getElementById('bounce-speech');
+    if(speech)speech.style.opacity='1';
+    // Drop after tap delay
+    bounceTimers.push(setTimeout(()=>{
+      if(bouncePaused)return;
+      sfx('tap');
+      if(speech){speech.textContent='Dropping!';speech.style.background='#FF7043';}
+      const ball=document.getElementById('bounce-ball');
+      if(ball){ball.style.transition='bottom 0.5s cubic-bezier(.55,0,1,.45)';ball.style.bottom='6px';}
+    },1000));
+  },t));
+  t+=2500;
+
+  // Phase 4: Bounce + freeze
+  bounceTimers.push(setTimeout(()=>{
+    if(bouncePaused)return;
+    markPhase('bounce-steps-list',BOUNCE_PHASES,3);
+    label.textContent='PHASE 4 OF 5';
+    const ball=document.getElementById('bounce-ball');
+    const speech=document.getElementById('bounce-speech');
+    if(ball){ball.style.transition='bottom 0.6s cubic-bezier(.33,1,.68,1)';ball.style.bottom='116px';}
+    if(speech){speech.textContent='Bounce! (frozen 1s)';speech.style.background='#4CAF50';speech.style.opacity='1';}
+    sfx('pop');
+    // Show freeze indicator
+    bounceTimers.push(setTimeout(()=>{
+      if(bouncePaused)return;
+      const ball=document.getElementById('bounce-ball');
+      if(ball){ball.style.boxShadow='0 0 0 4px rgba(76,175,80,.3)';} // freeze glow
+    },700));
+  },t));
+  t+=2800;
+
+  // Phase 5: Trial card
+  bounceTimers.push(setTimeout(()=>{
+    if(bouncePaused)return;
+    markPhase('bounce-steps-list',BOUNCE_PHASES,4);
+    label.textContent='PHASE 5 OF 5';
+    box.innerHTML=`
+      <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">Trial recorded!</div>
+      <div style="border:2px solid #1A1A1A;border-radius:10px;padding:14px;background:white;box-shadow:3px 3px 0 #1A1A1A;margin:12px 0;opacity:0;transform:translateY(12px);transition:all 0.5s ease;" id="bounce-card">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#FDD835;border:2px solid #1A1A1A;"></div>
+          <div style="font-family:'Sora',sans-serif;font-size:13px;font-weight:700;">Tennis Ball — Trial 1</div>
+        </div>
+        <div style="display:flex;gap:12px;">
+          <div style="flex:1;">
+            <div style="font-size:10px;color:#999;font-weight:600;margin-bottom:4px;">DROP</div>
+            <div style="height:8px;border-radius:4px;background:#E0E0E0;overflow:hidden;border:1.5px solid #1A1A1A;">
+              <div id="bounce-bar-drop" style="height:100%;width:0;background:#4DAAFF;transition:width 0.8s ease;border-radius:3px;"></div>
+            </div>
+            <div style="font-size:12px;font-weight:700;margin-top:2px;">200cm</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-size:10px;color:#999;font-weight:600;margin-bottom:4px;">BOUNCE</div>
+            <div style="height:8px;border-radius:4px;background:#E0E0E0;overflow:hidden;border:1.5px solid #1A1A1A;">
+              <div id="bounce-bar-bounce" style="height:100%;width:0;background:#66BB6A;transition:width 1s ease .3s;border-radius:3px;"></div>
+            </div>
+            <div style="font-size:12px;font-weight:700;margin-top:2px;">110cm</div>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#999;">Try another ball →</div>`;
+    sfx('coin');
+    // Animate card in
+    bounceTimers.push(setTimeout(()=>{
+      if(bouncePaused)return;
+      const card=document.getElementById('bounce-card');
+      if(card){card.style.opacity='1';card.style.transform='translateY(0)';}
+    },200));
+    // Animate bars
+    bounceTimers.push(setTimeout(()=>{
+      if(bouncePaused)return;
+      const d=document.getElementById('bounce-bar-drop');
+      const b=document.getElementById('bounce-bar-bounce');
+      if(d)d.style.width='100%';
+      if(b)b.style.width='55%';
+    },600));
+  },t));
+  t+=2500;
+
+  bounceTimers.push(setTimeout(()=>{
+    if(bouncePaused)return;
+    markPhase('bounce-steps-list',BOUNCE_PHASES,5);
+    label.textContent='STEP COMPLETE — 5 PHASES IN 1 STEP';
+  },t));
+}
+function bounceReplay(){bounceRun();}
+function bouncePause(){
+  bouncePaused=!bouncePaused;
+  document.getElementById('bounce-pause-btn').textContent=bouncePaused?'▶ Resume':'⏸ Pause';
+  if(!bouncePaused)bounceRun();
+}
+
+// Auto-start all demos when visible
+const demoObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      if (id === 'gps-demo') gpsRun();
+      else if (id === 'cup-demo') cupRun();
+      else if (id === 'bounce-demo') bounceRun();
+      demoObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.3 });
+
+demoObserver.observe(document.getElementById('gps-demo'));
+demoObserver.observe(document.getElementById('cup-demo'));
+demoObserver.observe(document.getElementById('bounce-demo'));
 </script>
 
 </body>
