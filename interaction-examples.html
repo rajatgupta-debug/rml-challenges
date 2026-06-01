@@ -710,9 +710,9 @@
      SECTION A: COMPLETE STEP DEMOS (auto-playing)
      Shows multi-phase interactions within a single step
 ═══════════════════════════════════════════════════════ -->
-<div style="max-width:520px;margin:0 auto 24px;background:#1A1A1A;color:white;padding:16px 20px;border-radius:12px;">
-  <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:700;margin-bottom:6px;">Why Learnosity won't work</div>
-  <div style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.5;">Each "step" in an exploration isn't a single question — it's a chain of dependent interactions. One thing triggers the next. Below are 3 real steps from 3 different activities, auto-playing so you can see the flow.</div>
+<div style="max-width:520px;margin:0 auto 24px;padding:0 4px;">
+  <div style="font-family:'Sora',sans-serif;font-size:18px;font-weight:700;margin-bottom:4px;">Complete Step Examples</div>
+  <div style="font-size:13px;color:#666;line-height:1.5;">What a single step looks like inside an exploration — multiple interactions happening in sequence within one step.</div>
 </div>
 
 <!-- ═══ DEMO 1: GPS — Beacon A Step ═══ -->
@@ -756,13 +756,13 @@
   <div class="section-source">From: The Cup Trick (Claims, Band 2)</div>
   <div class="section-desc">4 sub-phases in ONE step. Kid predicts → locks answer → pour simulation plays → volumes revealed → comparison question. Prediction feeds into simulation.</div>
 
-  <div class="demo-phone" style="max-width:340px;position:relative;overflow:hidden;">
+  <div class="demo-phone" style="max-width:340px;position:relative;overflow:visible;">
     <div class="demo-bar">
       <div class="db-back">←</div>
       <div class="db-title">The Cup Trick</div>
       <div class="db-pill">3 of 8</div>
     </div>
-    <div class="demo-content" style="min-height:380px;position:relative;" id="cup-demo">
+    <div class="demo-content" style="min-height:380px;position:relative;overflow:visible;" id="cup-demo">
       <div id="cup-phase" style="min-height:340px;"></div>
     </div>
     <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
@@ -788,13 +788,13 @@
   <div class="section-source">From: Bounce Lab (Patterns, Band 3)</div>
   <div class="section-desc">5 sub-phases in ONE step. Kid picks ball → ball rises → tap to drop → physics simulation with gravity → freeze at peak → data card animates in. Real-time physics drives the UI.</div>
 
-  <div class="demo-phone" style="max-width:340px;position:relative;overflow:hidden;">
+  <div class="demo-phone" style="max-width:340px;position:relative;overflow:visible;">
     <div class="demo-bar">
       <div class="db-back">←</div>
       <div class="db-title">Bounce Lab</div>
       <div class="db-pill">3 of 10</div>
     </div>
-    <div class="demo-content" style="min-height:380px;position:relative;" id="bounce-demo">
+    <div class="demo-content" style="min-height:380px;position:relative;overflow:visible;" id="bounce-demo">
       <div id="bounce-phase" style="min-height:340px;"></div>
     </div>
     <div style="position:absolute;bottom:8px;left:0;right:0;text-align:center;">
@@ -1554,11 +1554,36 @@ function sortReset() {
 // ── Shared helpers ──
 function animEl(html){const d=document.createElement('div');d.innerHTML=html;d.style.opacity='0';d.style.transform='translateY(8px)';d.style.transition='all 0.4s ease';return d;}
 function fadeIn(el){requestAnimationFrame(()=>{el.style.opacity='1';el.style.transform='translateY(0)';});}
-function cursorDot(parent,x,y){
+
+// ── Mouse cursor ──
+function makeCursor(parent){
   const c=document.createElement('div');
-  c.style.cssText=`position:absolute;width:18px;height:18px;border-radius:50%;background:rgba(26,26,26,0.25);border:2px solid rgba(26,26,26,0.4);left:${x}px;top:${y}px;transform:translate(-50%,-50%);transition:all 0.6s ease;pointer-events:none;z-index:10;`;
+  c.innerHTML=`<svg width="20" height="24" viewBox="0 0 20 24" fill="none"><path d="M2 1L2 17.5L6.5 13.5L10.5 21L13.5 19.5L9.5 12L15 11.5L2 1Z" fill="white" stroke="#1A1A1A" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+  c.style.cssText='position:absolute;z-index:20;pointer-events:none;left:-30px;top:-30px;transition:left 0.5s cubic-bezier(.4,0,.2,1),top 0.5s cubic-bezier(.4,0,.2,1);filter:drop-shadow(1px 2px 2px rgba(0,0,0,.25));';
+  parent.style.position='relative';
   parent.appendChild(c);
   return c;
+}
+function moveCursor(c,x,y,dur){
+  if(dur!==undefined){c.style.transitionDuration=dur+'ms,'+dur+'ms';}
+  else{c.style.transitionDuration='500ms,500ms';}
+  c.style.left=x+'px';c.style.top=y+'px';
+}
+function clickEffect(c){
+  const ring=document.createElement('div');
+  ring.style.cssText='position:absolute;width:24px;height:24px;border-radius:50%;border:2px solid rgba(26,26,26,.35);left:3px;top:3px;transform:scale(0);opacity:1;transition:transform 0.3s ease,opacity 0.3s ease;pointer-events:none;';
+  c.appendChild(ring);
+  requestAnimationFrame(()=>{ring.style.transform='scale(2.5)';ring.style.opacity='0';});
+  setTimeout(()=>ring.remove(),400);
+}
+function dragTrail(parent,x1,y1,x2,y2){
+  const trail=document.createElement('div');
+  const len=Math.sqrt((x2-x1)**2+(y2-y1)**2);
+  const angle=Math.atan2(y2-y1,x2-x1)*180/Math.PI;
+  trail.style.cssText=`position:absolute;left:${x1}px;top:${y1}px;width:0;height:2px;background:rgba(26,26,26,.15);border-radius:1px;transform-origin:0 50%;transform:rotate(${angle}deg);transition:width 0.8s ease;pointer-events:none;z-index:15;`;
+  parent.appendChild(trail);
+  requestAnimationFrame(()=>{trail.style.width=len+'px';});
+  setTimeout(()=>{trail.style.opacity='0';trail.style.transition='opacity 0.5s';setTimeout(()=>trail.remove(),600);},1500);
 }
 
 // ── Timeline helper ──
@@ -1591,8 +1616,12 @@ function gpsRun(){
   gpsTimers.forEach(clearTimeout);gpsTimers=[];gpsPaused=false;
   document.getElementById('gps-pause-btn').textContent='⏸ Pause';
   const box=document.getElementById('gps-phase');
+  const demo=document.getElementById('gps-demo');
   const label=document.getElementById('gps-phase-label');
   box.innerHTML='';label.textContent='';
+  // Remove old cursor
+  demo.querySelectorAll('[data-cursor]').forEach(c=>c.remove());
+  const cur=makeCursor(demo);cur.setAttribute('data-cursor','1');
   markPhase('gps-steps-list',GPS_PHASES,-1);
   let t=500;
 
@@ -1610,9 +1639,11 @@ function gpsRun(){
         <text x="140" y="85" font-size="11" fill="#1A1A1A" font-family="Sora" font-weight="700" text-anchor="middle">A</text>
         <circle id="gps-tap1" cx="210" cy="55" r="0" fill="#2EB39E" stroke="#1A1A1A" stroke-width="1.5" opacity="0"/>
       </svg>`;
-    // Simulate tap after delay
+    // Move cursor to canvas spot and tap
+    moveCursor(cur,230,120,800);
     gpsTimers.push(setTimeout(()=>{
       if(gpsPaused)return;
+      clickEffect(cur);
       const dot=document.getElementById('gps-tap1');
       if(dot){dot.setAttribute('r','7');dot.setAttribute('opacity','1');dot.style.transition='all 0.3s';}
       sfx('pop');
@@ -1632,6 +1663,8 @@ function gpsRun(){
         <div class="chip" id="gps-chip-no" style="background:var(--cream);">No — there could be more</div>
       </div>`;
     sfx('pop');
+    // Move cursor to chip
+    moveCursor(cur,180,105,600);
   },t));
   t+=2000;
 
@@ -1640,10 +1673,10 @@ function gpsRun(){
     if(gpsPaused)return;
     markPhase('gps-steps-list',GPS_PHASES,2);
     label.textContent='PHASE 3 OF 6';
+    clickEffect(cur);
     const c=document.getElementById('gps-chip-no');
     if(c){c.style.background='#E8F5E0';c.style.borderColor='#4CAF50';c.style.color='#2E7D32';}
     sfx('right');
-    // Add feedback
     const fb=document.createElement('div');
     fb.style.cssText='font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;';
     fb.textContent='✓ Exactly. Find 7 more spots at the same distance.';
@@ -1651,19 +1684,21 @@ function gpsRun(){
   },t));
   t+=2500;
 
-  // Phase 4: Canvas with multiple dots
+  // Phase 4: Canvas with multiple dots — cursor taps around circle
   gpsTimers.push(setTimeout(()=>{
     if(gpsPaused)return;
     markPhase('gps-steps-list',GPS_PHASES,3);
     label.textContent='PHASE 4 OF 6';
     let dots='';
+    const dotPositions=[];
     for(let i=0;i<8;i++){
       const a=i*Math.PI/4;
       const cx=140+70*Math.cos(a),cy=100-70*Math.sin(a);
-      dots+=`<circle cx="${cx}" cy="${cy}" r="6" fill="#2EB39E" stroke="#1A1A1A" stroke-width="1.5" opacity="0"><animate attributeName="opacity" to="1" dur="0.3s" begin="${i*0.2}s" fill="freeze"/><animate attributeName="r" from="0" to="6" dur="0.3s" begin="${i*0.2}s" fill="freeze"/></circle>`;
+      dotPositions.push({cx,cy});
+      dots+=`<circle cx="${cx}" cy="${cy}" r="6" fill="#2EB39E" stroke="#1A1A1A" stroke-width="1.5" opacity="0" id="gps-dot-${i}"/>`;
     }
     box.innerHTML=`
-      <div style="font-size:12px;font-weight:600;color:#999;margin-bottom:4px;letter-spacing:0.08em;">8 / 8 SPOTS FOUND</div>
+      <div style="font-size:12px;font-weight:600;color:#999;margin-bottom:4px;letter-spacing:0.08em;" id="gps-counter">1 / 8 SPOTS FOUND</div>
       <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Find 7 more spots 10m from A.</div>
       <svg viewBox="0 0 280 200" style="width:100%;border:2px solid #1A1A1A;border-radius:8px;background:#F8F8F6;">
         <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
@@ -1672,11 +1707,28 @@ function gpsRun(){
         <circle cx="140" cy="100" r="8" fill="#4DAAFF" stroke="#1A1A1A" stroke-width="2"/>
         <text x="140" y="85" font-size="11" fill="#1A1A1A" font-family="Sora" font-weight="700" text-anchor="middle">A</text>
       </svg>`;
-    sfx('pop');
+    // Cursor taps each dot sequentially
+    dotPositions.forEach((p,i)=>{
+      gpsTimers.push(setTimeout(()=>{
+        if(gpsPaused)return;
+        const sx=p.cx/280*box.querySelector('svg').clientWidth;
+        const sy=(p.cy/200*box.querySelector('svg').clientHeight)+45;
+        moveCursor(cur,sx,sy,250);
+        setTimeout(()=>{
+          if(gpsPaused)return;
+          clickEffect(cur);
+          const d=document.getElementById('gps-dot-'+i);
+          if(d){d.setAttribute('opacity','1');}
+          const ctr=document.getElementById('gps-counter');
+          if(ctr)ctr.textContent=(i+2)+' / 8 SPOTS FOUND';
+          sfx('pop');
+        },280);
+      },i*350));
+    });
   },t));
-  t+=3000;
+  t+=4000;
 
-  // Phase 5: Shape question
+  // Phase 5: Shape question — cursor clicks answer
   gpsTimers.push(setTimeout(()=>{
     if(gpsPaused)return;
     markPhase('gps-steps-list',GPS_PHASES,4);
@@ -1684,36 +1736,77 @@ function gpsRun(){
     box.innerHTML=`
       <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">What shape do all these points form?</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <div class="chip" style="opacity:.5;">A straight line</div>
-        <div class="chip" style="background:#E8F5E0;border-color:#4CAF50;color:#2E7D32;">A circle ✓</div>
-      </div>
-      <div style="font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;">✓ Exactly. Every spot 10m from A sits on a circle.</div>`;
-    sfx('right');
+        <div class="chip">A straight line</div>
+        <div class="chip" id="gps-circle-chip">A circle</div>
+      </div>`;
+    sfx('pop');
+    moveCursor(cur,160,100,500);
+    gpsTimers.push(setTimeout(()=>{
+      if(gpsPaused)return;
+      clickEffect(cur);
+      const ch=document.getElementById('gps-circle-chip');
+      if(ch){ch.style.background='#E8F5E0';ch.style.borderColor='#4CAF50';ch.style.color='#2E7D32';ch.textContent='A circle ✓';}
+      box.querySelector('.chip:first-child').style.opacity='.5';
+      sfx('right');
+      const fb=document.createElement('div');
+      fb.style.cssText='font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;';
+      fb.textContent='✓ Exactly. Every spot 10m from A sits on a circle.';
+      box.appendChild(fb);
+    },800));
   },t));
-  t+=2500;
+  t+=3000;
 
-  // Phase 6: Draw circle
+  // Phase 6: Draw circle — cursor drags from center outward
   gpsTimers.push(setTimeout(()=>{
     if(gpsPaused)return;
     markPhase('gps-steps-list',GPS_PHASES,5);
     label.textContent='PHASE 6 OF 6';
     box.innerHTML=`
       <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Now draw it. Tap A and drag outward.</div>
-      <svg viewBox="0 0 280 200" style="width:100%;border:2px solid #1A1A1A;border-radius:8px;background:#F8F8F6;">
+      <svg id="gps-draw-svg" viewBox="0 0 280 200" style="width:100%;border:2px solid #1A1A1A;border-radius:8px;background:#F8F8F6;">
         <line x1="0" y1="100" x2="280" y2="100" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
         <line x1="140" y1="0" x2="140" y2="200" stroke="rgba(0,0,0,.1)" stroke-width="1"/>
-        <circle cx="140" cy="100" r="70" fill="none" stroke="#4DAAFF" stroke-width="2" stroke-dasharray="6,4" opacity="0">
-          <animate attributeName="r" from="8" to="70" dur="1s" fill="freeze"/>
-          <animate attributeName="opacity" from="0" to="0.8" dur="0.4s" fill="freeze"/>
-        </circle>
+        <circle id="gps-growing-circle" cx="140" cy="100" r="8" fill="none" stroke="#4DAAFF" stroke-width="2" stroke-dasharray="6,4" opacity="0"/>
         <circle cx="140" cy="100" r="8" fill="#4DAAFF" stroke="#1A1A1A" stroke-width="2"/>
         <text x="140" y="85" font-size="11" fill="#1A1A1A" font-family="Sora" font-weight="700" text-anchor="middle">A</text>
-      </svg>
-      <div style="font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;">✓ Every point 10m from A. One circle. He's somewhere on this.</div>
-      <div style="margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#999;">Continue →</div>`;
-    sfx('reveal');
+      </svg>`;
+    // Cursor moves to center A, then drags outward
+    const svg=box.querySelector('svg');
+    const svgW=svg?svg.clientWidth:280;
+    const centerX=svgW/2;
+    const centerY=45+(svg?svg.clientHeight/2:70);
+    moveCursor(cur,centerX,centerY,500);
+    gpsTimers.push(setTimeout(()=>{
+      if(gpsPaused)return;
+      clickEffect(cur);
+      // Start drag outward
+      const endX=centerX+svgW*0.25;
+      moveCursor(cur,endX,centerY,1000);
+      dragTrail(demo,centerX,centerY,endX,centerY);
+      // Animate circle growing
+      let r=8;
+      const gc=document.getElementById('gps-growing-circle');
+      if(gc)gc.setAttribute('opacity','0.8');
+      const grow=setInterval(()=>{
+        if(gpsPaused){clearInterval(grow);return;}
+        r+=3;
+        if(gc)gc.setAttribute('r',r);
+        if(r>=70){
+          clearInterval(grow);
+          sfx('reveal');
+          const fb=document.createElement('div');
+          fb.style.cssText='font-size:12px;padding:6px 12px;border-radius:8px;background:#E8F5E0;color:#2E7D32;margin-top:8px;font-weight:500;';
+          fb.textContent="✓ Every point 10m from A. One circle. He's somewhere on this.";
+          box.appendChild(fb);
+          const cta=document.createElement('div');
+          cta.style.cssText='margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:"Sora",sans-serif;font-size:13px;font-weight:700;color:#999;';
+          cta.textContent='Continue →';
+          box.appendChild(cta);
+        }
+      },50);
+    },700));
   },t));
-  t+=2000;
+  t+=3500;
 
   // Done
   gpsTimers.push(setTimeout(()=>{
@@ -1745,8 +1838,11 @@ function cupRun(){
   cupTimers.forEach(clearTimeout);cupTimers=[];cupPaused=false;
   document.getElementById('cup-pause-btn').textContent='⏸ Pause';
   const box=document.getElementById('cup-phase');
+  const demo=document.getElementById('cup-demo');
   const label=document.getElementById('cup-phase-label');
   box.innerHTML='';label.textContent='';
+  demo.querySelectorAll('[data-cursor]').forEach(c=>c.remove());
+  const cur=makeCursor(demo);cur.setAttribute('data-cursor','1');
   markPhase('cup-steps-list',CUP_PHASES,-1);
   let t=500;
 
@@ -1768,34 +1864,43 @@ function cupRun(){
         </div>
       </div>`;
     sfx('pop');
-    // Select Cup B after delay
+    // Cursor moves to Cup B chip and clicks
+    moveCursor(cur,220,200,800);
     cupTimers.push(setTimeout(()=>{
       if(cupPaused)return;
+      clickEffect(cur);
       const cb=document.getElementById('cup-b');
       if(cb){cb.classList.add('selected');}
       sfx('select');
-    },1200));
+    },1000));
   },t));
-  t+=3000;
+  t+=2800;
 
-  // Phase 2: Lock
+  // Phase 2: Lock — cursor clicks Lock In button
   cupTimers.push(setTimeout(()=>{
     if(cupPaused)return;
     markPhase('cup-steps-list',CUP_PHASES,1);
     label.textContent='PHASE 2 OF 5';
-    const ca=document.getElementById('cup-a');
-    const cb=document.getElementById('cup-b');
-    if(ca)ca.classList.add('dimmed');
-    if(cb){cb.classList.remove('selected');cb.classList.add('locked');}
-    sfx('tap');
+    // Cursor moves down to lock area
+    moveCursor(cur,160,260,500);
+    cupTimers.push(setTimeout(()=>{
+      if(cupPaused)return;
+      clickEffect(cur);
+      const ca=document.getElementById('cup-a');
+      const cb=document.getElementById('cup-b');
+      if(ca)ca.classList.add('dimmed');
+      if(cb){cb.classList.remove('selected');cb.classList.add('locked');}
+      sfx('tap');
+    },600));
   },t));
   t+=2000;
 
-  // Phase 3: Pour simulation
+  // Phase 3: Pour simulation — cursor rests, animation plays
   cupTimers.push(setTimeout(()=>{
     if(cupPaused)return;
     markPhase('cup-steps-list',CUP_PHASES,2);
     label.textContent='PHASE 3 OF 5';
+    moveCursor(cur,-20,-20,400);
     box.innerHTML=`
       <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:10px;padding-left:10px;border-left:3px solid #FFD54F;">Pour them into beakers.</div>
       <div style="display:flex;gap:20px;justify-content:center;align-items:flex-end;margin:16px 0;">
@@ -1814,7 +1919,6 @@ function cupRun(){
           <div id="beaker-b-val" style="font-size:11px;font-weight:600;color:#4CAF50;opacity:0;transition:opacity 0.4s;">240ml</div>
         </div>
       </div>`;
-    // Animate fill
     cupTimers.push(setTimeout(()=>{
       if(cupPaused)return;
       const a=document.getElementById('beaker-a');
@@ -1836,7 +1940,6 @@ function cupRun(){
     if(av)av.style.opacity='1';
     if(bv)bv.style.opacity='1';
     sfx('reveal');
-    // Add comparison
     const comp=document.createElement('div');
     comp.style.cssText='text-align:center;font-family:"Sora",sans-serif;font-size:15px;font-weight:700;margin-top:8px;padding:8px;background:#FFF7E0;border:2px solid #1A1A1A;border-radius:8px;';
     comp.textContent='240ml = 240ml — Same!';
@@ -1844,7 +1947,7 @@ function cupRun(){
   },t));
   t+=2500;
 
-  // Phase 5: Probe question
+  // Phase 5: Probe question — cursor selects "No"
   cupTimers.push(setTimeout(()=>{
     if(cupPaused)return;
     markPhase('cup-steps-list',CUP_PHASES,4);
@@ -1853,19 +1956,39 @@ function cupRun(){
       <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:6px;padding-left:10px;border-left:3px solid #FFD54F;">Was your guess right?</div>
       <div style="font-size:12px;color:#555;margin-bottom:10px;">You picked Cup B (tall). Both cups had 240ml.</div>
       <div style="display:flex;flex-direction:column;gap:8px;">
-        <div class="chip" style="background:#FBE3E0;border-color:#D32F2F;color:#8B2F26;">No — I was wrong ✗</div>
-        <div class="chip" style="opacity:.5;">Yes — I was right</div>
-      </div>
-      <div style="font-size:12px;padding:8px 12px;border-radius:8px;background:#FFF7E0;border:1px solid #E0C040;color:#8B6914;margin-top:10px;font-weight:500;line-height:1.5;">
-        <strong>Tall doesn't mean more.</strong> Volume depends on width too, not just height.
-      </div>
-      <div style="margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#999;">Next round →</div>`;
-    sfx('oops');
+        <div class="chip" id="cup-probe-no">No — I was wrong</div>
+        <div class="chip" id="cup-probe-yes" style="opacity:1;">Yes — I was right</div>
+      </div>`;
+    sfx('pop');
+    // Cursor moves to "No" chip and clicks
+    moveCursor(cur,120,120,600);
+    cupTimers.push(setTimeout(()=>{
+      if(cupPaused)return;
+      clickEffect(cur);
+      const no=document.getElementById('cup-probe-no');
+      const yes=document.getElementById('cup-probe-yes');
+      if(no){no.style.background='#FBE3E0';no.style.borderColor='#D32F2F';no.style.color='#8B2F26';no.textContent='No — I was wrong ✗';}
+      if(yes)yes.classList.add('dimmed');
+      sfx('oops');
+      // Show takeaway + greyed CTA
+      cupTimers.push(setTimeout(()=>{
+        if(cupPaused)return;
+        const tw=document.createElement('div');
+        tw.style.cssText='font-size:12px;padding:8px 12px;border-radius:8px;background:#FFF7E0;border:1px solid #E0C040;color:#8B6914;margin-top:10px;font-weight:500;line-height:1.5;';
+        tw.innerHTML='<strong>Tall doesn\'t mean more.</strong> Volume depends on width too, not just height.';
+        box.appendChild(tw);
+        const cta=document.createElement('div');
+        cta.style.cssText='margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:"Sora",sans-serif;font-size:13px;font-weight:700;color:#999;';
+        cta.textContent='Next round →';
+        box.appendChild(cta);
+      },600));
+    },800));
   },t));
-  t+=2000;
+  t+=3200;
 
   cupTimers.push(setTimeout(()=>{
     if(cupPaused)return;
+    moveCursor(cur,-30,-30,300);
     markPhase('cup-steps-list',CUP_PHASES,5);
     label.textContent='STEP COMPLETE — 5 PHASES IN 1 STEP';
   },t));
@@ -1893,12 +2016,15 @@ function bounceRun(){
   bounceTimers.forEach(clearTimeout);bounceTimers=[];bouncePaused=false;
   document.getElementById('bounce-pause-btn').textContent='⏸ Pause';
   const box=document.getElementById('bounce-phase');
+  const demo=document.getElementById('bounce-demo');
   const label=document.getElementById('bounce-phase-label');
   box.innerHTML='';label.textContent='';
+  demo.querySelectorAll('[data-cursor]').forEach(c=>c.remove());
+  const cur=makeCursor(demo);cur.setAttribute('data-cursor','1');
   markPhase('bounce-steps-list',BOUNCE_PHASES,-1);
   let t=500;
 
-  // Phase 1: Pick ball
+  // Phase 1: Pick ball — cursor moves to tennis ball and clicks
   bounceTimers.push(setTimeout(()=>{
     if(bouncePaused)return;
     markPhase('bounce-steps-list',BOUNCE_PHASES,0);
@@ -1911,24 +2037,33 @@ function bounceRun(){
           <div style="font-size:10px;font-weight:600;">Rubber</div>
         </div>
         <div style="text-align:center;">
-          <div id="bounce-ball-pick" style="width:48px;height:48px;border-radius:50%;background:#FDD835;border:2.5px solid #1A1A1A;margin:0 auto 4px;box-shadow:0 0 0 3px #FFD54F;"></div>
-          <div style="font-size:10px;font-weight:600;">Tennis ←</div>
+          <div id="bounce-ball-pick" style="width:48px;height:48px;border-radius:50%;background:#FDD835;border:2.5px solid #1A1A1A;margin:0 auto 4px;"></div>
+          <div style="font-size:10px;font-weight:600;">Tennis</div>
         </div>
         <div style="text-align:center;">
           <div style="width:48px;height:48px;border-radius:50%;background:#90A4AE;border:2.5px solid #1A1A1A;margin:0 auto 4px;"></div>
           <div style="font-size:10px;font-weight:600;">Steel</div>
         </div>
-      </div>
-      <div style="font-size:11px;color:#999;text-align:center;">Kid taps the tennis ball</div>`;
-    sfx('select');
+      </div>`;
+    sfx('pop');
+    // Cursor moves to tennis ball
+    moveCursor(cur,155,80,700);
+    bounceTimers.push(setTimeout(()=>{
+      if(bouncePaused)return;
+      clickEffect(cur);
+      const bp=document.getElementById('bounce-ball-pick');
+      if(bp)bp.style.boxShadow='0 0 0 3px #FFD54F';
+      sfx('select');
+    },900));
   },t));
   t+=2500;
 
-  // Phase 2: Ball rises
+  // Phase 2: Ball rises — cursor moves away, animation plays
   bounceTimers.push(setTimeout(()=>{
     if(bouncePaused)return;
     markPhase('bounce-steps-list',BOUNCE_PHASES,1);
     label.textContent='PHASE 2 OF 5';
+    moveCursor(cur,-20,-20,300);
     box.innerHTML=`
       <div style="font-family:'Sora',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px;padding-left:10px;border-left:3px solid #FFD54F;">Ball rising to drop height...</div>
       <div style="position:relative;height:220px;border:2px solid #1A1A1A;border-radius:8px;background:linear-gradient(to bottom,#E3F0FF,#F8F8F6);overflow:hidden;">
@@ -1939,8 +2074,7 @@ function bounceRun(){
         <div id="bounce-ball" style="position:absolute;left:50%;width:36px;height:36px;border-radius:50%;background:#FDD835;border:2.5px solid #1A1A1A;transform:translateX(-50%);bottom:6px;transition:bottom 1.2s cubic-bezier(.33,1,.68,1);"></div>
         <div id="bounce-speech" style="position:absolute;left:50%;transform:translateX(-50%);top:16px;background:#1A1A1A;color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:8px;opacity:0;transition:opacity 0.3s;white-space:nowrap;">Tap the ball!</div>
       </div>`;
-    // Animate rise
-    cupTimers.push(setTimeout(()=>{
+    bounceTimers.push(setTimeout(()=>{
       if(bouncePaused)return;
       const ball=document.getElementById('bounce-ball');
       if(ball)ball.style.bottom='176px';
@@ -1949,25 +2083,28 @@ function bounceRun(){
   },t));
   t+=2000;
 
-  // Phase 3: Drop
+  // Phase 3: Drop — cursor taps the ball
   bounceTimers.push(setTimeout(()=>{
     if(bouncePaused)return;
     markPhase('bounce-steps-list',BOUNCE_PHASES,2);
     label.textContent='PHASE 3 OF 5';
     const speech=document.getElementById('bounce-speech');
     if(speech)speech.style.opacity='1';
-    // Drop after tap delay
+    // Cursor moves to ball position at top
+    moveCursor(cur,145,60,500);
     bounceTimers.push(setTimeout(()=>{
       if(bouncePaused)return;
+      clickEffect(cur);
       sfx('tap');
       if(speech){speech.textContent='Dropping!';speech.style.background='#FF7043';}
       const ball=document.getElementById('bounce-ball');
       if(ball){ball.style.transition='bottom 0.5s cubic-bezier(.55,0,1,.45)';ball.style.bottom='6px';}
-    },1000));
+      moveCursor(cur,-20,-20,300);
+    },700));
   },t));
   t+=2500;
 
-  // Phase 4: Bounce + freeze
+  // Phase 4: Bounce + freeze — no cursor needed, physics plays
   bounceTimers.push(setTimeout(()=>{
     if(bouncePaused)return;
     markPhase('bounce-steps-list',BOUNCE_PHASES,3);
@@ -1977,16 +2114,15 @@ function bounceRun(){
     if(ball){ball.style.transition='bottom 0.6s cubic-bezier(.33,1,.68,1)';ball.style.bottom='116px';}
     if(speech){speech.textContent='Bounce! (frozen 1s)';speech.style.background='#4CAF50';speech.style.opacity='1';}
     sfx('pop');
-    // Show freeze indicator
     bounceTimers.push(setTimeout(()=>{
       if(bouncePaused)return;
       const ball=document.getElementById('bounce-ball');
-      if(ball){ball.style.boxShadow='0 0 0 4px rgba(76,175,80,.3)';} // freeze glow
+      if(ball){ball.style.boxShadow='0 0 0 4px rgba(76,175,80,.3)';}
     },700));
   },t));
   t+=2800;
 
-  // Phase 5: Trial card
+  // Phase 5: Trial card slides in
   bounceTimers.push(setTimeout(()=>{
     if(bouncePaused)return;
     markPhase('bounce-steps-list',BOUNCE_PHASES,4);
@@ -2017,13 +2153,11 @@ function bounceRun(){
       </div>
       <div style="margin-top:10px;padding:10px;background:#E8E8E8;border:2px solid #1A1A1A;border-radius:8px;text-align:center;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:#999;">Try another ball →</div>`;
     sfx('coin');
-    // Animate card in
     bounceTimers.push(setTimeout(()=>{
       if(bouncePaused)return;
       const card=document.getElementById('bounce-card');
       if(card){card.style.opacity='1';card.style.transform='translateY(0)';}
     },200));
-    // Animate bars
     bounceTimers.push(setTimeout(()=>{
       if(bouncePaused)return;
       const d=document.getElementById('bounce-bar-drop');
