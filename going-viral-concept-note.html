@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Going Viral — Concept Note</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1A1A1A;
+    --bg: #F5F3EE;
+    --paper: #fff;
+    --yellow: #F5C842;
+    --mint: #2EB39E;
+    --mint-bg: #E6F7F4;
+    --peach: #FF6B6B;
+    --peach-bg: #FFF0F0;
+    --sky: #4DAAFF;
+    --sky-bg: #EEF6FF;
+    --purple: #B07CFF;
+    --purple-bg: #F3EDFF;
+    --text-2: #555;
+    --text-3: #999;
+    --fd: 'Sora', sans-serif;
+    --fb: 'Inter', sans-serif;
+    --shadow: 3px 3px 0 var(--ink);
+    --shadow-sm: 2px 2px 0 var(--ink);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--fb);
+    background: var(--bg);
+    color: var(--ink);
+    padding: 40px 20px 80px;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  .doc-header {
+    border: 2px solid var(--ink);
+    background: var(--ink);
+    color: #fff;
+    padding: 32px 28px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .doc-header .pill {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: var(--fd);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+  .doc-header h1 {
+    font-family: var(--fd);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .doc-header .subtitle {
+    font-family: var(--fb);
+    font-size: 15px;
+    opacity: 0.85;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .doc-header .meta {
+    font-family: var(--fb);
+    font-size: 14px;
+    opacity: 0.6;
+    line-height: 1.5;
+  }
+
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .summary-cell {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .summary-cell .sc-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .summary-cell .sc-value {
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  /* Thesis box */
+  .thesis {
+    border: 2px solid var(--ink);
+    background: #FFF7E0;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .thesis .th-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .thesis .th-text {
+    font-family: var(--fd);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 12px;
+  }
+  .thesis .th-sub {
+    font-family: var(--fb);
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+
+  /* Frame cards */
+  .frame-card {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .frame-header {
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .frame-num {
+    font-family: var(--fd);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .frame-type {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+  }
+  .frame-type.hook { background: var(--peach); color: #fff; }
+  .frame-type.predict { background: var(--yellow); color: var(--ink); }
+  .frame-type.pattern { background: var(--mint); color: #fff; }
+  .frame-type.race { background: var(--purple); color: #fff; }
+  .frame-type.insight { background: var(--sky); color: var(--ink); }
+  .frame-type.transfer { background: var(--peach); color: #fff; }
+  .frame-type.reveal { background: var(--ink); color: var(--yellow); border: 1px solid var(--yellow); }
+
+  .frame-body { padding: 24px 20px; }
+  .frame-title {
+    font-family: var(--fd);
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .frame-desc {
+    font-family: var(--fb);
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .wireframe {
+    border: 2px dashed #ccc;
+    background: #FAFAF8;
+    padding: 20px;
+    margin-top: 12px;
+  }
+  .wf-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 12px;
+  }
+
+  .mock-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-sm);
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 14px;
+  }
+  .mock-chip {
+    border: 2px solid var(--ink);
+    padding: 10px 14px;
+    font-family: var(--fd);
+    font-size: 13px;
+    font-weight: 700;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 8px;
+    display: inline-block;
+  }
+  .mock-chip.selected { background: var(--yellow); }
+
+  .design-note {
+    background: var(--sky-bg);
+    border: 2px solid var(--sky);
+    padding: 12px 16px;
+    font-family: var(--fb);
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+  .design-note strong {
+    font-family: var(--fd);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .flow-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-3);
+    margin: -14px 0 14px;
+  }
+
+  /* View counter */
+  .view-counter {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .vc-hour {
+    border: 2px solid var(--ink);
+    padding: 8px 6px;
+    text-align: center;
+    min-width: 56px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .vc-hour .vc-h {
+    font-family: var(--fd);
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .vc-hour .vc-v {
+    font-family: var(--fd);
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .vc-hour.predict {
+    background: var(--yellow);
+    border-style: dashed;
+  }
+  .vc-hour.predict .vc-v {
+    color: var(--text-3);
+  }
+  .vc-hour.reveal {
+    background: var(--mint-bg);
+  }
+  .vc-hour.dim {
+    opacity: 0.4;
+  }
+
+  /* Comparison race */
+  .race-row {
+    display: flex;
+    gap: 14px;
+    margin: 14px 0;
+  }
+  .race-video {
+    flex: 1;
+    border: 2px solid var(--ink);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+    background: #fff;
+  }
+  .race-video .rv-name {
+    font-family: var(--fd);
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .race-video .rv-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+  }
+  .rv-data {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-family: var(--fb);
+    font-size: 12px;
+  }
+  .rv-data .rv-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .rv-data .rv-row .rv-lbl { color: var(--text-3); }
+  .rv-data .rv-row .rv-val { font-weight: 600; }
+
+  /* Bar chart */
+  .bar-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 100px;
+    margin: 14px 0 8px;
+    padding: 0 4px;
+  }
+  .bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .bar-fill {
+    width: 100%;
+    border: 1.5px solid var(--ink);
+    min-height: 2px;
+    transition: height 0.3s;
+  }
+  .bar-lbl {
+    font-family: var(--fd);
+    font-size: 8px;
+    font-weight: 700;
+    color: var(--text-3);
+  }
+
+  /* Transfer cards */
+  .transfer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .t-card {
+    border: 2px solid var(--ink);
+    padding: 12px 10px;
+    box-shadow: var(--shadow-sm);
+    background: #fff;
+    text-align: center;
+  }
+  .t-card .tc-icon { font-size: 24px; margin-bottom: 6px; }
+  .t-card .tc-name {
+    font-family: var(--fd);
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 8px;
+  }
+  .t-card .tc-data {
+    font-family: var(--fb);
+    font-size: 11px;
+    color: var(--text-2);
+    line-height: 1.5;
+    text-align: left;
+  }
+  .t-card.pick {
+    border-color: var(--mint);
+    border-width: 3px;
+    background: var(--mint-bg);
+  }
+
+  /* Reveal contexts */
+  .context-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 14px 0;
+  }
+  .ctx-card {
+    border: 2px solid var(--ink);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+  }
+  .ctx-card .ctx-icon { font-size: 28px; margin-bottom: 6px; }
+  .ctx-card .ctx-title {
+    font-family: var(--fd);
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .ctx-card .ctx-sub {
+    font-family: var(--fb);
+    font-size: 11px;
+    color: var(--text-2);
+    line-height: 1.4;
+  }
+  .ctx-card:nth-child(1) { background: #FFF7E0; }
+  .ctx-card:nth-child(2) { background: var(--mint-bg); }
+  .ctx-card:nth-child(3) { background: var(--peach-bg); }
+  .ctx-card:nth-child(4) { background: var(--purple-bg); }
+
+  /* Big idea box */
+  .big-idea {
+    border: 3px solid var(--ink);
+    background: #FFF7E0;
+    padding: 24px;
+    margin: 32px 0;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .big-idea .bi-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .big-idea .bi-text {
+    font-family: var(--fd);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  /* Open items */
+  .open-items {
+    border: 2px solid #ccc;
+    border-style: dashed;
+    padding: 20px 24px;
+    margin-top: 32px;
+    background: #FAFAF8;
+  }
+  .open-items h3 {
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .open-items ul {
+    font-family: var(--fb);
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+    padding-left: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .summary-bar { grid-template-columns: 1fr 1fr; }
+    .race-row { flex-direction: column; }
+    .transfer-grid { grid-template-columns: 1fr; }
+    .context-grid { grid-template-columns: 1fr; }
+    .view-counter { gap: 4px; }
+    .vc-hour { min-width: 44px; padding: 6px 4px; }
+    .vc-hour .vc-v { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="doc-header">
+    <div class="pill">Concept Note</div>
+    <h1>Going Viral</h1>
+    <div class="subtitle">Two videos, same views right now. One's about to explode. Can you tell which one — just from the data?</div>
+    <div class="meta">Mode: Wonders &nbsp;·&nbsp; Band 2 (Age 10-12) &nbsp;·&nbsp; 8 screens &nbsp;·&nbsp; ~6 min</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-bar">
+    <div class="summary-cell">
+      <div class="sc-label">Skill</div>
+      <div class="sc-value">Pattern Recognition</div>
+    </div>
+    <div class="summary-cell">
+      <div class="sc-label">Math</div>
+      <div class="sc-value">Growth, Doubling, Prediction</div>
+    </div>
+    <div class="summary-cell">
+      <div class="sc-label">Real-world</div>
+      <div class="sc-value">Media Literacy</div>
+    </div>
+    <div class="summary-cell">
+      <div class="sc-label">Duration</div>
+      <div class="sc-value">~6 min</div>
+    </div>
+  </div>
+
+  <!-- Thesis -->
+  <div class="thesis">
+    <div class="th-label">Why this matters</div>
+    <div class="th-text">Kids share content daily without understanding how spread works. The ability to look at early data and recognize where it's heading — before the numbers get big — is pattern recognition no AI builds for you.</div>
+    <div class="th-sub">AI can tell you "this video has 220 views." It can't tell you whether 220 is about to become 10,000 or stay at 250. That judgement comes from reading the shape of the data — a skill this activity builds.</div>
+  </div>
+
+
+  <!-- ═══════ SCREEN 1 — HOOK ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 1</span>
+      <span class="frame-type hook">Hook + Gut Check</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">"You posted a cat video."</div>
+      <div class="frame-desc">Kid sees a cat video thumbnail and the first 5 hours of view data. Asked to predict Hour 6 — pure gut, no tools yet. This estimate gets saved to compare against later.</div>
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <!-- Video thumbnail -->
+        <div style="text-align:center; margin-bottom:16px;">
+          <div style="width:180px; height:110px; margin:0 auto; border:2px solid var(--ink); background:#FFF7E0; box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; font-size:40px;">
+            🐱
+          </div>
+          <div style="font-family:var(--fd); font-size:11px; font-weight:700; color:var(--text-3); margin-top:6px;">Your video — "Cat vs. Cucumber"</div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:14px; font-weight:700; margin-bottom:12px;">Here's how the views are growing:</div>
+
+        <div class="view-counter">
+          <div class="vc-hour"><div class="vc-h">Hr 1</div><div class="vc-v">12</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 2</div><div class="vc-v">25</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 3</div><div class="vc-v">55</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 4</div><div class="vc-v">120</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 5</div><div class="vc-v">260</div></div>
+          <div class="vc-hour predict"><div class="vc-h">Hr 6</div><div class="vc-v">???</div></div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:15px; font-weight:800; margin:16px 0 8px;">What do you think Hour 6 looks like?</div>
+        <div style="font-family:var(--fb); font-size:12px; color:var(--text-3); margin-bottom:12px;">No formula — just look at the numbers and guess.</div>
+
+        <!-- Estimate input -->
+        <div style="display:flex; align-items:center; gap:10px;">
+          <div style="font-family:var(--fd); font-size:13px; font-weight:700;">My guess:</div>
+          <div style="border:2px solid var(--ink); background:var(--yellow); padding:8px 16px; font-family:var(--fd); font-size:18px; font-weight:800; min-width:80px; text-align:center; box-shadow:var(--shadow-sm);">___</div>
+          <div style="font-family:var(--fb); font-size:12px; color:var(--text-3);">views</div>
+        </div>
+
+        <div class="mock-btn">Lock my guess →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> Gut-before-math. The kid's estimate is saved and shown back in Screen 2 after the reveal. Most kids will underestimate — the gap between gut and reality IS the lesson.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 2 — REVEAL + PREDICT AGAIN ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 2</span>
+      <span class="frame-type predict">Reveal + Predict</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Reveal Hour 6 — now predict 7 and 8</div>
+      <div class="frame-desc">Hour 6 is revealed (570). Kid sees how their guess compared. Now they predict Hours 7 and 8 — with 6 data points, the pattern should start to feel clearer.</div>
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div class="view-counter">
+          <div class="vc-hour"><div class="vc-h">Hr 1</div><div class="vc-v">12</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 2</div><div class="vc-v">25</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 3</div><div class="vc-v">55</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 4</div><div class="vc-v">120</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 5</div><div class="vc-v">260</div></div>
+          <div class="vc-hour reveal"><div class="vc-h">Hr 6</div><div class="vc-v">570</div></div>
+          <div class="vc-hour predict"><div class="vc-h">Hr 7</div><div class="vc-v">???</div></div>
+          <div class="vc-hour predict"><div class="vc-h">Hr 8</div><div class="vc-v">???</div></div>
+        </div>
+
+        <!-- Estimate comparison -->
+        <div style="margin:14px 0; padding:12px 14px; border:2px solid var(--ink); background:#FFF7E0; display:flex; align-items:center; gap:12px;">
+          <div style="font-family:var(--fd); font-size:12px; font-weight:700; color:var(--text-3);">Your guess:</div>
+          <div style="font-family:var(--fd); font-size:18px; font-weight:800;">280</div>
+          <div style="font-family:var(--fd); font-size:12px; font-weight:700; color:var(--text-3);">Actual:</div>
+          <div style="font-family:var(--fd); font-size:18px; font-weight:800; color:var(--mint);">570</div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:14px; font-weight:800; margin-bottom:8px;">Now predict Hours 7 and 8:</div>
+
+        <div style="display:flex; gap:14px; margin-bottom:8px;">
+          <div style="flex:1;">
+            <div style="font-family:var(--fd); font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:4px;">Hour 7</div>
+            <div style="border:2px solid var(--ink); background:var(--yellow); padding:8px 12px; font-family:var(--fd); font-size:16px; font-weight:800; text-align:center; box-shadow:var(--shadow-sm);">___</div>
+          </div>
+          <div style="flex:1;">
+            <div style="font-family:var(--fd); font-size:11px; font-weight:700; color:var(--text-3); margin-bottom:4px;">Hour 8</div>
+            <div style="border:2px solid var(--ink); background:var(--yellow); padding:8px 12px; font-family:var(--fd); font-size:16px; font-weight:800; text-align:center; box-shadow:var(--shadow-sm);">___</div>
+          </div>
+        </div>
+
+        <div class="mock-btn">Lock my guesses →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> The kid has seen the reveal and now has 6 data points. Their predictions for Hr 7 and 8 should be better than their Hr 6 guess — the gap closing is the signal that they're spotting the pattern even before naming it. Actual: Hr 7 = ~1,240, Hr 8 = ~2,700.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 3 — SPOT THE PATTERN ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 3</span>
+      <span class="frame-type pattern">Spot the Pattern</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">What's happening to the views each hour?</div>
+      <div class="frame-desc">Full 8-hour data revealed. Kid names the pattern — not with a formula, but by observing: "each hour adds more than the last." The growth is accelerating.</div>
+      <div class="wireframe">
+        <div class="wf-label">Full data + bar chart</div>
+
+        <div class="view-counter">
+          <div class="vc-hour"><div class="vc-h">Hr 1</div><div class="vc-v">12</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 2</div><div class="vc-v">25</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 3</div><div class="vc-v">55</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 4</div><div class="vc-v">120</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 5</div><div class="vc-v">260</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 6</div><div class="vc-v">570</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 7</div><div class="vc-v">1.2K</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 8</div><div class="vc-v">2.7K</div></div>
+        </div>
+
+        <!-- Simple bar chart -->
+        <div class="bar-chart">
+          <div class="bar-col"><div class="bar-fill" style="height:1px; background:#ddd;"></div><div class="bar-lbl">1</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:1px; background:#ddd;"></div><div class="bar-lbl">2</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:2px; background:#ddd;"></div><div class="bar-lbl">3</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:4px; background:var(--yellow);"></div><div class="bar-lbl">4</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:10px; background:var(--yellow);"></div><div class="bar-lbl">5</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:21px; background:var(--yellow);"></div><div class="bar-lbl">6</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:46px; background:var(--peach);"></div><div class="bar-lbl">7</div></div>
+          <div class="bar-col"><div class="bar-fill" style="height:100px; background:var(--peach);"></div><div class="bar-lbl">8</div></div>
+        </div>
+        <div style="text-align:center; font-family:var(--fd); font-size:9px; color:var(--text-3); margin-bottom:16px;">VIEWS PER HOUR</div>
+
+        <div style="font-family:var(--fd); font-size:15px; font-weight:800; margin-bottom:12px;">What's happening to the views each hour?</div>
+
+        <div class="mock-chip">Going up by the same amount each hour</div>
+        <div class="mock-chip selected">Each hour adds MORE than the last</div>
+        <div class="mock-chip">Going up, then it'll slow down</div>
+
+        <div class="mock-btn">Next →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> The bar chart makes the acceleration visible — the curve shape is the key insight. Kid names the pattern in words, not math. "Each hour adds more than the last" = roughly doubling, but we don't need to say "exponential."
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 4 — SECOND VIDEO (DIFFERENT PATTERN) ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 4</span>
+      <span class="frame-type predict">Second Video</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">A cooking tutorial is also growing</div>
+      <div class="frame-desc">Different video, different pattern. Steady growth — same amount added each hour. Kid predicts and then identifies the pattern here too. Now they've seen BOTH shapes.</div>
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div style="text-align:center; margin-bottom:16px;">
+          <div style="width:180px; height:110px; margin:0 auto; border:2px solid var(--ink); background:var(--mint-bg); box-shadow:var(--shadow-sm); display:flex; align-items:center; justify-content:center; font-size:40px;">
+            🍳
+          </div>
+          <div style="font-family:var(--fd); font-size:11px; font-weight:700; color:var(--text-3); margin-top:6px;">"5-Min Omelette Hack"</div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:14px; font-weight:700; margin-bottom:12px;">This video's been up for 5 hours too:</div>
+
+        <div class="view-counter">
+          <div class="vc-hour"><div class="vc-h">Hr 1</div><div class="vc-v">50</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 2</div><div class="vc-v">62</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 3</div><div class="vc-v">73</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 4</div><div class="vc-v">85</div></div>
+          <div class="vc-hour"><div class="vc-h">Hr 5</div><div class="vc-v">96</div></div>
+          <div class="vc-hour predict"><div class="vc-h">Hr 6</div><div class="vc-v">???</div></div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:15px; font-weight:800; margin:16px 0 8px;">Predict Hour 6:</div>
+
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+          <div style="font-family:var(--fd); font-size:13px; font-weight:700;">My guess:</div>
+          <div style="border:2px solid var(--ink); background:var(--yellow); padding:8px 16px; font-family:var(--fd); font-size:18px; font-weight:800; min-width:80px; text-align:center; box-shadow:var(--shadow-sm);">___</div>
+        </div>
+
+        <!-- After reveal -->
+        <div style="padding:12px 14px; border:2px solid var(--ink); background:var(--mint-bg); margin-bottom:14px;">
+          <div style="font-family:var(--fd); font-size:13px; font-weight:700; margin-bottom:8px;">After reveal (Hr 6 = 108):</div>
+          <div style="font-family:var(--fd); font-size:14px; font-weight:800;">What's the pattern here?</div>
+          <div style="margin-top:8px;">
+            <div class="mock-chip selected" style="margin:4px;">Goes up by about the same each hour</div>
+            <div class="mock-chip" style="margin:4px;">Each hour adds more than the last</div>
+          </div>
+        </div>
+
+        <div class="mock-btn">Next →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> This video starts HIGHER (50 vs 12) but grows steadily (+~12/hr). Kid should nail this prediction more easily — the pattern is simpler. The point is: they now have two patterns in their head. Steady vs accelerating. That sets up the race.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 5 — THE RACE ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 5</span>
+      <span class="frame-type race">The Race</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Same views right now — which one wins?</div>
+      <div class="frame-desc">Two NEW videos, both at ~220 views at Hour 5. One is growing steadily, the other is accelerating. Same views right now, completely different futures. Kid picks the winner — then watches both counters race.</div>
+      <div class="wireframe">
+        <div class="wf-label">Two videos side by side</div>
+
+        <div class="race-row">
+          <div class="race-video" style="background:#FFF7E0;">
+            <div class="rv-name"><div class="rv-dot" style="background:var(--yellow);"></div> Video A — Dance Tutorial</div>
+            <div class="rv-data">
+              <div class="rv-row"><span class="rv-lbl">Hr 1</span><span class="rv-val">200</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 2</span><span class="rv-val">210</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 3</span><span class="rv-val">220</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 4</span><span class="rv-val">230</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 5</span><span class="rv-val">240</span></div>
+            </div>
+          </div>
+          <div class="race-video" style="background:var(--peach-bg);">
+            <div class="rv-name"><div class="rv-dot" style="background:var(--peach);"></div> Video B — Dog Fails</div>
+            <div class="rv-data">
+              <div class="rv-row"><span class="rv-lbl">Hr 1</span><span class="rv-val">10</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 2</span><span class="rv-val">22</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 3</span><span class="rv-val">48</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 4</span><span class="rv-val">105</span></div>
+              <div class="rv-row"><span class="rv-lbl">Hr 5</span><span class="rv-val">225</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:15px; font-weight:800; margin:14px 0 10px; text-align:center;">Which one crosses 1,000 first?</div>
+
+        <div style="display:flex; gap:10px; justify-content:center; margin-bottom:16px;">
+          <div class="mock-chip" style="margin:0;">Video A</div>
+          <div class="mock-chip" style="margin:0;">Video B</div>
+        </div>
+
+        <!-- After reveal: race plays out -->
+        <div style="padding:14px; border:2px solid var(--ink); background:#FAFAF8; margin-top:12px;">
+          <div style="font-family:var(--fd); font-size:12px; font-weight:800; color:var(--text-3); margin-bottom:8px;">THE RACE PLAYS OUT:</div>
+          <div style="display:flex; gap:6px; font-family:var(--fd); font-size:11px; font-weight:700;">
+            <div style="flex:1; text-align:center;">
+              <div style="color:var(--text-3); margin-bottom:4px;">Hr 6</div>
+              <div>A: 250</div>
+              <div style="color:var(--peach);">B: 490</div>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <div style="color:var(--text-3); margin-bottom:4px;">Hr 7</div>
+              <div>A: 260</div>
+              <div style="color:var(--peach);">B: 1,070 🎯</div>
+            </div>
+            <div style="flex:1; text-align:center;">
+              <div style="color:var(--text-3); margin-bottom:4px;">Hr 8</div>
+              <div>A: 270</div>
+              <div style="color:var(--peach);">B: 2,300</div>
+            </div>
+          </div>
+          <div style="font-family:var(--fd); font-size:13px; font-weight:800; margin-top:12px; text-align:center; color:var(--peach);">Video B wins — by a LOT.</div>
+        </div>
+
+        <div class="mock-btn">But why? →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> This is the gut-punch moment. A had MORE views at every hour except 5, where they nearly tied. A kid who only looks at current numbers picks A. A kid who reads the growth pattern picks B. The race animation should feel exciting — counters ticking up side by side.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 6 — WHY ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 6</span>
+      <span class="frame-type insight">Why?</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Same views. Different futures.</div>
+      <div class="frame-desc">Kid names the difference: Video A gains the same amount every hour. Video B gains more every hour. The pattern was hiding in the early data the whole time.</div>
+      <div class="wireframe">
+        <div class="wf-label">Side-by-side pattern comparison</div>
+
+        <div class="race-row">
+          <div style="flex:1; padding:14px; border:2px solid var(--ink); background:#FFF7E0; text-align:center;">
+            <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:8px;">Video A</div>
+            <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); margin-bottom:10px;">+10, +10, +10, +10...</div>
+            <!-- Steady bars -->
+            <div style="display:flex; align-items:flex-end; justify-content:center; gap:3px; height:60px;">
+              <div style="width:16px; height:20px; background:var(--yellow); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:20px; background:var(--yellow); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:20px; background:var(--yellow); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:20px; background:var(--yellow); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:20px; background:var(--yellow); border:1.5px solid var(--ink);"></div>
+            </div>
+            <div style="font-family:var(--fd); font-size:11px; font-weight:700; margin-top:8px; color:var(--text-3);">Same jump every hour</div>
+          </div>
+          <div style="flex:1; padding:14px; border:2px solid var(--ink); background:var(--peach-bg); text-align:center;">
+            <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:8px;">Video B</div>
+            <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); margin-bottom:10px;">+12, +26, +57, +120...</div>
+            <!-- Growing bars -->
+            <div style="display:flex; align-items:flex-end; justify-content:center; gap:3px; height:60px;">
+              <div style="width:16px; height:5px; background:var(--peach); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:10px; background:var(--peach); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:20px; background:var(--peach); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:40px; background:var(--peach); border:1.5px solid var(--ink);"></div>
+              <div style="width:16px; height:60px; background:var(--peach); border:1.5px solid var(--ink);"></div>
+            </div>
+            <div style="font-family:var(--fd); font-size:11px; font-weight:700; margin-top:8px; color:var(--text-3);">Bigger jump every hour</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:15px; font-weight:800; margin:18px 0 10px; text-align:center;">It's not about how many views you have now.<br>It's about how FAST the views are growing.</div>
+
+        <div class="mock-btn">Next →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> The bars showing the JUMPS (not totals) make the difference visceral. Steady = flat bars. Accelerating = growing bars. The kid sees the pattern difference, not just the numbers.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 7 — TRANSFER (BIG IDEA CHECKPOINT) ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 7</span>
+      <span class="frame-type transfer">Transfer — Big Idea</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Three new posts. One's about to blow up.</div>
+      <div class="frame-desc">Fresh data, no hints. Kid reads 4 hours of data for three posts and picks the one that crosses 10,000 first. This is the skill applied independently.</div>
+      <div class="wireframe">
+        <div class="wf-label">Pick the one that goes viral</div>
+
+        <div class="transfer-grid">
+          <div class="t-card">
+            <div class="tc-icon">🎮</div>
+            <div class="tc-name">Game Review</div>
+            <div class="tc-data">
+              Hr 1: 500<br>
+              Hr 2: 510<br>
+              Hr 3: 521<br>
+              Hr 4: 530
+            </div>
+          </div>
+          <div class="t-card pick">
+            <div class="tc-icon">🐶</div>
+            <div class="tc-name">Puppy Rescue</div>
+            <div class="tc-data">
+              Hr 1: 8<br>
+              Hr 2: 30<br>
+              Hr 3: 115<br>
+              Hr 4: 440
+            </div>
+          </div>
+          <div class="t-card">
+            <div class="tc-icon">📚</div>
+            <div class="tc-name">Study Tips</div>
+            <div class="tc-data">
+              Hr 1: 300<br>
+              Hr 2: 280<br>
+              Hr 3: 250<br>
+              Hr 4: 210
+            </div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:14px; font-weight:800; margin:14px 0 10px; text-align:center;">Which one crosses 10,000 first?</div>
+
+        <div style="display:flex; gap:8px; justify-content:center; margin-bottom:6px;">
+          <div class="mock-chip" style="margin:0;">🎮 Game</div>
+          <div class="mock-chip selected" style="margin:0;">🐶 Puppy</div>
+          <div class="mock-chip" style="margin:0;">📚 Study</div>
+        </div>
+
+        <div style="font-family:var(--fb); font-size:11px; color:var(--text-3); text-align:center; margin-bottom:8px;">Three patterns — steady, accelerating, slowing down. Only one goes viral.</div>
+
+        <div class="mock-btn">Lock my pick →</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> This is the big idea checkpoint. Game Review has the most views but is barely growing. Study Tips is actually losing views (fizzling). Puppy Rescue has the fewest views but the growth is accelerating fast. The kid who reads the pattern — not the current number — gets it right.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">↓</div>
+
+
+  <!-- ═══════ SCREEN 8 — THE PUNCHLINE ═══════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 8</span>
+      <span class="frame-type reveal">The Punchline</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">The math doesn't care what's spreading.</div>
+      <div class="frame-desc">Same growth curve — four completely different contexts. Cat videos, playground games, rumours, and colds. The pattern is identical. What changes is the consequence.</div>
+      <div class="wireframe">
+        <div class="wf-label">Same curve, different contexts</div>
+
+        <div class="context-grid">
+          <div class="ctx-card">
+            <div class="ctx-icon">🐱</div>
+            <div class="ctx-title">Cat Video</div>
+            <div class="ctx-sub">You share with 2 friends.<br>They each share with 2 more.<br>By Hour 8: 2,700 views.</div>
+          </div>
+          <div class="ctx-card">
+            <div class="ctx-icon">⚽</div>
+            <div class="ctx-title">Playground Game</div>
+            <div class="ctx-sub">Teach 2 friends at recess.<br>They teach 2 more tomorrow.<br>By Friday: whole school plays.</div>
+          </div>
+          <div class="ctx-card">
+            <div class="ctx-icon">🤫</div>
+            <div class="ctx-title">A Rumour</div>
+            <div class="ctx-sub">Tell 2 friends a secret.<br>They each tell 2 more.<br>By Day 4: everyone knows.</div>
+          </div>
+          <div class="ctx-card">
+            <div class="ctx-icon">🤧</div>
+            <div class="ctx-title">A Cold</div>
+            <div class="ctx-sub">One sneeze on Monday.<br>Each sick kid spreads to 2.<br>By Friday: half the class is out.</div>
+          </div>
+        </div>
+
+        <div style="text-align:center; margin:16px 0;">
+          <!-- Shared curve visual -->
+          <div style="font-family:var(--fd); font-size:12px; font-weight:800; color:var(--text-3); margin-bottom:8px;">THE SAME CURVE EVERY TIME</div>
+          <div style="display:flex; align-items:flex-end; justify-content:center; gap:4px; height:80px;">
+            <div style="width:20px; height:2px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:3px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:5px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:9px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:16px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:30px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:54px; background:var(--ink); border-radius:1px;"></div>
+            <div style="width:20px; height:80px; background:var(--peach); border-radius:1px;"></div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:16px; font-weight:800; text-align:center; line-height:1.5; margin:14px 0;">
+          The math doesn't care if it's a cat video or a cold.<br>
+          <span style="color:var(--peach);">That's why it matters what YOU choose to share.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Big Idea -->
+  <div class="big-idea">
+    <div class="bi-label">The Big Idea</div>
+    <div class="bi-text">Two things can look the same right now and have completely different futures. The pattern is hiding in the early data — if you know how to read it.</div>
+  </div>
+
+
+  <!-- Open Items -->
+  <div class="open-items">
+    <h3>Open / To Refine</h3>
+    <ul>
+      <li><strong>Prediction interaction:</strong> Slider, number input, or pick from options? Number input feels more "real" but slider might be easier on mobile.</li>
+      <li><strong>Data visualisation:</strong> Numbers only, bar chart alongside, or a simple line curve? The bar chart in the wireframes shows the shape well — might be enough.</li>
+      <li><strong>Number messiness:</strong> Slightly messy numbers (12, 25, 55...) feel more real than clean doubling (10, 20, 40...). How messy vs. clean?</li>
+      <li><strong>Race animation:</strong> Does Screen 5 play out automatically (counters ticking up) or does the kid tap to advance each hour?</li>
+      <li><strong>Screen 4 context:</strong> Cooking tutorial is a placeholder. Needs something more relatable for this age group.</li>
+      <li><strong>Screen 8 depth:</strong> Is the 4-context reveal enough as a 10-second gut punch, or does it need interaction (match context to consequence)?</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
