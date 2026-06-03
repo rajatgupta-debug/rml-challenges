@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pack It Right — Concept Note</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1A1A1A;
+    --bg: #F5F3EE;
+    --paper: #fff;
+    --yellow: #F5C842;
+    --mint: #2EB39E;
+    --mint-bg: #E6F7F4;
+    --peach: #FF6B6B;
+    --peach-bg: #FFF0F0;
+    --sky: #4DAAFF;
+    --sky-bg: #EEF6FF;
+    --purple: #B07CFF;
+    --purple-bg: #F3EDFF;
+    --orange: #F99B4E;
+    --orange-bg: #FFF3E0;
+    --brown: #8B6914;
+    --brown-bg: #FFF8E7;
+    --text-2: #555;
+    --text-3: #999;
+    --fd: 'Sora', sans-serif;
+    --fb: 'Inter', sans-serif;
+    --shadow: 3px 3px 0 var(--ink);
+    --shadow-sm: 2px 2px 0 var(--ink);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--fb);
+    background: var(--bg);
+    color: var(--ink);
+    padding: 40px 20px 80px;
+  }
+
+  .container { max-width: 720px; margin: 0 auto; }
+
+  .doc-header {
+    border: 2px solid var(--ink);
+    background: var(--ink);
+    color: #fff;
+    padding: 32px 28px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .doc-header .pill {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--ink);
+    font-family: var(--fd);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    margin-bottom: 14px;
+  }
+  .doc-header h1 {
+    font-family: var(--fd);
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .doc-header .subtitle {
+    font-family: var(--fb);
+    font-size: 15px;
+    opacity: 0.85;
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+  .doc-header .meta {
+    font-family: var(--fb);
+    font-size: 14px;
+    opacity: 0.6;
+  }
+
+  .summary-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .summary-cell {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .summary-cell .sc-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 4px;
+  }
+  .summary-cell .sc-value {
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 800;
+  }
+
+  .checklist {
+    border: 2px solid var(--ink);
+    background: var(--mint-bg);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .checklist .cl-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 10px;
+  }
+  .checklist .cl-item {
+    font-family: var(--fb);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+    padding-left: 20px;
+    position: relative;
+  }
+  .checklist .cl-item::before {
+    content: "\2713";
+    position: absolute;
+    left: 0;
+    font-weight: 800;
+    color: var(--mint);
+  }
+  .checklist .cl-item b { font-family: var(--fd); font-weight: 800; }
+
+  .thesis {
+    border: 2px solid var(--ink);
+    background: #FFF7E0;
+    padding: 24px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow);
+  }
+  .thesis .th-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .thesis .th-text {
+    font-family: var(--fd);
+    font-size: 17px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 8px;
+  }
+  .thesis .th-sub {
+    font-family: var(--fb);
+    font-size: 14px;
+    color: var(--text-2);
+    line-height: 1.6;
+  }
+
+  /* ── Flow overview ── */
+  .flow-overview {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .flow-overview .fo-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 14px;
+  }
+  .flow-strip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .flow-chip {
+    padding: 6px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 8px;
+    font-family: var(--fd);
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .flow-arr {
+    font-family: var(--fd);
+    font-size: 14px;
+    color: var(--text-3);
+  }
+
+  /* ── Emotional arc ── */
+  .arc-bar {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .arc-bar .ab-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 14px;
+  }
+  .arc-strip {
+    display: flex;
+    gap: 8px;
+  }
+  .arc-step {
+    flex: 1;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .arc-step .as-emoji { font-size: 22px; margin-bottom: 4px; }
+  .arc-step .as-label {
+    font-family: var(--fd);
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-2);
+  }
+  .arc-step .as-screen {
+    font-family: var(--fb);
+    font-size: 9px;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+
+  /* ── Box cards ── */
+  .box-card {
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+  }
+  .box-card .bc-icon {
+    width: 44px; height: 44px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .box-card .bc-info {
+    flex: 1;
+  }
+  .box-card .bc-name {
+    font-family: var(--fd);
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .box-card .bc-detail {
+    font-family: var(--fb);
+    font-size: 11px;
+    color: var(--text-2);
+    margin-top: 2px;
+  }
+  .box-card .bc-coins {
+    display: flex;
+    gap: 3px;
+  }
+  .bc-coin {
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--yellow);
+    border: 2px solid var(--brown);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--brown);
+  }
+
+  /* ── Frame cards ── */
+  .frame-card {
+    border: 2px solid var(--ink);
+    background: var(--paper);
+    box-shadow: var(--shadow);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .frame-header {
+    background: var(--ink);
+    color: #fff;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .frame-num {
+    font-family: var(--fd);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+  }
+  .frame-type {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+  }
+  .frame-type.hook { background: var(--peach); color: #fff; }
+  .frame-type.round { background: var(--yellow); color: var(--ink); }
+  .frame-type.change { background: var(--orange); color: #fff; }
+  .frame-type.constraint { background: var(--purple); color: #fff; }
+  .frame-type.reveal { background: var(--ink); color: var(--yellow); border: 1px solid var(--yellow); }
+  .frame-type.transfer { background: var(--peach); color: #fff; }
+  .frame-type.ending { background: var(--mint); color: #fff; }
+
+  .frame-body { padding: 24px 20px; }
+  .frame-title {
+    font-family: var(--fd);
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .frame-desc {
+    font-family: var(--fb);
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+
+  .wireframe {
+    border: 2px dashed #ccc;
+    background: #FAFAF8;
+    padding: 20px;
+    margin-top: 12px;
+  }
+  .wf-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 12px;
+  }
+
+  .mock-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: var(--yellow);
+    border: 2px solid var(--ink);
+    box-shadow: var(--shadow-sm);
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 800;
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  .design-note {
+    background: var(--sky-bg);
+    border: 2px solid var(--sky);
+    padding: 10px 14px;
+    font-family: var(--fb);
+    font-size: 12px;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-top: 12px;
+  }
+  .design-note strong {
+    font-family: var(--fd);
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .flow-arrow {
+    text-align: center;
+    font-size: 20px;
+    color: var(--text-3);
+    margin: -14px 0 14px;
+  }
+
+  /* ── Shelf + packing zone ── */
+  .pack-scene {
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 14px;
+  }
+  .ps-header {
+    padding: 8px 12px;
+    font-family: var(--fd);
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 2px solid var(--ink);
+  }
+  .ps-body {
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 120px;
+    flex-wrap: wrap;
+  }
+
+  .toy-icon {
+    width: 44px; height: 44px;
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: var(--shadow-sm);
+    background: #fff;
+  }
+
+  /* ── Coin jar ── */
+  .coin-jar {
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--brown-bg);
+    box-shadow: var(--shadow-sm);
+  }
+  .coin-jar .cj-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .coin-jar .cj-coins {
+    display: flex;
+    gap: 3px;
+    flex-wrap: wrap;
+  }
+  .cj-coin {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--yellow);
+    border: 2px solid var(--brown);
+  }
+  .cj-coin.spent {
+    background: #ddd;
+    border-color: #bbb;
+    opacity: 0.4;
+  }
+
+  /* ── Compare zone ── */
+  .compare-zone {
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 14px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .cz-header {
+    padding: 8px 12px;
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    border-bottom: 2px solid var(--ink);
+    background: #FAFAF8;
+  }
+  .cz-row {
+    display: flex;
+  }
+  .cz-option {
+    flex: 1;
+    padding: 14px;
+    text-align: center;
+  }
+  .cz-option + .cz-option {
+    border-left: 2px solid var(--ink);
+  }
+  .cz-option .czo-label {
+    font-family: var(--fd);
+    font-size: 11px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .cz-option .czo-boxes {
+    display: flex;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .cz-option .czo-cost {
+    font-family: var(--fd);
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .mini-box {
+    width: 28px; height: 28px;
+    border: 2px solid var(--ink);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+
+  /* ── Rule card ── */
+  .rule-card {
+    border: 2px solid var(--ink);
+    border-radius: 10px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    box-shadow: var(--shadow-sm);
+  }
+  .rule-card .rc-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-family: var(--fd);
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .rule-card .rc-text {
+    font-family: var(--fd);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  /* ── Step list ── */
+  .step-list {
+    margin: 10px 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: steps;
+  }
+  .step-list li {
+    counter-increment: steps;
+    padding: 6px 0 6px 28px;
+    position: relative;
+    font-family: var(--fb);
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.5;
+    border-left: 2px solid #ddd;
+    margin-left: 10px;
+  }
+  .step-list li::before {
+    content: counter(steps);
+    position: absolute;
+    left: -11px;
+    top: 5px;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-list li:last-child { border-left-color: transparent; }
+
+  /* ── Rules so far ── */
+  .rules-so-far {
+    border: 2px dashed #ccc;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: 12px;
+    background: #FAFAF8;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .rules-so-far .rsf-label {
+    font-family: var(--fd);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-3);
+  }
+  .rsf-chip {
+    padding: 3px 8px;
+    border: 1.5px solid var(--ink);
+    border-radius: 6px;
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+  }
+  .rsf-chip.dim { opacity: 0.35; border-style: dashed; }
+
+  /* ── Big idea ── */
+  .big-idea {
+    border: 3px solid var(--ink);
+    background: #FFF7E0;
+    padding: 24px;
+    margin: 32px 0;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .big-idea .bi-label {
+    font-family: var(--fd);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-3);
+    margin-bottom: 8px;
+  }
+  .big-idea .bi-text {
+    font-family: var(--fd);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.4;
+  }
+
+  .open-items {
+    border: 2px solid #ccc;
+    border-style: dashed;
+    padding: 20px 24px;
+    margin-top: 32px;
+    background: #FAFAF8;
+    border-radius: 12px;
+  }
+  .open-items h3 {
+    font-family: var(--fd);
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 12px;
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .open-items ul {
+    font-family: var(--fb);
+    font-size: 13px;
+    color: var(--text-2);
+    line-height: 1.7;
+    padding-left: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .summary-bar { grid-template-columns: 1fr 1fr; }
+    .ps-body { flex-direction: column; gap: 12px; }
+    .arc-strip { flex-wrap: wrap; }
+    .arc-step { min-width: 80px; }
+    .flow-strip { gap: 4px; }
+    .flow-chip { font-size: 9px; padding: 4px 8px; }
+    .cz-row { flex-direction: column; }
+    .cz-option + .cz-option { border-left: none; border-top: 2px solid var(--ink); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="pill">Concept Note</div>
+    <h1>Pack It Right</h1>
+    <div class="subtitle">Three boxes. Limited coins. Things keep changing. What's the smartest way to pack?</div>
+    <div class="meta">Mode: Choices &nbsp;&middot;&nbsp; Band 1 (Grades K-1) &nbsp;&middot;&nbsp; 9 screens &nbsp;&middot;&nbsp; ~6 min</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary-bar">
+    <div class="summary-cell">
+      <div class="sc-label">Skill</div>
+      <div class="sc-value">Smart Choices</div>
+    </div>
+    <div class="summary-cell">
+      <div class="sc-label">Math</div>
+      <div class="sc-value">Counting, Comparison, Grouping</div>
+    </div>
+    <div class="summary-cell">
+      <div class="sc-label">Real-world</div>
+      <div class="sc-value">Packing, Spending</div>
+    </div>
+    <div class="summary-cell">
+      <div class="sc-label">Duration</div>
+      <div class="sc-value">~6 min</div>
+    </div>
+  </div>
+
+  <!-- Checklist -->
+  <div class="checklist">
+    <div class="cl-label">Idea Finalisation Checklist</div>
+    <div class="cl-item"><b>Skill:</b> Making smart choices. Comparing options on what they cost vs what they give you, instead of just grabbing the first or biggest thing.</div>
+    <div class="cl-item"><b>Core question:</b> There are many ways to pack. Which one's smartest &mdash; and how do you know?</div>
+  </div>
+
+  <!-- Thesis -->
+  <div class="thesis">
+    <div class="th-label">Why this matters</div>
+    <div class="th-text">AI can optimise any packing problem. But the instinct to stop and compare before picking &mdash; that's yours.</div>
+    <div class="th-sub">Every day, kids grab the biggest, the first, the most obvious. This activity builds the habit of pausing: "Is there a smarter way?" And then, when things change: "Is my answer still smart?"</div>
+  </div>
+
+  <!-- Box types -->
+  <div style="border:2px solid var(--ink); background:var(--paper); padding:20px 24px; margin-bottom:32px; box-shadow:var(--shadow-sm);">
+    <div style="font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-bottom:14px;">The 3 Boxes</div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="box-card" style="background:var(--sky-bg);">
+        <div class="bc-icon" style="background:var(--sky);">
+          <svg width="24" height="22" viewBox="0 0 24 22"><rect x="4" y="5" width="16" height="14" rx="2" fill="#fff" stroke="#1A1A1A" stroke-width="1.5"/><rect x="6" y="2" width="12" height="5" rx="1" fill="var(--sky)" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        </div>
+        <div class="bc-info">
+          <div class="bc-name">Small Box</div>
+          <div class="bc-detail">Fits 1 toy</div>
+        </div>
+        <div class="bc-coins"><div class="bc-coin">$</div></div>
+      </div>
+      <div class="box-card" style="background:var(--orange-bg);">
+        <div class="bc-icon" style="background:var(--orange);">
+          <svg width="28" height="26" viewBox="0 0 28 26"><rect x="3" y="6" width="22" height="17" rx="2" fill="#fff" stroke="#1A1A1A" stroke-width="1.5"/><rect x="5" y="2" width="18" height="6" rx="1" fill="var(--orange)" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        </div>
+        <div class="bc-info">
+          <div class="bc-name">Medium Box</div>
+          <div class="bc-detail">Fits 3 toys</div>
+        </div>
+        <div class="bc-coins"><div class="bc-coin">$</div><div class="bc-coin">$</div></div>
+      </div>
+      <div class="box-card" style="background:var(--mint-bg);">
+        <div class="bc-icon" style="background:var(--mint);">
+          <svg width="32" height="30" viewBox="0 0 32 30"><rect x="2" y="7" width="28" height="20" rx="3" fill="#fff" stroke="#1A1A1A" stroke-width="1.5"/><rect x="4" y="2" width="24" height="7" rx="2" fill="var(--mint)" stroke="#1A1A1A" stroke-width="1.5"/></svg>
+        </div>
+        <div class="bc-info">
+          <div class="bc-name">Big Box</div>
+          <div class="bc-detail">Fits 5 toys</div>
+        </div>
+        <div class="bc-coins"><div class="bc-coin">$</div><div class="bc-coin">$</div><div class="bc-coin">$</div></div>
+      </div>
+    </div>
+    <div style="font-family:var(--fb); font-size:11px; color:var(--text-3); margin-top:12px; line-height:1.5;">Coins are shown as visual icons, not numbers. Kid counts by looking, not by adding.</div>
+  </div>
+
+  <!-- Flow overview -->
+  <div class="flow-overview">
+    <div class="fo-label">Flow Overview &mdash; 9 Screens, ~6 min</div>
+    <div class="flow-strip">
+      <div class="flow-chip" style="background:var(--peach-bg);">1 &middot; Hook</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:#FFF7E0;">2 &middot; 3 toys</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:var(--orange-bg);">3 &middot; +1 toy</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:#FFF7E0;">4 &middot; 6 toys</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:var(--orange-bg);">5 &middot; No medium!</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:var(--purple-bg);">6 &middot; Too tall!</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:var(--ink); color:var(--yellow);">7 &middot; Toolkit</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:var(--peach-bg);">8 &middot; Transfer</div>
+      <span class="flow-arr">&rarr;</span>
+      <div class="flow-chip" style="background:var(--mint-bg);">9 &middot; Big Idea</div>
+    </div>
+    <div style="font-family:var(--fb); font-size:11px; color:var(--text-3); margin-top:10px; line-height:1.5;">
+      Yellow = pack round &nbsp;&middot;&nbsp; Orange = change hits &nbsp;&middot;&nbsp; Purple = constraint &nbsp;&middot;&nbsp; Pattern: pack &rarr; change &rarr; re-pack &rarr; harder change &rarr; apply
+    </div>
+  </div>
+
+  <!-- Emotional arc -->
+  <div class="arc-bar">
+    <div class="ab-label">Emotional Arc</div>
+    <div class="arc-strip">
+      <div class="arc-step" style="background:#FFF7E0;">
+        <div class="as-emoji">😏</div>
+        <div class="as-label">Easy!</div>
+        <div class="as-screen">S2</div>
+      </div>
+      <div class="arc-step" style="background:var(--orange-bg);">
+        <div class="as-emoji">😮</div>
+        <div class="as-label">Wait, what?</div>
+        <div class="as-screen">S3</div>
+      </div>
+      <div class="arc-step" style="background:#FFF7E0;">
+        <div class="as-emoji">🤔</div>
+        <div class="as-label">Hmm, tricky</div>
+        <div class="as-screen">S4-S5</div>
+      </div>
+      <div class="arc-step" style="background:var(--purple-bg);">
+        <div class="as-emoji">😤</div>
+        <div class="as-label">No perfect answer</div>
+        <div class="as-screen">S6</div>
+      </div>
+      <div class="arc-step" style="background:var(--mint-bg);">
+        <div class="as-emoji">💪</div>
+        <div class="as-label">I've got this</div>
+        <div class="as-screen">S8</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═════════════════════════════ -->
+  <!-- SCREEN 1 — HOOK              -->
+  <!-- ═════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 1</span>
+      <span class="frame-type hook">Hook</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Moving Day!</div>
+      <div class="frame-desc">Set the scene. Toy shelf is full. Truck is waiting. Kid meets the 3 boxes and the coin jar.</div>
+
+      <ol class="step-list">
+        <li>Room fades in &mdash; toy shelf on one side, moving truck on the other</li>
+        <li>3 boxes bounce in one by one: Small (blue), Medium (orange), Big (green)</li>
+        <li>Coin jar appears &mdash; full of coins. <b>"Every box costs coins. Keep as many as you can!"</b></li>
+        <li>Quick demo: kid sees 1 toy &rarr; 1 small box used &rarr; 1 coin drops from jar</li>
+        <li>Kid taps "Let's pack!" to start</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div style="text-align:center; padding:16px 0;">
+          <div style="font-size:48px; margin-bottom:12px;">🏠</div>
+          <div style="font-family:var(--fd); font-size:18px; font-weight:800; margin-bottom:6px;">Moving Day!</div>
+          <div style="font-family:var(--fb); font-size:13px; color:var(--text-2); margin-bottom:16px;">Pack your toys. Keep your coins.</div>
+
+          <!-- Shelf with toys -->
+          <div style="display:flex; justify-content:center; gap:8px; margin-bottom:16px;">
+            <div class="toy-icon" style="background:#FFF7E0;">🧸</div>
+            <div class="toy-icon" style="background:var(--peach-bg);">🤖</div>
+            <div class="toy-icon" style="background:var(--sky-bg);">🚗</div>
+            <div class="toy-icon" style="background:var(--purple-bg);">🎨</div>
+            <div class="toy-icon" style="background:var(--mint-bg);">🦕</div>
+          </div>
+
+          <!-- 3 boxes -->
+          <div style="display:flex; justify-content:center; gap:12px; margin-bottom:16px;">
+            <div style="text-align:center;">
+              <div style="width:36px; height:32px; border:2px solid var(--ink); border-radius:6px; background:var(--sky); margin:0 auto 4px;"></div>
+              <div style="font-family:var(--fd); font-size:9px; font-weight:700;">Small</div>
+              <div style="font-family:var(--fd); font-size:9px; color:var(--text-3);">1 toy &middot; 1 coin</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:48px; height:40px; border:2px solid var(--ink); border-radius:6px; background:var(--orange); margin:0 auto 4px;"></div>
+              <div style="font-family:var(--fd); font-size:9px; font-weight:700;">Medium</div>
+              <div style="font-family:var(--fd); font-size:9px; color:var(--text-3);">3 toys &middot; 2 coins</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:60px; height:48px; border:2px solid var(--ink); border-radius:6px; background:var(--mint); margin:0 auto 4px;"></div>
+              <div style="font-family:var(--fd); font-size:9px; font-weight:700;">Big</div>
+              <div style="font-family:var(--fd); font-size:9px; color:var(--text-3);">5 toys &middot; 3 coins</div>
+            </div>
+          </div>
+
+          <!-- Coin jar -->
+          <div class="coin-jar" style="justify-content:center;">
+            <div style="font-size:22px;">🏺</div>
+            <div class="cj-coins">
+              <div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div>
+              <div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mock-btn">Let's pack! &rarr;</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> Coin jar is the scoreboard. It starts full. Every box drains it. Kid instantly understands: fewer coins spent = more coins kept = better.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ═════════════════════════════════ -->
+  <!-- SCREEN 2 — ROUND 1 (3 TOYS)     -->
+  <!-- ═════════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 2</span>
+      <span class="frame-type round">Round 1 &mdash; 3 Toys</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Pack these 3 toys!</div>
+      <div class="frame-desc">First round. Kid picks boxes from the shelf and taps toys into them. Coins drop from jar for each box used.</div>
+
+      <ol class="step-list">
+        <li>3 toys appear on shelf: 🧸 🤖 🚗</li>
+        <li>Kid taps a box type to add it to the packing area</li>
+        <li>Kid taps toys to snap them into boxes. Box fills visually (slots light up)</li>
+        <li>Coins drop from jar as each box is added &mdash; <b>clink, clink, clink</b></li>
+        <li>When all toys are packed &rarr; "Done!" button appears</li>
+        <li>"Want to see another way?" &mdash; shows cheapest option if kid didn't find it</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div class="pack-scene">
+          <div class="ps-header" style="background:#FFF7E0;">📦 Pack 3 toys</div>
+          <div class="ps-body" style="background:#FFFDF8;">
+            <div style="text-align:center;">
+              <div style="display:flex; gap:8px; justify-content:center; margin-bottom:8px;">
+                <div class="toy-icon" style="background:#FFF7E0;">🧸</div>
+                <div class="toy-icon" style="background:var(--peach-bg);">🤖</div>
+                <div class="toy-icon" style="background:var(--sky-bg);">🚗</div>
+              </div>
+              <div style="font-family:var(--fd); font-size:10px; font-weight:700; color:var(--text-3);">Toys to pack</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Strategies comparison -->
+        <div class="compare-zone">
+          <div class="cz-header">Compare</div>
+          <div class="cz-row">
+            <div class="cz-option" style="background:var(--peach-bg);">
+              <div class="czo-label">3 small boxes</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+              </div>
+              <div class="czo-cost" style="color:var(--peach);">3 coins</div>
+            </div>
+            <div class="cz-option" style="background:var(--mint-bg);">
+              <div class="czo-label">1 medium box</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--orange-bg);">M</div>
+              </div>
+              <div class="czo-cost" style="color:var(--mint);">2 coins &#10024;</div>
+            </div>
+            <div class="cz-option">
+              <div class="czo-label">1 big box</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--mint-bg);">B</div>
+              </div>
+              <div class="czo-cost" style="color:var(--peach);">3 coins + 2 empty</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" style="background:#FFF7E0;">
+          <div class="rc-icon" style="background:var(--yellow);">1</div>
+          <div class="rc-text">The biggest box isn't always the smartest pick.</div>
+        </div>
+
+        <div class="mock-btn">Next &rarr;</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> Most kids grab the big box (instinct: big = good). Seeing medium is cheaper + exact fit is the first surprise. Coin jar makes the cost gap visceral.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ═══════════════════════════════════ -->
+  <!-- SCREEN 3 — CHANGE 1 (NEW TOY)     -->
+  <!-- ═══════════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 3</span>
+      <span class="frame-type change">Change &mdash; New Toy!</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">"Wait &mdash; you forgot Teddy!"</div>
+      <div class="frame-desc">A 4th toy bounces onto the shelf. Medium box is full (fits 3). Kid's 2-coin answer is gone. Re-pack.</div>
+
+      <ol class="step-list">
+        <li>🎨 bounces in with a "boing!" sound. Shelf now has 4 toys</li>
+        <li>Medium box flashes &mdash; it's full! Can't fit a 4th toy</li>
+        <li><b>"Your 2-coin plan just broke. Re-pack!"</b></li>
+        <li>Kid re-packs. Options now: Medium + Small (3 coins) or Big (3 coins, 1 empty) or 4 Small (4 coins)</li>
+        <li>Compare shows: Medium + Small = Big = 3 coins. But Medium + Small has zero waste</li>
+        <li>Either 3-coin option is fine &mdash; the point is the 2-coin answer is gone</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div class="pack-scene">
+          <div class="ps-header" style="background:var(--orange-bg);">&#9888;&#65039; A new toy appeared!</div>
+          <div class="ps-body" style="background:#FFF8F0;">
+            <div style="display:flex; gap:8px; align-items:center;">
+              <!-- Old toys in medium box -->
+              <div style="border:2px solid var(--ink); border-radius:8px; padding:8px; background:var(--orange-bg); text-align:center;">
+                <div style="display:flex; gap:4px; margin-bottom:4px;">
+                  <div style="font-size:18px;">🧸</div><div style="font-size:18px;">🤖</div><div style="font-size:18px;">🚗</div>
+                </div>
+                <div style="font-family:var(--fd); font-size:9px; font-weight:700;">Medium &middot; FULL</div>
+              </div>
+              <div style="font-family:var(--fd); font-size:14px; color:var(--peach);">+</div>
+              <!-- New toy, unboxed -->
+              <div class="toy-icon" style="background:#FFF7E0; border-color:var(--peach); border-width:3px;">🎨</div>
+              <div style="font-family:var(--fd); font-size:11px; font-weight:800; color:var(--peach);">No box!</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-zone">
+          <div class="cz-header">Re-pack &mdash; what's smartest now?</div>
+          <div class="cz-row">
+            <div class="cz-option" style="background:var(--mint-bg);">
+              <div class="czo-label">Medium + Small</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--orange-bg);">M</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+              </div>
+              <div class="czo-cost" style="color:var(--mint);">3 coins &middot; exact fit</div>
+            </div>
+            <div class="cz-option">
+              <div class="czo-label">1 Big</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--mint-bg);">B</div>
+              </div>
+              <div class="czo-cost">3 coins &middot; 1 empty</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" style="background:var(--orange-bg);">
+          <div class="rc-icon" style="background:var(--orange); color:#fff;">2</div>
+          <div class="rc-text">New stuff shows up. Your old answer breaks. Re-pack.</div>
+        </div>
+
+        <div class="mock-btn">Next &rarr;</div>
+      </div>
+
+      <div class="rules-so-far">
+        <span class="rsf-label">Rules so far:</span>
+        <span class="rsf-chip" style="background:#FFF7E0;">1 &middot; Biggest isn't smartest</span>
+        <span class="rsf-chip" style="background:var(--orange-bg);">2 &middot; New stuff = re-pack</span>
+        <span class="rsf-chip dim">3</span>
+        <span class="rsf-chip dim">4</span>
+        <span class="rsf-chip dim">5</span>
+      </div>
+
+      <div class="design-note">
+        <strong>Design note:</strong> The re-evaluation moment. Kid HAD a 2-coin answer. It's gone. The lesson isn't "find the new cheapest" &mdash; it's "your answer can break when things change."
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ═════════════════════════════════ -->
+  <!-- SCREEN 4 — ROUND 2 (6 TOYS)     -->
+  <!-- ═════════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 4</span>
+      <span class="frame-type round">Round 2 &mdash; 6 Toys</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Pack these 6 toys!</div>
+      <div class="frame-desc">Bigger shelf. More combos to compare. Kid needs to mix box sizes smartly.</div>
+
+      <ol class="step-list">
+        <li>6 toys on the shelf: 🧸 🤖 🚗 🎨 🦕 ⚽</li>
+        <li>Kid picks boxes and packs. Coins drop from jar</li>
+        <li>After packing &rarr; "Want to see another way?" shows alternatives</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div class="pack-scene">
+          <div class="ps-header" style="background:#FFF7E0;">📦 Pack 6 toys</div>
+          <div class="ps-body" style="background:#FFFDF8;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+              <div class="toy-icon" style="background:#FFF7E0;">🧸</div>
+              <div class="toy-icon" style="background:var(--peach-bg);">🤖</div>
+              <div class="toy-icon" style="background:var(--sky-bg);">🚗</div>
+              <div class="toy-icon" style="background:var(--purple-bg);">🎨</div>
+              <div class="toy-icon" style="background:var(--mint-bg);">🦕</div>
+              <div class="toy-icon" style="background:var(--orange-bg);">⚽</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-zone">
+          <div class="cz-header">Compare strategies</div>
+          <div class="cz-row">
+            <div class="cz-option" style="background:var(--mint-bg);">
+              <div class="czo-label">2 Medium</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--orange-bg);">M</div>
+                <div class="mini-box" style="background:var(--orange-bg);">M</div>
+              </div>
+              <div class="czo-cost" style="color:var(--mint);">4 coins &middot; exact fit &#10024;</div>
+            </div>
+            <div class="cz-option">
+              <div class="czo-label">Big + Small</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--mint-bg);">B</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+              </div>
+              <div class="czo-cost">4 coins &middot; 1 empty</div>
+            </div>
+            <div class="cz-option" style="background:var(--peach-bg);">
+              <div class="czo-label">6 Small</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+              </div>
+              <div class="czo-cost" style="color:var(--peach);">6 coins</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" style="background:var(--purple-bg);">
+          <div class="rc-icon" style="background:var(--purple); color:#fff;">3</div>
+          <div class="rc-text">Mixing sizes can beat going all-big or all-small.</div>
+        </div>
+
+        <div class="mock-btn">Next &rarr;</div>
+      </div>
+
+      <div class="rules-so-far">
+        <span class="rsf-label">Rules so far:</span>
+        <span class="rsf-chip" style="background:#FFF7E0;">1 &middot; Biggest isn't smartest</span>
+        <span class="rsf-chip" style="background:var(--orange-bg);">2 &middot; New stuff = re-pack</span>
+        <span class="rsf-chip" style="background:var(--purple-bg);">3 &middot; Mix sizes</span>
+        <span class="rsf-chip dim">4</span>
+        <span class="rsf-chip dim">5</span>
+      </div>
+
+      <div class="design-note">
+        <strong>Design note:</strong> 2 medium = Big + Small in cost, but zero waste. Kid starts seeing that matching box size to toy count matters more than just picking the biggest available.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ════════════════════════════════════════ -->
+  <!-- SCREEN 5 — CHANGE 2 (MEDIUM SOLD OUT)   -->
+  <!-- ════════════════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 5</span>
+      <span class="frame-type change">Change &mdash; Medium Sold Out!</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">"Oh no &mdash; no more medium boxes!"</div>
+      <div class="frame-desc">Same 6 toys. But the medium box is crossed out. Only small and big available. Kid re-packs with fewer options.</div>
+
+      <ol class="step-list">
+        <li>Medium box gets a red X and fades out. <b>"Sold out!"</b></li>
+        <li>Kid's 2-medium strategy is gone. Must use small + big only</li>
+        <li>Kid re-packs. Best option: Big + Small = 4 coins (1 empty slot in big)</li>
+        <li>6 small = 6 coins. Much worse</li>
+        <li>Point: same price as before, but the strategy had to completely change</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div style="display:flex; justify-content:center; gap:16px; margin-bottom:14px;">
+          <div style="text-align:center;">
+            <div style="width:36px; height:32px; border:2px solid var(--ink); border-radius:6px; background:var(--sky); margin:0 auto 4px;"></div>
+            <div style="font-family:var(--fd); font-size:9px; font-weight:700;">Small</div>
+          </div>
+          <div style="text-align:center; opacity:0.3;">
+            <div style="width:48px; height:40px; border:2px solid var(--ink); border-radius:6px; background:var(--orange); margin:0 auto 4px; position:relative;">
+              <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:24px; color:var(--peach);">&#10006;</div>
+            </div>
+            <div style="font-family:var(--fd); font-size:9px; font-weight:700; text-decoration:line-through;">Medium</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="width:60px; height:48px; border:2px solid var(--ink); border-radius:6px; background:var(--mint); margin:0 auto 4px;"></div>
+            <div style="font-family:var(--fd); font-size:9px; font-weight:700;">Big</div>
+          </div>
+        </div>
+
+        <div class="compare-zone">
+          <div class="cz-header">Only small + big left. Now what?</div>
+          <div class="cz-row">
+            <div class="cz-option" style="background:var(--mint-bg);">
+              <div class="czo-label">Big + Small</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--mint-bg);">B</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+              </div>
+              <div class="czo-cost" style="color:var(--mint);">4 coins &#10024;</div>
+            </div>
+            <div class="cz-option" style="background:var(--peach-bg);">
+              <div class="czo-label">6 Small</div>
+              <div class="czo-boxes">
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+                <div class="mini-box" style="background:var(--sky-bg);">S</div>
+              </div>
+              <div class="czo-cost" style="color:var(--peach);">6 coins</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rule-card" style="background:var(--sky-bg);">
+          <div class="rc-icon" style="background:var(--sky); color:#fff;">4</div>
+          <div class="rc-text">When an option disappears, find the next best way.</div>
+        </div>
+
+        <div class="mock-btn">Next &rarr;</div>
+      </div>
+
+      <div class="rules-so-far">
+        <span class="rsf-label">Rules so far:</span>
+        <span class="rsf-chip" style="background:#FFF7E0;">1 &middot; Biggest isn't smartest</span>
+        <span class="rsf-chip" style="background:var(--orange-bg);">2 &middot; New stuff = re-pack</span>
+        <span class="rsf-chip" style="background:var(--purple-bg);">3 &middot; Mix sizes</span>
+        <span class="rsf-chip" style="background:var(--sky-bg);">4 &middot; Option gone = adapt</span>
+        <span class="rsf-chip dim">5</span>
+      </div>
+
+      <div class="design-note">
+        <strong>Design note:</strong> Strongest re-evaluation moment. The change isn't "more toys" &mdash; it's "fewer tools." Solving the same problem with fewer options is the real-world skill.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ═══════════════════════════════════════ -->
+  <!-- SCREEN 6 — ROUND 3 (CONSTRAINT)       -->
+  <!-- ═══════════════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 6</span>
+      <span class="frame-type constraint">Constraint &mdash; Too Tall!</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">This toy doesn't fit in any box!</div>
+      <div class="frame-desc">6 normal toys + 1 oversized giraffe. Kid packs the 6, then faces the giraffe. Two options, both with trade-offs.</div>
+
+      <ol class="step-list">
+        <li>Kid packs 6 normal toys (by now they're good at this)</li>
+        <li>Giraffe toy appears &mdash; visually taller than all 3 box types</li>
+        <li>Kid tries to put giraffe in each box &mdash; <b>flashes red, won't fit</b></li>
+        <li>Two option cards appear side by side:</li>
+        <li><b>Option A:</b> Split giraffe into 2 pieces &rarr; fits in 2 small boxes &rarr; 2 coins</li>
+        <li><b>Option B:</b> Special tall box appears &rarr; fits perfectly &rarr; 4 coins</li>
+        <li>Kid taps one. Coins drop. Then the OTHER option plays out too</li>
+        <li>Kid sees both consequences. No "correct" &mdash; just: cheaper but broken vs pricier but whole</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <!-- Giraffe that doesn't fit -->
+        <div style="text-align:center; margin-bottom:14px;">
+          <div style="display:inline-flex; align-items:flex-end; gap:12px;">
+            <div style="text-align:center;">
+              <div style="width:36px; height:32px; border:2px solid var(--ink); border-radius:6px; background:var(--sky); margin:0 auto 4px;"></div>
+              <div style="font-family:var(--fd); font-size:8px; color:var(--text-3);">Small</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:48px; height:40px; border:2px solid var(--ink); border-radius:6px; background:var(--orange); margin:0 auto 4px;"></div>
+              <div style="font-family:var(--fd); font-size:8px; color:var(--text-3);">Medium</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="width:60px; height:48px; border:2px solid var(--ink); border-radius:6px; background:var(--mint); margin:0 auto 4px;"></div>
+              <div style="font-family:var(--fd); font-size:8px; color:var(--text-3);">Big</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:48px; line-height:1;">🦒</div>
+              <div style="font-family:var(--fd); font-size:9px; font-weight:800; color:var(--peach);">Too tall!</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Two options -->
+        <div style="display:flex; gap:12px; margin:14px 0;">
+          <div style="flex:1; border:2px solid var(--ink); border-radius:12px; padding:14px; text-align:center; box-shadow:var(--shadow-sm); background:var(--sky-bg);">
+            <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:8px;">Option A</div>
+            <div style="font-size:28px; margin-bottom:6px;">🦒 &#10140; &#9986;&#65039;</div>
+            <div style="font-family:var(--fb); font-size:11px; color:var(--text-2); margin-bottom:6px;">Split into 2 pieces</div>
+            <div style="font-family:var(--fb); font-size:11px; color:var(--text-2); margin-bottom:8px;">Fits in 2 small boxes</div>
+            <div style="display:flex; justify-content:center; gap:3px; margin-bottom:4px;">
+              <div class="bc-coin">$</div><div class="bc-coin">$</div>
+            </div>
+            <div style="font-family:var(--fd); font-size:10px; font-weight:700; color:var(--mint);">Cheaper &mdash; but broken</div>
+          </div>
+          <div style="flex:1; border:2px solid var(--ink); border-radius:12px; padding:14px; text-align:center; box-shadow:var(--shadow-sm); background:var(--purple-bg);">
+            <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:8px;">Option B</div>
+            <div style="font-size:28px; margin-bottom:6px;">📦</div>
+            <div style="font-family:var(--fb); font-size:11px; color:var(--text-2); margin-bottom:6px;">Special tall box</div>
+            <div style="font-family:var(--fb); font-size:11px; color:var(--text-2); margin-bottom:8px;">Fits perfectly</div>
+            <div style="display:flex; justify-content:center; gap:3px; margin-bottom:4px;">
+              <div class="bc-coin">$</div><div class="bc-coin">$</div><div class="bc-coin">$</div><div class="bc-coin">$</div>
+            </div>
+            <div style="font-family:var(--fd); font-size:10px; font-weight:700; color:var(--purple);">Pricier &mdash; but whole</div>
+          </div>
+        </div>
+
+        <div style="font-family:var(--fb); font-size:12px; color:var(--text-3); text-align:center; margin:8px 0;">Kid picks. Then sees what the OTHER option would have been.</div>
+
+        <div class="rule-card" style="background:var(--peach-bg);">
+          <div class="rc-icon" style="background:var(--peach); color:#fff;">5</div>
+          <div class="rc-text">Sometimes no box is perfect. You pick what matters more to you.</div>
+        </div>
+
+        <div class="mock-btn">Next &rarr;</div>
+      </div>
+
+      <div class="rules-so-far">
+        <span class="rsf-label">Rules complete:</span>
+        <span class="rsf-chip" style="background:#FFF7E0;">1 &middot; Biggest isn't smartest</span>
+        <span class="rsf-chip" style="background:var(--orange-bg);">2 &middot; New stuff = re-pack</span>
+        <span class="rsf-chip" style="background:var(--purple-bg);">3 &middot; Mix sizes</span>
+        <span class="rsf-chip" style="background:var(--sky-bg);">4 &middot; Option gone = adapt</span>
+        <span class="rsf-chip" style="background:var(--peach-bg);">5 &middot; No perfect answer</span>
+      </div>
+
+      <div class="design-note">
+        <strong>Design note:</strong> First genuinely open choice. Showing both outcomes removes anxiety. The lesson: smart choices aren't always about cheapest &mdash; sometimes you weigh cost vs care.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ═════════════════════════════ -->
+  <!-- SCREEN 7 — TOOLKIT RECAP     -->
+  <!-- ═════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 7</span>
+      <span class="frame-type reveal">Your Toolkit</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">5 things you learned about smart choices</div>
+      <div class="frame-desc">Rules flip in one by one before the final test.</div>
+
+      <ol class="step-list">
+        <li>Rules flip in one at a time (0.5s stagger) with a "ding!" each</li>
+        <li>Each rule shows its round's emoji as a reminder</li>
+        <li>After all 5 &rarr; challenge text pulses: "One more. No hints this time."</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">Rules collected</div>
+
+        <div class="rule-card" style="background:#FFF7E0;">
+          <div class="rc-icon" style="background:var(--yellow);">1</div>
+          <div class="rc-text">The biggest box isn't always the smartest pick.</div>
+        </div>
+        <div class="rule-card" style="background:var(--orange-bg);">
+          <div class="rc-icon" style="background:var(--orange); color:#fff;">2</div>
+          <div class="rc-text">New stuff shows up. Your old answer breaks. Re-pack.</div>
+        </div>
+        <div class="rule-card" style="background:var(--purple-bg);">
+          <div class="rc-icon" style="background:var(--purple); color:#fff;">3</div>
+          <div class="rc-text">Mixing sizes can beat going all-big or all-small.</div>
+        </div>
+        <div class="rule-card" style="background:var(--sky-bg);">
+          <div class="rc-icon" style="background:var(--sky); color:#fff;">4</div>
+          <div class="rc-text">When an option disappears, find the next best way.</div>
+        </div>
+        <div class="rule-card" style="background:var(--peach-bg);">
+          <div class="rc-icon" style="background:var(--peach); color:#fff;">5</div>
+          <div class="rc-text">Sometimes no box is perfect. You pick what matters more.</div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:15px; font-weight:800; margin:18px 0 8px; text-align:center; color:var(--peach);">One more challenge. No hints this time.</div>
+
+        <div class="mock-btn">Let's go &rarr;</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 8 — TRANSFER (BIRTHDAY PARTY)     -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 8</span>
+      <span class="frame-type transfer">Transfer &mdash; Birthday Party</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">Pack the return gifts!</div>
+      <div class="frame-desc">New scene: birthday party. 8 return gifts, same 3 box sizes. Kid packs. Then 3 more friends RSVP. Re-pack with no hints.</div>
+
+      <ol class="step-list">
+        <li>Party scene fades in. 8 gift icons on a table. Same 3 box types. Coin jar resets</li>
+        <li>Kid packs 8 gifts. Best: 1 Big (5) + 1 Medium (3) = 5 coins. Or: 2 Medium + Small + Small = 6 coins. Or other combos</li>
+        <li>Kid finishes. Then: <b>"3 more friends just RSVP'd!"</b> 11 gifts now</li>
+        <li>No "want to see another way?" this time. No compare zone. Just the coin jar</li>
+        <li>Kid re-packs independently. Applies rules without scaffolding</li>
+        <li>After packing &rarr; show coins kept vs best possible: <b>"You kept 5 coins. Best possible was 6. Close!"</b></li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div class="pack-scene">
+          <div class="ps-header" style="background:var(--purple-bg);">🎂 Birthday Party &mdash; Pack return gifts!</div>
+          <div class="ps-body" style="background:#F8F0FF;">
+            <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center;">
+              <div class="toy-icon" style="background:#FFF7E0;">🎁</div>
+              <div class="toy-icon" style="background:var(--peach-bg);">🎁</div>
+              <div class="toy-icon" style="background:var(--sky-bg);">🎁</div>
+              <div class="toy-icon" style="background:var(--mint-bg);">🎁</div>
+              <div class="toy-icon" style="background:var(--purple-bg);">🎁</div>
+              <div class="toy-icon" style="background:var(--orange-bg);">🎁</div>
+              <div class="toy-icon" style="background:#FFF7E0;">🎁</div>
+              <div class="toy-icon" style="background:var(--peach-bg);">🎁</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Change moment -->
+        <div style="border:2px solid var(--peach); border-radius:12px; padding:14px; text-align:center; margin:14px 0; background:var(--peach-bg);">
+          <div style="font-family:var(--fd); font-size:14px; font-weight:800; color:var(--peach); margin-bottom:6px;">&#9888;&#65039; 3 more friends just RSVP'd!</div>
+          <div style="font-family:var(--fb); font-size:12px; color:var(--text-2);">11 gifts now. Re-pack!</div>
+          <div style="display:flex; gap:4px; justify-content:center; margin-top:8px; flex-wrap:wrap;">
+            <div class="toy-icon" style="background:#FFF7E0; width:36px; height:36px; font-size:16px;">🎁</div>
+            <div class="toy-icon" style="background:var(--sky-bg); width:36px; height:36px; font-size:16px;">🎁</div>
+            <div class="toy-icon" style="background:var(--mint-bg); width:36px; height:36px; font-size:16px;">🎁</div>
+          </div>
+        </div>
+
+        <!-- Coin jar result -->
+        <div class="coin-jar" style="justify-content:center; margin:14px 0;">
+          <div style="font-size:22px;">🏺</div>
+          <div class="cj-coins">
+            <div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div>
+            <div class="cj-coin spent"></div><div class="cj-coin spent"></div><div class="cj-coin spent"></div><div class="cj-coin spent"></div><div class="cj-coin spent"></div>
+          </div>
+          <div style="font-family:var(--fd); font-size:12px; font-weight:800;">5 coins kept!</div>
+        </div>
+
+        <div style="font-family:var(--fd); font-size:13px; font-weight:800; text-align:center; color:var(--mint);">Best possible: 6 coins. You got 5. Nice packing!</div>
+
+        <div class="mock-btn">See what you learned &rarr;</div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> No scaffolding. No compare zone. Kid applies everything independently. The coin gap (yours vs best) is gentle feedback, not a grade. Even 1-2 coins off is a win.
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-arrow">&darr;</div>
+
+
+  <!-- ═════════════════════════════ -->
+  <!-- SCREEN 9 — BIG IDEA          -->
+  <!-- ═════════════════════════════ -->
+  <div class="frame-card">
+    <div class="frame-header">
+      <span class="frame-num">Screen 9</span>
+      <span class="frame-type ending">Big Idea</span>
+    </div>
+    <div class="frame-body">
+      <div class="frame-title">What did you learn?</div>
+      <div class="frame-desc">Big idea + tool earned + score recap.</div>
+
+      <ol class="step-list">
+        <li>All 3 box types fly in and arrange in a row</li>
+        <li>Big idea text animates in center</li>
+        <li>Tool Earned badge appears</li>
+        <li>Coin jar shows final total across all rounds</li>
+        <li>CTAs: Share + Home</li>
+      </ol>
+
+      <div class="wireframe">
+        <div class="wf-label">What the kid sees</div>
+
+        <div style="text-align:center; padding:16px 0;">
+          <!-- Boxes -->
+          <div style="display:flex; justify-content:center; gap:12px; margin-bottom:16px;">
+            <div style="width:36px; height:32px; border:2px solid var(--ink); border-radius:6px; background:var(--sky);"></div>
+            <div style="width:48px; height:40px; border:2px solid var(--ink); border-radius:6px; background:var(--orange);"></div>
+            <div style="width:60px; height:48px; border:2px solid var(--ink); border-radius:6px; background:var(--mint);"></div>
+          </div>
+
+          <!-- Big idea -->
+          <div style="border:3px solid var(--ink); background:#FFF7E0; padding:20px; margin:0 20px 16px; box-shadow:var(--shadow);">
+            <div style="font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-bottom:6px;">The Big Idea</div>
+            <div style="font-family:var(--fd); font-size:16px; font-weight:800; line-height:1.4;">Don't just pick. Compare, then pick.<br>And when things change &mdash; compare again.</div>
+          </div>
+
+          <!-- Tool earned -->
+          <div style="border:2px solid var(--ink); border-radius:12px; padding:12px 16px; display:inline-flex; align-items:center; gap:8px; box-shadow:var(--shadow-sm); background:var(--mint-bg); margin-bottom:16px;">
+            <span style="font-size:22px;">📦</span>
+            <div>
+              <div style="font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--text-3);">Tool Earned</div>
+              <div style="font-family:var(--fd); font-size:13px; font-weight:800;">Smart Packer</div>
+            </div>
+          </div>
+
+          <br>
+
+          <!-- Final score -->
+          <div class="coin-jar" style="justify-content:center; margin:12px 0;">
+            <div style="font-size:22px;">🏺</div>
+            <div class="cj-coins">
+              <div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div><div class="cj-coin"></div>
+            </div>
+            <div style="font-family:var(--fd); font-size:12px; font-weight:800;">7 coins saved across all rounds!</div>
+          </div>
+
+          <!-- CTAs -->
+          <div style="display:flex; gap:10px; margin-top:16px;">
+            <div class="mock-btn" style="flex:1; background:var(--mint); color:#fff;">Share with a friend</div>
+            <div class="mock-btn" style="flex:1; background:var(--paper);">Back to Home</div>
+          </div>
+        </div>
+      </div>
+      <div class="design-note">
+        <strong>Design note:</strong> Tool Earned is the real reward. "Smart Packer" is a named skill, not a trophy. Coin jar total across all rounds gives a sense of cumulative progress.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ═══════════ DESIGN DETAILS ═══════════ -->
+
+  <!-- Interaction patterns -->
+  <div style="border:2px solid var(--ink); background:var(--paper); padding:20px 24px; margin:32px 0; box-shadow:var(--shadow-sm);">
+    <div style="font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-bottom:14px;">Interaction Design &mdash; Key Patterns</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <div style="border:2px solid #eee; border-radius:10px; padding:14px;">
+        <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:6px;">Coin Jar as Scoreboard</div>
+        <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); line-height:1.5;">Starts full. Coins drop out per box. More coins remaining = better. Kid watches and counts, doesn't add numbers.</div>
+      </div>
+      <div style="border:2px solid #eee; border-radius:10px; padding:14px;">
+        <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:6px;">Pack Then Compare</div>
+        <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); line-height:1.5;">Kid commits to a strategy first. THEN sees alternatives. The gap between their choice and the best option is the lesson.</div>
+      </div>
+      <div style="border:2px solid #eee; border-radius:10px; padding:14px;">
+        <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:6px;">Change Hits Mid-Round</div>
+        <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); line-height:1.5;">Changes arrive AFTER kid has committed. New toy, sold-out box, oversized item. Each one breaks the current answer and forces re-evaluation.</div>
+      </div>
+      <div style="border:2px solid #eee; border-radius:10px; padding:14px;">
+        <div style="font-family:var(--fd); font-size:12px; font-weight:800; margin-bottom:6px;">Scaffolding Fades</div>
+        <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); line-height:1.5;">S2-S5: compare zone shows alternatives. S6: two options shown. S8 (transfer): no scaffolding at all. Kid applies independently.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio & feedback -->
+  <div style="border:2px solid var(--ink); background:var(--paper); padding:20px 24px; margin-bottom:32px; box-shadow:var(--shadow-sm);">
+    <div style="font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-bottom:14px;">Audio &amp; Feedback</div>
+    <div style="display:grid; grid-template-columns:auto 1fr; gap:8px 12px; font-family:var(--fb); font-size:12px; color:var(--text-2); line-height:1.5;">
+      <span style="font-family:var(--fd); font-weight:700;">&#128266; Coin drop</span>
+      <span>Satisfying "clink" as each coin leaves the jar. More drops = more tension</span>
+      <span style="font-family:var(--fd); font-weight:700;">&#128266; Toy snap</span>
+      <span>Soft "click" when toy snaps into a box slot</span>
+      <span style="font-family:var(--fd); font-weight:700;">&#128266; Box full</span>
+      <span>Gentle "thud" when all slots in a box fill up. Lid closes animation</span>
+      <span style="font-family:var(--fd); font-weight:700;">&#128266; Change alert</span>
+      <span>Playful "uh oh!" sound when a new toy arrives or box sells out</span>
+      <span style="font-family:var(--fd); font-weight:700;">&#128266; Rule earned</span>
+      <span>"Ding!" when rule card flips in. Same sound as other activities &mdash; consistency</span>
+      <span style="font-family:var(--fd); font-weight:700;">&#128266; Won't fit</span>
+      <span>Low buzz + red flash when giraffe is dragged to a too-small box</span>
+    </div>
+  </div>
+
+  <!-- Transitions -->
+  <div style="border:2px solid var(--ink); background:var(--paper); padding:20px 24px; margin-bottom:32px; box-shadow:var(--shadow-sm);">
+    <div style="font-family:var(--fd); font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-3); margin-bottom:14px;">Transitions Between Screens</div>
+    <div style="font-family:var(--fb); font-size:12px; color:var(--text-2); line-height:1.8;">
+      <b>Round &rarr; Change:</b> Packed boxes seal with a lid-close animation. Then the change arrives &mdash; new toy bounces in, or box fades out with a red X. Shelf updates.<br>
+      <b>Pack &rarr; Compare:</b> Kid taps "Done." Their packing stays on screen. Alternative strategy fades in beside it for side-by-side comparison.<br>
+      <b>Compare &rarr; Rule:</b> Comparison shrinks up. Rule card slides in from bottom (0.3s). "Next" appears after card settles.<br>
+      <b>Packing &rarr; Transfer:</b> Scene cross-fades from room to party. Same box types, same coin jar. Familiar mechanics, new context.<br>
+      <b>Transfer &rarr; Big Idea:</b> Gifts shrink to icons. Boxes and coin jar assemble in center for final reveal.
+    </div>
+  </div>
+
+
+  <!-- Open Items -->
+  <div class="open-items">
+    <h3>Open / To Refine</h3>
+    <ul>
+      <li><strong>Packing interaction:</strong> Tap-to-snap (simpler) vs drag-and-drop (more physical)? K-1 motor skills favor tap. Recommend tap with drag as optional.</li>
+      <li><strong>Coin jar starting count:</strong> 10 coins shown? 15? Should match the worst-case total so jar never feels "already empty." Need to math out the maximum possible spend across all rounds.</li>
+      <li><strong>Compare zone depth:</strong> Show 2 alternatives or all possible combos? 2 is cleaner for K-1. All combos is more educational but may overwhelm.</li>
+      <li><strong>Constraint round (S6):</strong> Giraffe works visually. But "split into 2 pieces" might confuse K-1 kids literally. Alternative: "fold it" or "remove the legs"?</li>
+      <li><strong>Transfer difficulty:</strong> 8 &rarr; 11 gifts is a bigger number than earlier rounds. Might be too hard for K. Could reduce to 5 &rarr; 7 for K, keep 8 &rarr; 11 for Grade 1.</li>
+      <li><strong>Replay value:</strong> Same toy counts every time. Could randomize counts per round for repeat plays.</li>
+      <li><strong>Voiceover:</strong> "Pack these 3 toys!" read aloud for K-1? Reduces reading dependency. Adds production cost.</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>
